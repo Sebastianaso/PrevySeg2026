@@ -9,6 +9,7 @@ import ExperiencesSection from './components/ExperiencesSection';
 import ContactFooter from './components/ContactFooter';
 import NetworkBackground from './components/NetworkBackground';
 import ScrollToTop from './components/ScrollToTop';
+import LMSLayout from './lms/LMSLayout';
 import { 
   ContactModal, 
   PlatformModal, 
@@ -22,6 +23,9 @@ function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState('');
+  
+  // Estado de usuario autenticado en LMS
+  const [currentLMSUser, setCurrentLMSUser] = useState(null);
 
   const handleOpenContactWithCourse = (courseName) => {
     setSelectedCourse(courseName || '');
@@ -34,6 +38,21 @@ function App() {
       servicesElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const handleLoginSuccess = (userData) => {
+    setCurrentLMSUser(userData);
+  };
+
+  // Si el usuario está autenticado en la plataforma virtual, mostramos el LMS Layout completo
+  if (currentLMSUser) {
+    return (
+      <LMSLayout
+        currentUser={currentLMSUser}
+        onLogout={() => setCurrentLMSUser(null)}
+        onReturnHome={() => setCurrentLMSUser(null)}
+      />
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white">
@@ -96,6 +115,7 @@ function App() {
       <PlatformModal 
         isOpen={isPlatformOpen} 
         onClose={() => setIsPlatformOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
       />
 
       <SearchModal 

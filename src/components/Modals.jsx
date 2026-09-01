@@ -152,23 +152,68 @@ export const ContactModal = ({ isOpen, onClose, defaultCourse = '' }) => {
 };
 
 
-// 2. Modal Plataforma Virtual
-export const PlatformModal = ({ isOpen, onClose }) => {
+// 2. Modal Plataforma Virtual con Autenticación Estricta
+export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   if (!isOpen) return null;
+
+  const validUsers = [
+    {
+      user: '15692858-5',
+      pass: '15692858',
+      nombre: 'Ashley Adaros Guzmán',
+      email: 'ashley.adaros@prevyseg.cl',
+      rol: 'Administrador / Instructor SENCE',
+    },
+    {
+      user: '21778425-5',
+      pass: '21778425',
+      nombre: 'Sebastián Araya Cortés',
+      email: 'sebastian.araya@prevyseg.cl',
+      rol: 'Docente / Supervisor OS-10',
+    }
+  ];
 
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
     setTimeout(() => {
       setLoading(false);
-      setError('Credenciales en verificación o usuario en proceso de activación SENCE. Por favor contacta a secretaría académica.');
-    }, 1200);
+      
+      // Normalizar entrada de RUT (quitar puntos o espacios)
+      const cleanInputUser = rut.trim().replace(/\./g, '');
+      const cleanPassword = password.trim();
+
+      const matched = validUsers.find(
+        (u) => u.user === cleanInputUser && u.pass === cleanPassword
+      );
+
+      if (matched) {
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          onClose();
+          if (onLoginSuccess) {
+            onLoginSuccess(matched);
+          }
+        }, 800);
+      } else {
+        setError('Credenciales inválidas. Por favor verifica tu RUT y contraseña autorizada SENCE.');
+      }
+    }, 600);
+  };
+
+  const handleFillDemo = (demoUser, demoPass) => {
+    setRut(demoUser);
+    setPassword(demoPass);
+    setError('');
   };
 
   return (
@@ -194,64 +239,87 @@ export const PlatformModal = ({ isOpen, onClose }) => {
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          {error && (
-            <div className="p-3 bg-red-950/60 border border-red-500/40 rounded-lg text-xs text-red-300">
-              {error}
+        {success ? (
+          <div className="py-8 text-center space-y-3">
+            <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto animate-bounce">
+              <CheckCircle size={32} />
             </div>
-          )}
+            <h4 className="text-lg font-bold text-white">¡Acceso Autorizado!</h4>
+            <p className="text-xs text-gray-300">Ingresando al Panel de Administración LMS...</p>
+          </div>
+        ) : (
+          <form onSubmit={handleLogin} className="space-y-4">
+            {error && (
+              <div className="p-3 bg-red-950/70 border border-red-500/50 rounded-xl text-xs text-red-300">
+                {error}
+              </div>
+            )}
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1">RUT del Alumno</label>
-            <div className="relative">
-              <input
-                type="text"
-                required
-                placeholder="12.345.678-9"
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-                className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7]"
-              />
-              <User size={16} className="absolute left-3.5 top-3 text-gray-400" />
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 mb-1">RUT de Usuario</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  required
+                  placeholder="15692858-5"
+                  value={rut}
+                  onChange={(e) => setRut(e.target.value)}
+                  className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7] font-mono"
+                />
+                <User size={16} className="absolute left-3.5 top-3 text-gray-400" />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1">Contraseña</label>
-            <div className="relative">
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7]"
-              />
-              <Lock size={16} className="absolute left-3.5 top-3 text-gray-400" />
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 mb-1">Contraseña</label>
+              <div className="relative">
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7]"
+                />
+                <Lock size={16} className="absolute left-3.5 top-3 text-gray-400" />
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <label className="flex items-center gap-1.5 cursor-pointer">
-              <input type="checkbox" className="rounded bg-gray-800 border-gray-700 text-[#0284c7]" />
-              <span>Recordar sesión</span>
-            </label>
-            <a href="#recuperar" onClick={(e) => { e.preventDefault(); alert("Por favor comunícate a prevyseg.capacitaciones@gmail.com con tu RUT para restablecer tu clave."); }} className="text-[#00c2b2] hover:underline">
-              ¿Olvidaste tu clave?
-            </a>
-          </div>
+            {/* Quick Demo Credentials */}
+            <div className="p-3 bg-gray-900/80 border border-gray-800 rounded-xl text-[11px] space-y-1.5">
+              <span className="text-gray-400 font-bold block uppercase text-[10px]">Credenciales de Prueba Disponibles:</span>
+              <div className="flex flex-col gap-1 text-gray-300">
+                <button
+                  type="button"
+                  onClick={() => handleFillDemo('15692858-5', '15692858')}
+                  className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer"
+                >
+                  <span>1. Ashley Adaros (Admin)</span>
+                  <span className="font-mono text-gray-400">15692858-5 / 15692858</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleFillDemo('21778425-5', '21778425')}
+                  className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer"
+                >
+                  <span>2. Sebastián Araya (Docente)</span>
+                  <span className="font-mono text-gray-400">21778425-5 / 21778425</span>
+                </button>
+              </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            {loading ? <span>Conectando...</span> : <span>Ingresar al Aula</span>}
-            <ExternalLink size={14} />
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              {loading ? <span>Verificando en SENCE...</span> : <span>Ingresar al Panel Virtual</span>}
+              <ExternalLink size={14} />
+            </button>
+          </form>
+        )}
 
-        <div className="mt-6 pt-4 border-t border-gray-800 text-center text-xs text-gray-500">
+        <div className="mt-6 pt-4 border-t border-gray-800 text-center text-[11px] text-gray-500">
           Acreditado para formación en línea sincrónica y asincrónica SENCE.
         </div>
       </div>

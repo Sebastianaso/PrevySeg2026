@@ -1,6 +1,6 @@
 # 📚 Documentación del Proyecto PrevySeg (.docs)
 
-Bienvenido a la carpeta central de documentación del proyecto **PrevySeg** (Organismo Técnico de Capacitación).
+Bienvenido a la carpeta central de documentación del proyecto **PrevySeg** (Organismo Técnico de Capacitación y Plataforma Virtual LMS).
 Este directorio almacena el registro histórico de todas las iteraciones, actualizaciones técnicas, diagramas de arquitectura y flujos de interacción del sistema.
 
 ---
@@ -14,22 +14,25 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
 │   ├── architecture_diagram.md            # Diagrama de arquitectura de software y stack
 │   ├── component_hierarchy_diagram.md     # Jerarquía del árbol de componentes de React
 │   ├── interaction_flow_diagram.md        # Flujos de interacción del usuario y modales
-│   └── routing_and_scroll_diagram.md      # Flujo de scroll suave y anclajes con offset
+│   ├── routing_and_scroll_diagram.md      # Flujo de scroll suave y anclajes con offset
+│   └── lms_architecture_diagram.md        # Arquitectura del LMS y flujo de datos SENCE
 └── iterations/                            # Registro cronológico de iteraciones y updates
     ├── iteration_001_initial_scaffolding_and_setup.md
     ├── iteration_002_core_components_and_visual_layout.md
     ├── iteration_003_interactivity_modals_and_canvas.md
-    └── iteration_004_git_setup_and_docs_structure.md
+    ├── iteration_004_git_setup_and_docs_structure.md
+    └── iteration_005_lms_virtual_platform_implementation.md
 ```
 
 ---
 
 ## 📐 Índice de Diagramas Mermaid
 
-1. [Diagrama de Arquitectura](./diagrams/architecture_diagram.md): Vista global de capas (Presentación, Estilos, Iconografía, Lógica de Modales, Assets).
-2. [Jerarquía de Componentes](./diagrams/component_hierarchy_diagram.md): Estructura del árbol React desde `App` hasta los componentes atómicos.
+1. [Diagrama de Arquitectura](./diagrams/architecture_diagram.md): Vista global de capas frontend de la landing page.
+2. [Jerarquía de Componentes](./diagrams/component_hierarchy_diagram.md): Estructura del árbol React desde `App` hasta componentes visuales.
 3. [Flujo de Interacción](./diagrams/interaction_flow_diagram.md): Eventos del usuario, triggers de modales y retroalimentación.
 4. [Navegación y Scroll](./diagrams/routing_and_scroll_diagram.md): Comportamiento de `react-scroll` con offset negativo `-85px`.
+5. [Arquitectura del LMS](./diagrams/lms_architecture_diagram.md): Arquitectura de la Plataforma Virtual, compuerta de autenticación y capas de datos.
 
 ---
 
@@ -38,9 +41,10 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
 | Iteración | Título | Fecha | Descripción |
 |---|---|---|---|
 | **001** | [Scaffolding Inicial y Configuración](./iterations/iteration_001_initial_scaffolding_and_setup.md) | 2026-09-01 | Configuración de Vite, React 19, Tailwind CSS v4, fuentes y assets. |
-| **002** | [Componentes Visuales y Replicación Pixel-Perfect](./iterations/iteration_002_core_components_and_visual_layout.md) | 2026-09-01 | Construcción de Header, Hero, Quiénes Somos, Servicios, Ejecución, Estadísticas y Footer. |
+| **002** | [Componentes Visuales y Replicación](./iterations/iteration_002_core_components_and_visual_layout.md) | 2026-09-01 | Construcción de Header, Hero, Quiénes Somos, Servicios, Ejecución, Estadísticas y Footer. |
 | **003** | [Interactividad, Modales y Canvas](./iterations/iteration_003_interactivity_modals_and_canvas.md) | 2026-09-01 | Fondo de nodos interactivo, modales de plataforma virtual, contacto y buscador. |
 | **004** | [Control de Versiones y Documentación](./iterations/iteration_004_git_setup_and_docs_structure.md) | 2026-09-01 | Creación de `.docs`, diagramas Mermaid y push al repositorio remoto en GitHub. |
+| **005** | [Plataforma Virtual (LMS) y Conexión de Datos](./iterations/iteration_005_lms_virtual_platform_implementation.md) | 2026-09-01 | Implementación del LMS Moodle-like, autenticación estricta, vistas, TinyMCE y tabla de participantes dinámica. |
 
 ---
 
