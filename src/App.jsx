@@ -1,0 +1,117 @@
+import React, { useState } from 'react';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import AboutUs from './components/AboutUs';
+import Services from './components/Services';
+import ExecutionSection from './components/ExecutionSection';
+import StatsSection from './components/StatsSection';
+import ExperiencesSection from './components/ExperiencesSection';
+import ContactFooter from './components/ContactFooter';
+import NetworkBackground from './components/NetworkBackground';
+import ScrollToTop from './components/ScrollToTop';
+import { 
+  ContactModal, 
+  PlatformModal, 
+  SearchModal, 
+  ArticleModal 
+} from './components/Modals';
+
+function App() {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isPlatformOpen, setIsPlatformOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState('');
+
+  const handleOpenContactWithCourse = (courseName) => {
+    setSelectedCourse(courseName || '');
+    setIsContactOpen(true);
+  };
+
+  const handleLearnMore = () => {
+    const servicesElement = document.getElementById('servicios');
+    if (servicesElement) {
+      servicesElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white">
+      
+      {/* Dynamic Network Node Canvas Background */}
+      <NetworkBackground />
+
+      {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll) */}
+      <Header 
+        onOpenPlatform={() => setIsPlatformOpen(true)}
+        onOpenSearch={() => setIsSearchOpen(true)}
+      />
+
+      {/* Main Page Layout */}
+      <main className="flex-grow relative z-10">
+        
+        {/* Section #inicio (Hero) */}
+        <Hero 
+          onOpenContact={() => handleOpenContactWithCourse('')}
+        />
+
+        {/* Section #quienes-somos (About Us: Misión, Visión, Valores) */}
+        <AboutUs />
+
+        {/* Section #servicios (Programas de Formación & Cursos de Especialización) */}
+        <Services 
+          onSelectCourse={(course) => handleOpenContactWithCourse(course)}
+        />
+
+        {/* Execution Section (Cyan Checkmarks, Action, and Promo Image) */}
+        <ExecutionSection 
+          onLearnMore={handleLearnMore}
+        />
+
+        {/* Stats Section (Light Contrast 4 Indicators) */}
+        <StatsSection />
+
+        {/* Experiences Section (3 Blog/News Cards) */}
+        <ExperiencesSection 
+          onReadArticle={(article) => setSelectedArticle(article)}
+        />
+
+      </main>
+
+      {/* Section #contacto & Footer */}
+      <ContactFooter 
+        onOpenContactModal={() => handleOpenContactWithCourse('')}
+      />
+
+      {/* Floating Scroll To Top Button */}
+      <ScrollToTop />
+
+      {/* Interactive Modals */}
+      <ContactModal 
+        isOpen={isContactOpen} 
+        onClose={() => setIsContactOpen(false)}
+        defaultCourse={selectedCourse}
+      />
+
+      <PlatformModal 
+        isOpen={isPlatformOpen} 
+        onClose={() => setIsPlatformOpen(false)}
+      />
+
+      <SearchModal 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)}
+        onSelectCourse={(course) => handleOpenContactWithCourse(course)}
+      />
+
+      <ArticleModal 
+        article={selectedArticle} 
+        onClose={() => setSelectedArticle(null)}
+        onOpenContact={() => handleOpenContactWithCourse(selectedArticle?.category || '')}
+      />
+
+    </div>
+  );
+}
+
+export default App;

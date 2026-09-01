@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #18191c;
+    --bg-card: #131416;
+    --brand-blue: #0284c7;
+    --brand-cyan: #00c2b2;
+    --brand-green: #22c55e;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    scroll-behavior: smooth;
+    background-color: #18191c;
+    color: #ffffff;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121315;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2d34;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0284c7;
+}
+
+/* Constellation network canvas background */
+.network-overlay {
+  background-image: 
+    radial-gradient(circle at 20% 35%, rgba(2, 132, 199, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(0, 194, 178, 0.08) 0%, transparent 40%);
+}
+
+/* Subtle glowing and hover transitions */
+.glass-panel {
+  background: rgba(19, 20, 22, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.5), 0 0 20px -6px rgba(0, 194, 178, 0.2);
+}
+
+/* Custom pulse animations */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: floatSlow 5s ease-in-out infinite;
+}
