@@ -19,7 +19,11 @@ import {
   FolderKanban,
   Lock,
   SlidersHorizontal,
-  ShieldAlert
+  ShieldAlert,
+  GraduationCap,
+  Briefcase,
+  Sparkles,
+  Award
 } from 'lucide-react';
 
 import CoursesView from './views/CoursesView';
@@ -32,13 +36,22 @@ import PersonalAreaView from './views/PersonalAreaView';
 import MyCoursesView from './views/MyCoursesView';
 import AdminGeneralView from './views/AdminGeneralView';
 import SiteAdminView from './views/SiteAdminView';
+import ExtraCoursesView from './views/ExtraCoursesView';
+import JobBoardView from './views/JobBoardView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
-  // Verificación estricta de permisos de Administrador para los RUTs: 15692858-8 / 15692858-5 y 21778425-5
-  const cleanRut = currentUser?.rut ? currentUser.rut.replace(/[^0-9kK]/g, '') : '';
-  const isAdmin = cleanRut.includes('15692858') || cleanRut.includes('21778425') || currentUser?.rol?.toLowerCase().includes('administrador');
+  // Verificación estricta de Roles (RBAC)
+  const isStudent = currentUser?.rol === 'STUDENT' || currentUser?.rut?.includes('21778425-6');
+  const isAdmin = !isStudent && (
+    currentUser?.rol === 'ADMIN' || 
+    currentUser?.rut?.includes('15692858') || 
+    currentUser?.rut?.includes('21778425-5') ||
+    currentUser?.rol?.toLowerCase().includes('administrador')
+  );
 
-  // Navegación principal en barra superior: 'inicio' | 'area-personal' | 'mis-cursos' | 'administracion' | 'admin-sitio'
+  // Navegación principal en barra superior: 
+  // Para ADMIN: 'inicio' | 'area-personal' | 'mis-cursos' | 'administracion' | 'admin-sitio'
+  // Para STUDENT: 'area-personal' | 'mis-cursos' | 'capacitaciones-extras' | 'bolsa-empleo'
   const [mainNavTab, setMainNavTab] = useState('area-personal');
   
   // Sub-pestaña activa en "Administración del sitio": 'ajustes-sitio' | 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
@@ -48,7 +61,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
-  // Tabs del submenú azul (bg-blue-900) para "Administración del sitio"
+  // Tabs del submenú azul (bg-blue-900) para "Administración del sitio" (Solo para administradores)
   const adminSubTabs = [
     { id: 'ajustes-sitio', label: 'Ajustes del Sitio', icon: SlidersHorizontal },
     { id: 'cursos', label: 'Página Principal', icon: BookOpen },
@@ -60,8 +73,12 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   ];
 
   const handleSelectCourse = (course) => {
-    setMainNavTab('admin-sitio');
-    setAdminSubTab('participantes');
+    if (isAdmin) {
+      setMainNavTab('admin-sitio');
+      setAdminSubTab('participantes');
+    } else {
+      setMainNavTab('mis-cursos');
+    }
   };
 
   const handleNavigateFromAdminGeneral = (targetSubTab) => {
@@ -71,7 +88,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
 
   const userInitials = currentUser?.nombre 
     ? currentUser.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-    : 'AA';
+    : 'US';
 
   return (
     <div className="min-h-screen bg-[#18191c] text-white flex flex-col font-['Inter',sans-serif] selection:bg-[#00c2b2] selection:text-white">
@@ -91,21 +108,28 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                 <span className="text-[#0284c7] group-hover:text-sky-400 transition-colors">Prevy</span>
                 <span className="text-[#00c2b2] group-hover:text-teal-300 transition-colors">Seg</span>
               </div>
-              <span className="bg-sky-950 text-sky-300 text-[10px] font-bold px-2 py-0.5 rounded border border-sky-800/60 hidden sm:inline-block">
-                LMS Virtual
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded border hidden sm:inline-block ${
+                isStudent ? 'bg-teal-950 text-teal-300 border-teal-800' : 'bg-sky-950 text-sky-300 border-sky-800'
+              }`}>
+                {isStudent ? 'Portal Alumno' : 'LMS Virtual'}
               </span>
             </div>
 
-            {/* Enlaces de Navegación Principales */}
+            {/* Enlaces de Navegación Principales según Rol */}
             <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold text-gray-300">
-              <button 
-                onClick={() => setMainNavTab('inicio')}
-                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  mainNavTab === 'inicio' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
-                }`}
-              >
-                Página Principal
-              </button>
+              
+              {/* VISTAS COMUNES */}
+              {!isStudent && (
+                <button 
+                  onClick={() => setMainNavTab('inicio')}
+                  className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    mainNavTab === 'inicio' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                  }`}
+                >
+                  Página Principal
+                </button>
+              )}
+
               <button 
                 onClick={() => setMainNavTab('area-personal')}
                 className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
@@ -114,6 +138,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
               >
                 Área personal
               </button>
+
               <button 
                 onClick={() => setMainNavTab('mis-cursos')}
                 className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
@@ -122,29 +147,57 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
               >
                 Mis cursos
               </button>
-              <button 
-                onClick={() => setMainNavTab('administracion')}
-                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
-                }`}
-              >
-                Administración
-              </button>
-              
-              {/* Pestaña: "Administración del sitio" (Solo visible para rol Administrador) */}
+
+              {/* VISTAS EXCLUSIVAS DEL ALUMNO (STUDENT) */}
+              {isStudent && (
+                <>
+                  <button 
+                    onClick={() => setMainNavTab('capacitaciones-extras')}
+                    className={`px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                      mainNavTab === 'capacitaciones-extras' ? 'text-white bg-[#0284c7]/30 border border-[#0284c7] font-bold' : 'hover:text-white hover:bg-gray-800/40 text-sky-300'
+                    }`}
+                  >
+                    <GraduationCap size={15} />
+                    <span>Capacitaciones Extras</span>
+                  </button>
+
+                  <button 
+                    onClick={() => setMainNavTab('bolsa-empleo')}
+                    className={`px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                      mainNavTab === 'bolsa-empleo' ? 'text-white bg-[#00c2b2]/30 border border-[#00c2b2] font-bold' : 'hover:text-white hover:bg-gray-800/40 text-teal-300'
+                    }`}
+                  >
+                    <Briefcase size={14} />
+                    <span>Bolsa de empleo</span>
+                  </button>
+                </>
+              )}
+
+              {/* VISTAS EXCLUSIVAS DE ADMINISTRADOR (ADMIN) */}
               {isAdmin && (
-                <button 
-                  onClick={() => {
-                    setMainNavTab('admin-sitio');
-                    setAdminSubTab('ajustes-sitio');
-                  }}
-                  className={`px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
-                    mainNavTab === 'admin-sitio' ? 'text-white bg-purple-900/60 border border-purple-500/40 font-bold' : 'text-purple-300 hover:text-white hover:bg-purple-950/40'
-                  }`}
-                >
-                  <Lock size={12} className="text-purple-400" />
-                  <span>Administración del sitio</span>
-                </button>
+                <>
+                  <button 
+                    onClick={() => setMainNavTab('administracion')}
+                    className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                      mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                    }`}
+                  >
+                    Administración
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      setMainNavTab('admin-sitio');
+                      setAdminSubTab('ajustes-sitio');
+                    }}
+                    className={`px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                      mainNavTab === 'admin-sitio' ? 'text-white bg-purple-900/60 border border-purple-500/40 font-bold' : 'text-purple-300 hover:text-white hover:bg-purple-950/40'
+                    }`}
+                  >
+                    <Lock size={12} className="text-purple-400" />
+                    <span>Administración del sitio</span>
+                  </button>
+                </>
               )}
             </nav>
           </div>
@@ -152,27 +205,29 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
           {/* Right: Controls, Notifications, Profile, Edit Mode Switch */}
           <div className="flex items-center gap-3 sm:gap-5">
             
-            {/* Switch "Modo de edición" */}
-            <div className="flex items-center gap-2 bg-gray-900/90 px-3 py-1.5 rounded-full border border-gray-700/80 shadow-sm">
-              <span className="text-[11px] font-bold text-gray-300 hidden sm:inline select-none">
-                Modo de edición
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsEditMode(!isEditMode)}
-                className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isEditMode ? 'bg-[#0284c7]' : 'bg-gray-700'
-                }`}
-                role="switch"
-                aria-checked={isEditMode}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    isEditMode ? 'translate-x-4' : 'translate-x-0'
+            {/* Switch "Modo de edición" (Solo para Administrador) */}
+            {isAdmin && (
+              <div className="flex items-center gap-2 bg-gray-900/90 px-3 py-1.5 rounded-full border border-gray-700/80 shadow-sm">
+                <span className="text-[11px] font-bold text-gray-300 hidden sm:inline select-none">
+                  Modo de edición
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    isEditMode ? 'bg-[#0284c7]' : 'bg-gray-700'
                   }`}
-                />
-              </button>
-            </div>
+                  role="switch"
+                  aria-checked={isEditMode}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      isEditMode ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
 
             {/* Notifications Bell */}
             <div className="relative">
@@ -188,18 +243,33 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
               {showNotifDropdown && (
                 <div className="absolute right-0 mt-2 w-72 bg-[#18191c] border border-gray-700 rounded-xl shadow-2xl p-4 z-50 text-xs space-y-3 animate-in fade-in">
                   <div className="font-bold text-white pb-2 border-b border-gray-800 flex justify-between">
-                    <span>Notificaciones SENCE</span>
+                    <span>{isStudent ? 'Avisos Académicos' : 'Notificaciones SENCE'}</span>
                     <span className="text-[10px] text-[#00c2b2]">2 nuevas</span>
                   </div>
                   <div className="space-y-2">
-                    <div className="p-2 rounded bg-gray-900 border border-gray-800">
-                      <p className="font-semibold text-gray-200">Asistencia Sincronizada</p>
-                      <p className="text-gray-400 text-[10px]">Marcación horaria OS-10 validada exitosamente.</p>
-                    </div>
-                    <div className="p-2 rounded bg-gray-900 border border-gray-800">
-                      <p className="font-semibold text-gray-200">Nueva Evaluación</p>
-                      <p className="text-gray-400 text-[10px]">3 alumnos enviaron examen de Legislación.</p>
-                    </div>
+                    {isStudent ? (
+                      <>
+                        <div className="p-2 rounded bg-gray-900 border border-gray-800">
+                          <p className="font-semibold text-gray-200">Nueva Oferta Laboral</p>
+                          <p className="text-gray-400 text-[10px]">Guardia OS-10 en Mall Plaza Arica disponible.</p>
+                        </div>
+                        <div className="p-2 rounded bg-gray-900 border border-gray-800">
+                          <p className="font-semibold text-gray-200">Clase Sincrónica</p>
+                          <p className="text-gray-400 text-[10px]">Tu módulo de Legislación comienza hoy 19:00 hrs.</p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="p-2 rounded bg-gray-900 border border-gray-800">
+                          <p className="font-semibold text-gray-200">Asistencia Sincronizada</p>
+                          <p className="text-gray-400 text-[10px]">Marcación horaria OS-10 validada exitosamente.</p>
+                        </div>
+                        <div className="p-2 rounded bg-gray-900 border border-gray-800">
+                          <p className="font-semibold text-gray-200">Nueva Evaluación</p>
+                          <p className="text-gray-400 text-[10px]">3 alumnos enviaron examen de Legislación.</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -220,12 +290,16 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
                 className="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-800 transition-colors cursor-pointer"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0284c7] to-[#00c2b2] text-white font-bold text-xs flex items-center justify-center shadow-md">
+                <div className={`w-8 h-8 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-md ${
+                  isStudent 
+                    ? 'bg-gradient-to-tr from-[#00c2b2] to-emerald-500' 
+                    : 'bg-gradient-to-tr from-[#0284c7] to-[#00c2b2]'
+                }`}>
                   {userInitials}
                 </div>
                 <div className="hidden md:block text-left text-xs">
                   <div className="font-bold text-gray-100 leading-tight">
-                    {currentUser?.nombre || 'Usuario SENCE'}
+                    {currentUser?.nombre || 'Usuario Registrado'}
                   </div>
                   <div className="text-[10px] text-[#00c2b2] font-mono leading-tight">
                     {currentUser?.rut || '15692858-5'}
@@ -236,30 +310,48 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
 
               {/* Profile Dropdown */}
               {showUserDropdown && (
-                <div className="absolute right-0 mt-2 w-56 bg-[#18191c] border border-gray-700 rounded-2xl shadow-2xl p-2 z-50 text-xs space-y-1 animate-in fade-in">
+                <div className="absolute right-0 mt-2 w-60 bg-[#18191c] border border-gray-700 rounded-2xl shadow-2xl p-2 z-50 text-xs space-y-1 animate-in fade-in">
                   <div className="px-3 py-2 border-b border-gray-800">
                     <div className="font-bold text-white">{currentUser?.nombre}</div>
                     <div className="text-[10px] text-gray-400">{currentUser?.email}</div>
-                    {isAdmin && (
-                      <span className="inline-block mt-1 text-[10px] font-bold text-purple-300 bg-purple-950 px-2 py-0.5 rounded border border-purple-800">
-                        Administrador
-                      </span>
-                    )}
+                    <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded border ${
+                      isStudent 
+                        ? 'text-teal-300 bg-teal-950 border-teal-800' 
+                        : 'text-purple-300 bg-purple-950 border-purple-800'
+                    }`}>
+                      {currentUser?.cargo || (isStudent ? 'Estudiante' : 'Administrador')}
+                    </span>
                   </div>
-                  <button onClick={() => { setMainNavTab('mis-cursos'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
-                    <BookOpen size={14} /> <span>Mis Cursos Activos</span>
-                  </button>
+
                   <button onClick={() => { setMainNavTab('area-personal'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
                     <UserIcon size={14} /> <span>Área Personal</span>
                   </button>
+
+                  <button onClick={() => { setMainNavTab('mis-cursos'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
+                    <BookOpen size={14} /> <span>Mis Cursos Activos</span>
+                  </button>
+
+                  {isStudent && (
+                    <>
+                      <button onClick={() => { setMainNavTab('capacitaciones-extras'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-sky-300 hover:text-white flex items-center gap-2 cursor-pointer">
+                        <GraduationCap size={14} /> <span>Capacitaciones Extras</span>
+                      </button>
+                      <button onClick={() => { setMainNavTab('bolsa-empleo'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-teal-300 hover:text-white flex items-center gap-2 cursor-pointer">
+                        <Briefcase size={14} /> <span>Bolsa de Empleo</span>
+                      </button>
+                    </>
+                  )}
+
                   {isAdmin && (
                     <button onClick={() => { setMainNavTab('admin-sitio'); setAdminSubTab('ajustes-sitio'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-purple-900/50 text-purple-300 hover:text-white flex items-center gap-2 cursor-pointer">
                       <Lock size={14} /> <span>Ajustes del Sitio</span>
                     </button>
                   )}
+
                   <button onClick={() => { onReturnHome(); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-[#00c2b2] flex items-center gap-2 cursor-pointer">
                     <Home size={14} /> <span>Sitio Público PrevySeg</span>
                   </button>
+
                   <div className="pt-1 border-t border-gray-800">
                     <button 
                       onClick={() => { onLogout(); setShowUserDropdown(false); }}
@@ -276,20 +368,28 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
 
         </div>
 
-        {/* Mobile Navigation Row */}
+        {/* Mobile Navigation Row (Adapted per role) */}
         <div className="lg:hidden flex items-center justify-around border-t border-gray-800/80 px-2 py-2 text-[11px] font-semibold text-gray-300 overflow-x-auto">
-          <button onClick={() => setMainNavTab('inicio')} className={`px-2 py-1 rounded ${mainNavTab === 'inicio' ? 'text-white bg-gray-800 font-bold' : ''}`}>Página Principal</button>
           <button onClick={() => setMainNavTab('area-personal')} className={`px-2 py-1 rounded ${mainNavTab === 'area-personal' ? 'text-white bg-gray-800 font-bold' : ''}`}>Área personal</button>
           <button onClick={() => setMainNavTab('mis-cursos')} className={`px-2 py-1 rounded ${mainNavTab === 'mis-cursos' ? 'text-white bg-gray-800 font-bold' : ''}`}>Mis cursos</button>
-          <button onClick={() => setMainNavTab('administracion')} className={`px-2 py-1 rounded ${mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : ''}`}>Administración</button>
-          {isAdmin && (
-            <button onClick={() => { setMainNavTab('admin-sitio'); setAdminSubTab('ajustes-sitio'); }} className={`px-2 py-1 rounded ${mainNavTab === 'admin-sitio' ? 'text-purple-300 bg-purple-950 font-bold' : ''}`}>Admin Sitio</button>
+          
+          {isStudent ? (
+            <>
+              <button onClick={() => setMainNavTab('capacitaciones-extras')} className={`px-2 py-1 rounded ${mainNavTab === 'capacitaciones-extras' ? 'text-sky-300 bg-sky-950 font-bold' : ''}`}>Capacitaciones</button>
+              <button onClick={() => setMainNavTab('bolsa-empleo')} className={`px-2 py-1 rounded ${mainNavTab === 'bolsa-empleo' ? 'text-teal-300 bg-teal-950 font-bold' : ''}`}>Empleos</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setMainNavTab('inicio')} className={`px-2 py-1 rounded ${mainNavTab === 'inicio' ? 'text-white bg-gray-800 font-bold' : ''}`}>Página Principal</button>
+              <button onClick={() => setMainNavTab('administracion')} className={`px-2 py-1 rounded ${mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : ''}`}>Administración</button>
+              <button onClick={() => { setMainNavTab('admin-sitio'); setAdminSubTab('ajustes-sitio'); }} className={`px-2 py-1 rounded ${mainNavTab === 'admin-sitio' ? 'text-purple-300 bg-purple-950 font-bold' : ''}`}>Admin Sitio</button>
+            </>
           )}
         </div>
       </header>
 
-      {/* 2. SUBMENÚ AZUL (bg-blue-900 / #1e3a8a) CUANDO SE SELECCIONA "Administración del sitio" o "Página Principal" */}
-      {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
+      {/* 2. SUBMENÚ AZUL (bg-blue-900 / #1e3a8a) - EXCLUSIVO PARA ADMINISTRADORES */}
+      {isAdmin && (mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
         <div className="bg-[#1e3a8a] text-white border-b border-blue-950 shadow-md">
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
             <div className="flex items-center space-x-1 sm:space-x-2 overflow-x-auto py-1 scrollbar-none">
@@ -333,27 +433,30 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
           <span className="text-gray-300 font-semibold uppercase text-[11px]">
             {mainNavTab === 'area-personal' && 'Área personal'}
             {mainNavTab === 'mis-cursos' && 'Mis cursos'}
+            {mainNavTab === 'capacitaciones-extras' && 'Capacitaciones Extras'}
+            {mainNavTab === 'bolsa-empleo' && 'Bolsa de Empleo'}
             {mainNavTab === 'administracion' && 'Administración OTEC'}
             {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
               <>Administración del sitio / {adminSubTabs.find(t => t.id === adminSubTab)?.label}</>
             )}
           </span>
-          {isEditMode && (
+          
+          {isEditMode && isAdmin && (
             <span className="ml-auto bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
               <Edit3 size={11} /> Modo Edición Activo
             </span>
           )}
         </div>
 
-        {/* Control de Acceso: Bloqueo si un usuario no administrador intenta acceder a admin-sitio */}
-        {mainNavTab === 'admin-sitio' && !isAdmin && (
+        {/* Control de Acceso: Bloqueo de seguridad si un Alumno intenta forzar acceso a rutas de administración */}
+        {isStudent && (mainNavTab === 'admin-sitio' || mainNavTab === 'administracion') && (
           <div className="py-16 text-center space-y-4 bg-gray-900/60 rounded-2xl border border-red-800/50 p-8">
             <div className="w-16 h-16 rounded-full bg-red-950/80 border border-red-600/40 text-red-400 flex items-center justify-center mx-auto">
               <ShieldAlert size={36} />
             </div>
             <h2 className="text-2xl font-bold text-white">Acceso Restringido</h2>
             <p className="text-sm text-gray-400 max-w-md mx-auto">
-              Este apartado de <strong>Administración del sitio</strong> está reservado exclusivamente para usuarios autorizados con rol Administrador (RUTs: 15692858-8 / 15692858-5 y 21778425-5).
+              Este apartado está reservado para la administración del OTEC. Como estudiante, puedes acceder a tus cursos, certificaciones extras y bolsa laboral.
             </p>
             <button
               onClick={() => setMainNavTab('area-personal')}
@@ -373,37 +476,50 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
 
         {/* Vista: Mis Cursos (image_ef45f7.png) */}
         {mainNavTab === 'mis-cursos' && (
-          <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
+          <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode && isAdmin} />
         )}
 
-        {/* Vista: Administración OTEC */}
-        {mainNavTab === 'administracion' && (
-          <AdminGeneralView onNavigateSubtab={handleNavigateFromAdminGeneral} />
+        {/* Vista: Capacitaciones Extras (Para Alumnos) */}
+        {mainNavTab === 'capacitaciones-extras' && (
+          <ExtraCoursesView currentUser={currentUser} />
         )}
 
-        {/* Vista: Administración del Sitio (Solo si es Admin o en inicio) */}
-        {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
+        {/* Vista: Bolsa de Empleo (Para Alumnos) */}
+        {mainNavTab === 'bolsa-empleo' && (
+          <JobBoardView currentUser={currentUser} />
+        )}
+
+        {/* Vistas de Administrador */}
+        {isAdmin && (
           <>
-            {adminSubTab === 'ajustes-sitio' && (
-              <SiteAdminView currentUser={currentUser} />
+            {mainNavTab === 'administracion' && (
+              <AdminGeneralView onNavigateSubtab={handleNavigateFromAdminGeneral} />
             )}
-            {adminSubTab === 'cursos' && (
-              <CoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
-            )}
-            {adminSubTab === 'configuracion' && (
-              <SettingsView isEditMode={isEditMode} />
-            )}
-            {adminSubTab === 'participantes' && (
-              <ParticipantsView isEditMode={isEditMode} />
-            )}
-            {adminSubTab === 'informes' && (
-              <ReportsView isEditMode={isEditMode} />
-            )}
-            {adminSubTab === 'preguntas' && (
-              <QuestionBankView isEditMode={isEditMode} />
-            )}
-            {adminSubTab === 'contenido' && (
-              <ContentBankView isEditMode={isEditMode} />
+
+            {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
+              <>
+                {adminSubTab === 'ajustes-sitio' && (
+                  <SiteAdminView currentUser={currentUser} />
+                )}
+                {adminSubTab === 'cursos' && (
+                  <CoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
+                )}
+                {adminSubTab === 'configuracion' && (
+                  <SettingsView isEditMode={isEditMode} />
+                )}
+                {adminSubTab === 'participantes' && (
+                  <ParticipantsView isEditMode={isEditMode} />
+                )}
+                {adminSubTab === 'informes' && (
+                  <ReportsView isEditMode={isEditMode} />
+                )}
+                {adminSubTab === 'preguntas' && (
+                  <QuestionBankView isEditMode={isEditMode} />
+                )}
+                {adminSubTab === 'contenido' && (
+                  <ContentBankView isEditMode={isEditMode} />
+                )}
+              </>
             )}
           </>
         )}

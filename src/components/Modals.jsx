@@ -168,14 +168,24 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
       pass: '15692858',
       nombre: 'Ashley Adaros Guzmán',
       email: 'ashley.adaros@prevyseg.cl',
-      rol: 'Administrador / Instructor SENCE',
+      rol: 'ADMIN',
+      cargo: 'Administrador / Instructor SENCE',
     },
     {
       user: '21778425-5',
       pass: '21778425',
       nombre: 'Sebastián Araya Cortés',
       email: 'sebastian.araya@prevyseg.cl',
-      rol: 'Docente / Supervisor OS-10',
+      rol: 'ADMIN',
+      cargo: 'Administrador / Docente OS-10',
+    },
+    {
+      user: '21778425-6',
+      pass: '21778425',
+      nombre: 'Matías Silva Lagos',
+      email: 'matias.silva@alumnos.prevyseg.cl',
+      rol: 'STUDENT',
+      cargo: 'Estudiante (Persona Natural)',
     }
   ];
 
@@ -191,9 +201,12 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
       const cleanInputUser = rut.trim().replace(/\./g, '');
       const cleanPassword = password.trim();
 
-      const matched = validUsers.find(
-        (u) => u.user === cleanInputUser && u.pass === cleanPassword
-      );
+      // Para el estudiante 21778425-6 permitir cualquier contraseña o 21778425
+      let matched = validUsers.find((u) => u.user === cleanInputUser && u.pass === cleanPassword);
+      
+      if (!matched && cleanInputUser === '21778425-6') {
+        matched = validUsers.find((u) => u.user === '21778425-6');
+      }
 
       if (matched) {
         setSuccess(true);
@@ -203,11 +216,11 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
           if (onLoginSuccess) {
             onLoginSuccess(matched);
           }
-        }, 800);
+        }, 700);
       } else {
         setError('Credenciales inválidas. Por favor verifica tu RUT y contraseña autorizada SENCE.');
       }
-    }, 600);
+    }, 500);
   };
 
   const handleFillDemo = (demoUser, demoPass) => {
@@ -245,7 +258,7 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
               <CheckCircle size={32} />
             </div>
             <h4 className="text-lg font-bold text-white">¡Acceso Autorizado!</h4>
-            <p className="text-xs text-gray-300">Ingresando al Panel de Administración LMS...</p>
+            <p className="text-xs text-gray-300">Ingresando a la plataforma virtual...</p>
           </div>
         ) : (
           <form onSubmit={handleLogin} className="space-y-4">
@@ -261,7 +274,7 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 <input
                   type="text"
                   required
-                  placeholder="15692858-5"
+                  placeholder="15692858-5 o 21778425-6"
                   value={rut}
                   onChange={(e) => setRut(e.target.value)}
                   className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7] font-mono"
@@ -288,13 +301,13 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
             {/* Quick Demo Credentials */}
             <div className="p-3 bg-gray-900/80 border border-gray-800 rounded-xl text-[11px] space-y-1.5">
               <span className="text-gray-400 font-bold block uppercase text-[10px]">Credenciales de Prueba Disponibles:</span>
-              <div className="flex flex-col gap-1 text-gray-300">
+              <div className="flex flex-col gap-1.5 text-gray-300">
                 <button
                   type="button"
                   onClick={() => handleFillDemo('15692858-5', '15692858')}
                   className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer"
                 >
-                  <span>1. Ashley Adaros (Admin)</span>
+                  <span>👑 Ashley Adaros (ADMIN)</span>
                   <span className="font-mono text-gray-400">15692858-5 / 15692858</span>
                 </button>
                 <button
@@ -302,8 +315,16 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
                   onClick={() => handleFillDemo('21778425-5', '21778425')}
                   className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer"
                 >
-                  <span>2. Sebastián Araya (Docente)</span>
+                  <span>👑 Sebastián Araya (ADMIN)</span>
                   <span className="font-mono text-gray-400">21778425-5 / 21778425</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleFillDemo('21778425-6', '21778425')}
+                  className="text-left text-[#00c2b2] hover:underline flex justify-between cursor-pointer border-t border-gray-800 pt-1"
+                >
+                  <span>🎓 Matías Silva (STUDENT)</span>
+                  <span className="font-mono text-gray-400">21778425-6 / cualquier pass</span>
                 </button>
               </div>
             </div>
