@@ -21,7 +21,8 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
     ├── iteration_002_core_components_and_visual_layout.md
     ├── iteration_003_interactivity_modals_and_canvas.md
     ├── iteration_004_git_setup_and_docs_structure.md
-    └── iteration_005_lms_virtual_platform_implementation.md
+    ├── iteration_005_lms_virtual_platform_implementation.md
+    └── iteration_006_personal_area_my_courses_and_admin_views.md
 ```
 
 ---
@@ -45,6 +46,7 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
 | **003** | [Interactividad, Modales y Canvas](./iterations/iteration_003_interactivity_modals_and_canvas.md) | 2026-09-01 | Fondo de nodos interactivo, modales de plataforma virtual, contacto y buscador. |
 | **004** | [Control de Versiones y Documentación](./iterations/iteration_004_git_setup_and_docs_structure.md) | 2026-09-01 | Creación de `.docs`, diagramas Mermaid y push al repositorio remoto en GitHub. |
 | **005** | [Plataforma Virtual (LMS) y Conexión de Datos](./iterations/iteration_005_lms_virtual_platform_implementation.md) | 2026-09-01 | Implementación del LMS Moodle-like, autenticación estricta, vistas, TinyMCE y tabla de participantes dinámica. |
+| **006** | [Área Personal, Mis Cursos y Administración](./iterations/iteration_006_personal_area_my_courses_and_admin_views.md) | 2026-09-01 | Vistas especializadas de Área Personal (timeline y empty state), Mis Cursos (vista general y tarjetas con patrón azul) y pestaña Administración. |
 
 ---
 
@@ -52,10 +54,5 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
 
 Para registrar futuras actualizaciones:
 1. Crear un nuevo archivo en `.docs/iterations/` con la nomenclatura `iteration_XXX_nombre_descriptivo.md`.
-2. Incluir:
-   - **Objetivo del cambio**.
-   - **Archivos modificados o agregados**.
-   - **Detalles técnicos de la implementación**.
-   - **Validación y pruebas realizadas**.
-3. Si el cambio altera la arquitectura o interacción, actualizar o agregar los diagramas correspondientes en `.docs/diagrams/`.
-4. Actualizar la tabla de iteraciones en este `README.md`.
+2. Incluir objetivo, archivos modificados, detalles técnicos y validación.
+3. Actualizar la tabla de iteraciones en este `README.md`.

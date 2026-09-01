@@ -13,11 +13,10 @@ import {
   User as UserIcon, 
   ChevronDown, 
   Home, 
-  Grid, 
   ShieldCheck, 
-  Check, 
-  ArrowLeft,
-  ExternalLink
+  ExternalLink,
+  Sliders,
+  FolderKanban
 } from 'lucide-react';
 
 import CoursesView from './views/CoursesView';
@@ -26,15 +25,23 @@ import ParticipantsView from './views/ParticipantsView';
 import ReportsView from './views/ReportsView';
 import QuestionBankView from './views/QuestionBankView';
 import ContentBankView from './views/ContentBankView';
+import PersonalAreaView from './views/PersonalAreaView';
+import MyCoursesView from './views/MyCoursesView';
+import AdminGeneralView from './views/AdminGeneralView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
-  const [activeTab, setActiveTab] = useState('cursos'); // 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
+  // Navegación principal en barra superior: 'inicio' | 'area-personal' | 'mis-cursos' | 'administracion' | 'admin-sitio'
+  const [mainNavTab, setMainNavTab] = useState('area-personal');
+  
+  // Sub-pestaña activa en "Administración del sitio": 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
+  const [adminSubTab, setAdminSubTab] = useState('cursos');
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
-  // Tabs de navegación del submenú azul (bg-blue-900)
-  const navTabs = [
+  // Tabs del submenú azul (bg-blue-900) para "Administración del sitio"
+  const adminSubTabs = [
     { id: 'cursos', label: 'Página Principal', icon: BookOpen },
     { id: 'configuracion', label: 'Configuración', icon: Settings },
     { id: 'participantes', label: 'Participantes', icon: Users },
@@ -44,8 +51,13 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   ];
 
   const handleSelectCourse = (course) => {
-    // Al seleccionar un curso, cambiamos a la pestaña de participantes o configuración
-    setActiveTab('participantes');
+    setMainNavTab('admin-sitio');
+    setAdminSubTab('participantes');
+  };
+
+  const handleNavigateFromAdminGeneral = (targetSubTab) => {
+    setMainNavTab('admin-sitio');
+    setAdminSubTab(targetSubTab);
   };
 
   const userInitials = currentUser?.nombre 
@@ -56,10 +68,10 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
     <div className="min-h-screen bg-[#18191c] text-white flex flex-col font-['Inter',sans-serif] selection:bg-[#00c2b2] selection:text-white">
       
       {/* 1. BARRA SUPERIOR (TOP BAR: Fondo Negro #0f1012) */}
-      <header className="bg-[#0f1012] border-b border-gray-800 text-white sticky top-0 z-50">
+      <header className="bg-[#0f1012] border-b border-gray-800 text-white sticky top-0 z-50 shadow-md">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           
-          {/* Left: Brand & Main LMS Links */}
+          {/* Left: Brand & Main Navigation Links */}
           <div className="flex items-center gap-6 sm:gap-8">
             <div 
               onClick={onReturnHome}
@@ -75,31 +87,46 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
               </span>
             </div>
 
-            {/* Links Principales */}
+            {/* Enlaces de Navegación Principales */}
             <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold text-gray-300">
               <button 
-                onClick={() => setActiveTab('cursos')}
+                onClick={() => setMainNavTab('inicio')}
                 className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  activeTab === 'cursos' ? 'text-white bg-gray-800/80 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                  mainNavTab === 'inicio' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
                 }`}
               >
                 Página Principal
               </button>
               <button 
-                onClick={() => setActiveTab('cursos')}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-gray-800/40 transition-colors cursor-pointer"
+                onClick={() => setMainNavTab('area-personal')}
+                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                  mainNavTab === 'area-personal' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                }`}
               >
                 Área personal
               </button>
               <button 
-                onClick={() => setActiveTab('participantes')}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-gray-800/40 transition-colors cursor-pointer"
+                onClick={() => setMainNavTab('mis-cursos')}
+                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                  mainNavTab === 'mis-cursos' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                }`}
               >
                 Mis cursos
               </button>
+              {/* Nueva pestaña solicitada: "Administración" */}
               <button 
-                onClick={() => setActiveTab('configuracion')}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-gray-800/40 transition-colors cursor-pointer"
+                onClick={() => setMainNavTab('administracion')}
+                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                  mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                }`}
+              >
+                Administración
+              </button>
+              <button 
+                onClick={() => setMainNavTab('admin-sitio')}
+                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                  mainNavTab === 'admin-sitio' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
+                }`}
               >
                 Administración del sitio
               </button>
@@ -198,11 +225,11 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                     <div className="font-bold text-white">{currentUser?.nombre}</div>
                     <div className="text-[10px] text-gray-400">{currentUser?.email}</div>
                   </div>
-                  <button onClick={() => { setActiveTab('cursos'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
+                  <button onClick={() => { setMainNavTab('mis-cursos'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
                     <BookOpen size={14} /> <span>Mis Cursos Activos</span>
                   </button>
-                  <button onClick={() => { setActiveTab('informes'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
-                    <FileText size={14} /> <span>Libro de Calificaciones</span>
+                  <button onClick={() => { setMainNavTab('area-personal'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
+                    <UserIcon size={14} /> <span>Área Personal</span>
                   </button>
                   <button onClick={() => { onReturnHome(); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-[#00c2b2] flex items-center gap-2 cursor-pointer">
                     <Home size={14} /> <span>Sitio Público PrevySeg</span>
@@ -222,78 +249,113 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
           </div>
 
         </div>
+
+        {/* Mobile Navigation Row */}
+        <div className="lg:hidden flex items-center justify-around border-t border-gray-800/80 px-2 py-2 text-[11px] font-semibold text-gray-300 overflow-x-auto">
+          <button onClick={() => setMainNavTab('inicio')} className={`px-2 py-1 rounded ${mainNavTab === 'inicio' ? 'text-white bg-gray-800 font-bold' : ''}`}>Página Principal</button>
+          <button onClick={() => setMainNavTab('area-personal')} className={`px-2 py-1 rounded ${mainNavTab === 'area-personal' ? 'text-white bg-gray-800 font-bold' : ''}`}>Área personal</button>
+          <button onClick={() => setMainNavTab('mis-cursos')} className={`px-2 py-1 rounded ${mainNavTab === 'mis-cursos' ? 'text-white bg-gray-800 font-bold' : ''}`}>Mis cursos</button>
+          <button onClick={() => setMainNavTab('administracion')} className={`px-2 py-1 rounded ${mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : ''}`}>Administración</button>
+          <button onClick={() => setMainNavTab('admin-sitio')} className={`px-2 py-1 rounded ${mainNavTab === 'admin-sitio' ? 'text-white bg-gray-800 font-bold' : ''}`}>Admin Sitio</button>
+        </div>
       </header>
 
-      {/* 2. SUBMENÚ AZUL (bg-blue-900 / #1e3a8a) */}
-      <div className="bg-[#1e3a8a] text-white border-b border-blue-950 shadow-md">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
-          <div className="flex items-center space-x-1 sm:space-x-2 overflow-x-auto py-1 scrollbar-none">
-            {navTabs.map((tab) => {
-              const IconComponent = tab.icon;
-              const isActive = activeTab === tab.id;
+      {/* 2. SUBMENÚ AZUL (bg-blue-900 / #1e3a8a) CUANDO SE SELECCIONA "Administración del sitio" o "Página Principal" */}
+      {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
+        <div className="bg-[#1e3a8a] text-white border-b border-blue-950 shadow-md">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
+            <div className="flex items-center space-x-1 sm:space-x-2 overflow-x-auto py-1 scrollbar-none">
+              {adminSubTabs.map((tab) => {
+                const IconComponent = tab.icon;
+                const isActive = adminSubTab === tab.id;
 
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider rounded-t-lg transition-all cursor-pointer whitespace-nowrap border-b-2 ${
-                    isActive 
-                      ? 'bg-[#18191c] text-[#38bdf8] border-[#38bdf8] shadow-inner font-extrabold' 
-                      : 'text-blue-200 hover:text-white hover:bg-blue-800/60 border-transparent'
-                  }`}
-                >
-                  <IconComponent size={15} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setMainNavTab('admin-sitio');
+                      setAdminSubTab(tab.id);
+                    }}
+                    className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider rounded-t-lg transition-all cursor-pointer whitespace-nowrap border-b-2 ${
+                      isActive 
+                        ? 'bg-[#18191c] text-[#38bdf8] border-[#38bdf8] shadow-inner font-extrabold' 
+                        : 'text-blue-200 hover:text-white hover:bg-blue-800/60 border-transparent'
+                    }`}
+                  >
+                    <IconComponent size={15} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 3. CONTENIDO PRINCIPAL DE LA VISTA ACTIVA */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 lg:p-8">
         
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-gray-400 mb-6">
-          <button onClick={() => setActiveTab('cursos')} className="hover:text-[#38bdf8] flex items-center gap-1 cursor-pointer">
+          <button onClick={() => setMainNavTab('area-personal')} className="hover:text-[#38bdf8] flex items-center gap-1 cursor-pointer">
             <Home size={13} />
             <span>Inicio</span>
           </button>
           <span>/</span>
-          <span className="text-gray-300 font-semibold">
-            {navTabs.find(t => t.id === activeTab)?.label}
+          <span className="text-gray-300 font-semibold uppercase text-[11px]">
+            {mainNavTab === 'area-personal' && 'Área personal'}
+            {mainNavTab === 'mis-cursos' && 'Mis cursos'}
+            {mainNavTab === 'administracion' && 'Administración OTEC'}
+            {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
+              <>Administración del sitio / {adminSubTabs.find(t => t.id === adminSubTab)?.label}</>
+            )}
           </span>
           {isEditMode && (
             <span className="ml-auto bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
-              <Edit3 size={11} /> Edición Habilitada
+              <Edit3 size={11} /> Modo Edición Activo
             </span>
           )}
         </div>
 
-        {/* Renderizado Condicional de la Vista */}
-        {activeTab === 'cursos' && (
-          <CoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
+        {/* Renderizado de Vistas según la pestaña principal */}
+        
+        {/* Vista: Área Personal (image_ef434c.png) */}
+        {mainNavTab === 'area-personal' && (
+          <PersonalAreaView onSelectCourse={handleSelectCourse} />
         )}
 
-        {activeTab === 'configuracion' && (
-          <SettingsView isEditMode={isEditMode} />
+        {/* Vista: Mis Cursos (image_ef45f7.png) */}
+        {mainNavTab === 'mis-cursos' && (
+          <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
         )}
 
-        {activeTab === 'participantes' && (
-          <ParticipantsView isEditMode={isEditMode} />
+        {/* Vista: Administración (Nueva pestaña) */}
+        {mainNavTab === 'administracion' && (
+          <AdminGeneralView onNavigateSubtab={handleNavigateFromAdminGeneral} />
         )}
 
-        {activeTab === 'informes' && (
-          <ReportsView isEditMode={isEditMode} />
-        )}
-
-        {activeTab === 'preguntas' && (
-          <QuestionBankView isEditMode={isEditMode} />
-        )}
-
-        {activeTab === 'contenido' && (
-          <ContentBankView isEditMode={isEditMode} />
+        {/* Vista: Administración del Sitio / Página Principal (Con Submenú Azul) */}
+        {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
+          <>
+            {adminSubTab === 'cursos' && (
+              <CoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
+            )}
+            {adminSubTab === 'configuracion' && (
+              <SettingsView isEditMode={isEditMode} />
+            )}
+            {adminSubTab === 'participantes' && (
+              <ParticipantsView isEditMode={isEditMode} />
+            )}
+            {adminSubTab === 'informes' && (
+              <ReportsView isEditMode={isEditMode} />
+            )}
+            {adminSubTab === 'preguntas' && (
+              <QuestionBankView isEditMode={isEditMode} />
+            )}
+            {adminSubTab === 'contenido' && (
+              <ContentBankView isEditMode={isEditMode} />
+            )}
+          </>
         )}
 
       </main>
