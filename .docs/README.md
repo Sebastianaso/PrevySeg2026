@@ -25,7 +25,8 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
     ├── iteration_005_lms_virtual_platform_implementation.md
     ├── iteration_006_personal_area_my_courses_and_admin_views.md
     ├── iteration_007_site_administration_and_role_security.md
-    └── iteration_008_rbac_roles_extra_courses_and_job_board.md
+    ├── iteration_008_rbac_roles_extra_courses_and_job_board.md
+    └── iteration_009_whatsapp_direct_contact_integration.md
 ```
 
 ---
@@ -53,6 +54,7 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
 | **006** | [Área Personal, Mis Cursos y Administración](./iterations/iteration_006_personal_area_my_courses_and_admin_views.md) | 2026-09-01 | Vistas especializadas de Área Personal (timeline y empty state), Mis Cursos (vista general y tarjetas con patrón azul) y pestaña Administración. |
 | **007** | [Administración del Sitio Completa y Seguridad por Roles](./iterations/iteration_007_site_administration_and_role_security.md) | 2026-09-01 | Réplica exhaustiva de las 15 categorías de Administración del sitio con cajas expandibles, buscador en vivo y restricción exclusiva para administradores. |
 | **008** | [Control de Roles RBAC, Capacitaciones Extras y Bolsa de Empleo](./iterations/iteration_008_rbac_roles_extra_courses_and_job_board.md) | 2026-09-01 | Separación dinámica de perfiles ADMIN y STUDENT (21778425-6), catálogo de capacitaciones con precios CLP y días, y bolsa laboral estilo BNE con filtros. |
+| **009** | [Integración Directa con WhatsApp Oficial](./iterations/iteration_009_whatsapp_direct_contact_integration.md) | 2026-09-01 | Conexión del modal "Envíanos Un Mensaje" para transferir automáticamente el formulario completo al WhatsApp +56 9 7869 1869. |
 
 ---
 

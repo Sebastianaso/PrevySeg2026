@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
 
-// 1. Modal Envíanos Un Mensaje
+// 1. Modal Envíanos Un Mensaje (Envío directo a WhatsApp +56 9 7869 1869)
 export const ContactModal = ({ isOpen, onClose, defaultCourse = '' }) => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -25,16 +25,46 @@ export const ContactModal = ({ isOpen, onClose, defaultCourse = '' }) => {
     mensaje: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [whatsappLink, setWhatsappLink] = useState('');
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Destinatario oficial WhatsApp PrevySeg
+    const targetWhatsAppNumber = '56978691869'; // +56 9 7869 1869
+    
+    const whatsappMessage = `👋 *¡Hola PrevySeg! Nueva Consulta Web:*
+
+👤 *Nombre Completo:* ${formData.nombre.trim()}
+📧 *Correo Electrónico:* ${formData.email.trim()}
+📱 *Teléfono / WhatsApp:* ${formData.telefono.trim()}
+🎓 *Programa de Interés:* ${formData.curso}
+💬 *Mensaje o Consulta:*
+${formData.mensaje.trim() || 'Deseo recibir información de fechas, requisitos y franquicia SENCE.'}
+
+---
+_Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
+
+    const encodedUrl = `https://api.whatsapp.com/send?phone=${targetWhatsAppNumber}&text=${encodeURIComponent(whatsappMessage)}`;
+    setWhatsappLink(encodedUrl);
+    
+    // Abrir WhatsApp automáticamente en una pestaña nueva
+    window.open(encodedUrl, '_blank', 'noopener,noreferrer');
+    
     setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      onClose();
-    }, 2800);
+  };
+
+  const handleReset = () => {
+    setIsSubmitted(false);
+    setFormData({
+      nombre: '',
+      email: '',
+      telefono: '',
+      curso: defaultCourse || 'Formación de Guardias de Seguridad',
+      mensaje: '',
+    });
   };
 
   return (
@@ -50,14 +80,52 @@ export const ContactModal = ({ isOpen, onClose, defaultCourse = '' }) => {
         </button>
 
         {isSubmitted ? (
-          <div className="py-12 text-center space-y-4">
+          <div className="py-8 text-center space-y-5">
             <div className="w-16 h-16 bg-emerald-500/20 text-[#22c55e] rounded-full flex items-center justify-center mx-auto animate-bounce">
               <CheckCircle size={36} />
             </div>
-            <h3 className="text-2xl font-bold text-white">¡Mensaje Enviado con Éxito!</h3>
-            <p className="text-gray-300 text-sm max-w-sm mx-auto">
-              Gracias por comunicarte con <strong className="text-white">PrevySeg</strong>. Un asesor de capacitación te contactará a la brevedad.
-            </p>
+            
+            <div className="space-y-2">
+              <h3 className="text-2xl font-black text-white">¡Mensaje Preparado con Éxito!</h3>
+              <p className="text-gray-300 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+                Tu mensaje para <strong className="text-white">PrevySeg</strong> ha sido transferido al WhatsApp oficial <strong className="text-emerald-400 font-mono">+56 9 7869 1869</strong>.
+              </p>
+            </div>
+
+            <div className="p-3.5 bg-[#121315] rounded-xl border border-gray-800 text-left text-xs space-y-1 font-mono text-gray-300">
+              <div><strong className="text-gray-500">De:</strong> {formData.nombre} ({formData.telefono})</div>
+              <div><strong className="text-gray-500">Para:</strong> +56 9 7869 1869 (WhatsApp PrevySeg)</div>
+              <div><strong className="text-gray-500">Curso:</strong> {formData.curso}</div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-[#22c55e] hover:bg-[#16a34a] active:scale-95 text-gray-950 font-black py-3 px-4 rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition-all cursor-pointer text-xs sm:text-sm"
+              >
+                <Send size={16} />
+                <span>Abrir WhatsApp (+56 9 7869 1869)</span>
+              </a>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex-1 border border-gray-700 hover:bg-gray-800 text-gray-300 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  Enviar otro mensaje
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -65,7 +133,7 @@ export const ContactModal = ({ isOpen, onClose, defaultCourse = '' }) => {
               <span className="text-[#22c55e] text-xs font-bold uppercase tracking-wider">Contacto Directo</span>
               <h3 className="text-2xl font-bold text-white mt-1">Envíanos Un Mensaje</h3>
               <p className="text-gray-400 text-xs mt-1">
-                Consulta fechas de inicio, costos con código SENCE o requerimientos especiales.
+                Consulta fechas de inicio, costos con código SENCE o requerimientos especiales. Se enviará a nuestro WhatsApp oficial: <strong className="text-emerald-400 font-mono">+56 9 7869 1869</strong>.
               </p>
             </div>
 
