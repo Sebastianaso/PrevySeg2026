@@ -22,7 +22,8 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
     ├── iteration_003_interactivity_modals_and_canvas.md
     ├── iteration_004_git_setup_and_docs_structure.md
     ├── iteration_005_lms_virtual_platform_implementation.md
-    └── iteration_006_personal_area_my_courses_and_admin_views.md
+    ├── iteration_006_personal_area_my_courses_and_admin_views.md
+    └── iteration_007_site_administration_and_role_security.md
 ```
 
 ---
@@ -47,6 +48,7 @@ Este directorio almacena el registro histórico de todas las iteraciones, actual
 | **004** | [Control de Versiones y Documentación](./iterations/iteration_004_git_setup_and_docs_structure.md) | 2026-09-01 | Creación de `.docs`, diagramas Mermaid y push al repositorio remoto en GitHub. |
 | **005** | [Plataforma Virtual (LMS) y Conexión de Datos](./iterations/iteration_005_lms_virtual_platform_implementation.md) | 2026-09-01 | Implementación del LMS Moodle-like, autenticación estricta, vistas, TinyMCE y tabla de participantes dinámica. |
 | **006** | [Área Personal, Mis Cursos y Administración](./iterations/iteration_006_personal_area_my_courses_and_admin_views.md) | 2026-09-01 | Vistas especializadas de Área Personal (timeline y empty state), Mis Cursos (vista general y tarjetas con patrón azul) y pestaña Administración. |
+| **007** | [Administración del Sitio Completa y Seguridad por Roles](./iterations/iteration_007_site_administration_and_role_security.md) | 2026-09-01 | Réplica exhaustiva de las 15 categorías de Administración del sitio con cajas expandibles, buscador en vivo y restricción exclusiva para administradores (15692858-8 / 15692858-5 y 21778425-5). |
 
 ---
 

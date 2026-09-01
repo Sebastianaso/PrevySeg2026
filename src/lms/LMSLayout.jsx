@@ -16,7 +16,10 @@ import {
   ShieldCheck, 
   ExternalLink,
   Sliders,
-  FolderKanban
+  FolderKanban,
+  Lock,
+  SlidersHorizontal,
+  ShieldAlert
 } from 'lucide-react';
 
 import CoursesView from './views/CoursesView';
@@ -28,13 +31,18 @@ import ContentBankView from './views/ContentBankView';
 import PersonalAreaView from './views/PersonalAreaView';
 import MyCoursesView from './views/MyCoursesView';
 import AdminGeneralView from './views/AdminGeneralView';
+import SiteAdminView from './views/SiteAdminView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
+  // Verificación estricta de permisos de Administrador para los RUTs: 15692858-8 / 15692858-5 y 21778425-5
+  const cleanRut = currentUser?.rut ? currentUser.rut.replace(/[^0-9kK]/g, '') : '';
+  const isAdmin = cleanRut.includes('15692858') || cleanRut.includes('21778425') || currentUser?.rol?.toLowerCase().includes('administrador');
+
   // Navegación principal en barra superior: 'inicio' | 'area-personal' | 'mis-cursos' | 'administracion' | 'admin-sitio'
   const [mainNavTab, setMainNavTab] = useState('area-personal');
   
-  // Sub-pestaña activa en "Administración del sitio": 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
-  const [adminSubTab, setAdminSubTab] = useState('cursos');
+  // Sub-pestaña activa en "Administración del sitio": 'ajustes-sitio' | 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
+  const [adminSubTab, setAdminSubTab] = useState('ajustes-sitio');
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -42,8 +50,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
 
   // Tabs del submenú azul (bg-blue-900) para "Administración del sitio"
   const adminSubTabs = [
+    { id: 'ajustes-sitio', label: 'Ajustes del Sitio', icon: SlidersHorizontal },
     { id: 'cursos', label: 'Página Principal', icon: BookOpen },
-    { id: 'configuracion', label: 'Configuración', icon: Settings },
+    { id: 'configuracion', label: 'Configuración de Cursos', icon: Settings },
     { id: 'participantes', label: 'Participantes', icon: Users },
     { id: 'informes', label: 'Informes', icon: FileText },
     { id: 'preguntas', label: 'Banco de preguntas', icon: HelpCircle },
@@ -113,7 +122,6 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
               >
                 Mis cursos
               </button>
-              {/* Nueva pestaña solicitada: "Administración" */}
               <button 
                 onClick={() => setMainNavTab('administracion')}
                 className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
@@ -122,14 +130,22 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
               >
                 Administración
               </button>
-              <button 
-                onClick={() => setMainNavTab('admin-sitio')}
-                className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  mainNavTab === 'admin-sitio' ? 'text-white bg-gray-800 font-bold' : 'hover:text-white hover:bg-gray-800/40'
-                }`}
-              >
-                Administración del sitio
-              </button>
+              
+              {/* Pestaña: "Administración del sitio" (Solo visible para rol Administrador) */}
+              {isAdmin && (
+                <button 
+                  onClick={() => {
+                    setMainNavTab('admin-sitio');
+                    setAdminSubTab('ajustes-sitio');
+                  }}
+                  className={`px-3 py-2 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    mainNavTab === 'admin-sitio' ? 'text-white bg-purple-900/60 border border-purple-500/40 font-bold' : 'text-purple-300 hover:text-white hover:bg-purple-950/40'
+                  }`}
+                >
+                  <Lock size={12} className="text-purple-400" />
+                  <span>Administración del sitio</span>
+                </button>
+              )}
             </nav>
           </div>
 
@@ -224,6 +240,11 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                   <div className="px-3 py-2 border-b border-gray-800">
                     <div className="font-bold text-white">{currentUser?.nombre}</div>
                     <div className="text-[10px] text-gray-400">{currentUser?.email}</div>
+                    {isAdmin && (
+                      <span className="inline-block mt-1 text-[10px] font-bold text-purple-300 bg-purple-950 px-2 py-0.5 rounded border border-purple-800">
+                        Administrador
+                      </span>
+                    )}
                   </div>
                   <button onClick={() => { setMainNavTab('mis-cursos'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
                     <BookOpen size={14} /> <span>Mis Cursos Activos</span>
@@ -231,6 +252,11 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                   <button onClick={() => { setMainNavTab('area-personal'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white flex items-center gap-2 cursor-pointer">
                     <UserIcon size={14} /> <span>Área Personal</span>
                   </button>
+                  {isAdmin && (
+                    <button onClick={() => { setMainNavTab('admin-sitio'); setAdminSubTab('ajustes-sitio'); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-purple-900/50 text-purple-300 hover:text-white flex items-center gap-2 cursor-pointer">
+                      <Lock size={14} /> <span>Ajustes del Sitio</span>
+                    </button>
+                  )}
                   <button onClick={() => { onReturnHome(); setShowUserDropdown(false); }} className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-800 text-[#00c2b2] flex items-center gap-2 cursor-pointer">
                     <Home size={14} /> <span>Sitio Público PrevySeg</span>
                   </button>
@@ -256,7 +282,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
           <button onClick={() => setMainNavTab('area-personal')} className={`px-2 py-1 rounded ${mainNavTab === 'area-personal' ? 'text-white bg-gray-800 font-bold' : ''}`}>Área personal</button>
           <button onClick={() => setMainNavTab('mis-cursos')} className={`px-2 py-1 rounded ${mainNavTab === 'mis-cursos' ? 'text-white bg-gray-800 font-bold' : ''}`}>Mis cursos</button>
           <button onClick={() => setMainNavTab('administracion')} className={`px-2 py-1 rounded ${mainNavTab === 'administracion' ? 'text-white bg-gray-800 font-bold' : ''}`}>Administración</button>
-          <button onClick={() => setMainNavTab('admin-sitio')} className={`px-2 py-1 rounded ${mainNavTab === 'admin-sitio' ? 'text-white bg-gray-800 font-bold' : ''}`}>Admin Sitio</button>
+          {isAdmin && (
+            <button onClick={() => { setMainNavTab('admin-sitio'); setAdminSubTab('ajustes-sitio'); }} className={`px-2 py-1 rounded ${mainNavTab === 'admin-sitio' ? 'text-purple-300 bg-purple-950 font-bold' : ''}`}>Admin Sitio</button>
+          )}
         </div>
       </header>
 
@@ -317,6 +345,25 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
           )}
         </div>
 
+        {/* Control de Acceso: Bloqueo si un usuario no administrador intenta acceder a admin-sitio */}
+        {mainNavTab === 'admin-sitio' && !isAdmin && (
+          <div className="py-16 text-center space-y-4 bg-gray-900/60 rounded-2xl border border-red-800/50 p-8">
+            <div className="w-16 h-16 rounded-full bg-red-950/80 border border-red-600/40 text-red-400 flex items-center justify-center mx-auto">
+              <ShieldAlert size={36} />
+            </div>
+            <h2 className="text-2xl font-bold text-white">Acceso Restringido</h2>
+            <p className="text-sm text-gray-400 max-w-md mx-auto">
+              Este apartado de <strong>Administración del sitio</strong> está reservado exclusivamente para usuarios autorizados con rol Administrador (RUTs: 15692858-8 / 15692858-5 y 21778425-5).
+            </p>
+            <button
+              onClick={() => setMainNavTab('area-personal')}
+              className="bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow transition-all cursor-pointer"
+            >
+              Volver a mi Área Personal
+            </button>
+          </div>
+        )}
+
         {/* Renderizado de Vistas según la pestaña principal */}
         
         {/* Vista: Área Personal (image_ef434c.png) */}
@@ -329,14 +376,17 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
           <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
         )}
 
-        {/* Vista: Administración (Nueva pestaña) */}
+        {/* Vista: Administración OTEC */}
         {mainNavTab === 'administracion' && (
           <AdminGeneralView onNavigateSubtab={handleNavigateFromAdminGeneral} />
         )}
 
-        {/* Vista: Administración del Sitio / Página Principal (Con Submenú Azul) */}
+        {/* Vista: Administración del Sitio (Solo si es Admin o en inicio) */}
         {(mainNavTab === 'admin-sitio' || mainNavTab === 'inicio') && (
           <>
+            {adminSubTab === 'ajustes-sitio' && (
+              <SiteAdminView currentUser={currentUser} />
+            )}
             {adminSubTab === 'cursos' && (
               <CoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode} />
             )}
