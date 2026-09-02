@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Phone, 
   Mail, 
@@ -7,7 +8,8 @@ import {
   Search, 
   Menu, 
   X,
-  ExternalLink
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
 import { FacebookIcon, TwitterIcon, InstagramIcon, YoutubeIcon } from './SocialIcons';
 
@@ -31,13 +33,15 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 shadow-xl">
-      {/* 1. Top Blue Bar */}
-      <div className="bg-[#0284c7] text-white text-xs py-1.5 px-4 sm:px-8 border-b border-sky-400/30">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 shadow-2xl">
+      {/* 1. Top Bar */}
+      <div className="bg-gradient-to-r from-[#0284c7] via-[#0369a1] to-[#0284c7] text-white text-xs py-1.5 px-4 sm:px-8 border-b border-sky-400/30">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
           {/* Social Icons */}
           <div className="flex items-center space-x-4">
-            <a 
+            <motion.a 
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
               href="https://facebook.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -45,8 +49,10 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               className="hover:text-sky-200 transition-colors duration-200"
             >
               <FacebookIcon size={14} />
-            </a>
-            <a 
+            </motion.a>
+            <motion.a 
+              whileHover={{ scale: 1.2, rotate: -5 }}
+              whileTap={{ scale: 0.9 }}
               href="https://twitter.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -54,8 +60,10 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               className="hover:text-sky-200 transition-colors duration-200"
             >
               <TwitterIcon size={14} />
-            </a>
-            <a 
+            </motion.a>
+            <motion.a 
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
               href="https://instagram.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -63,8 +71,10 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               className="hover:text-sky-200 transition-colors duration-200"
             >
               <InstagramIcon size={14} />
-            </a>
-            <a 
+            </motion.a>
+            <motion.a 
+              whileHover={{ scale: 1.2, rotate: -5 }}
+              whileTap={{ scale: 0.9 }}
               href="https://youtube.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -72,7 +82,7 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               className="hover:text-sky-200 transition-colors duration-200"
             >
               <YoutubeIcon size={14} />
-            </a>
+            </motion.a>
           </div>
 
           {/* Top Contact Info */}
@@ -101,9 +111,9 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
         </div>
       </div>
 
-      {/* 2. Main Navigation Bar */}
-      <nav className={`bg-[#18191c]/95 backdrop-blur-md border-b border-gray-800/60 transition-all duration-300 ${
-        isScrolled ? 'py-3' : 'py-4'
+      {/* 2. Main Navigation Bar with Glassmorphism */}
+      <nav className={`bg-[#18191c]/85 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ${
+        isScrolled ? 'py-2.5 shadow-xl shadow-black/40' : 'py-3.5'
       } px-4 sm:px-8`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
@@ -119,13 +129,13 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               <span className="text-[#0284c7] group-hover:text-sky-400 transition-colors">Prevy</span>
               <span className="text-[#00c2b2] group-hover:text-teal-300 transition-colors">Seg</span>
             </div>
-            <span className="text-[9px] tracking-wider uppercase text-gray-400 font-semibold -mt-1">
+            <span className="text-[9px] tracking-wider uppercase text-slate-400 font-semibold -mt-1 group-hover:text-slate-300 transition-colors">
               Organismo Técnico De Capacitación
             </span>
           </ScrollLink>
 
           {/* Desktop Navigation Menu */}
-          <div className="hidden lg:flex items-center space-x-8 text-xs font-bold tracking-wider">
+          <div className="hidden lg:flex items-center space-x-7 text-xs font-bold tracking-wider">
             {navItems.map((item) => (
               <ScrollLink
                 key={item.name}
@@ -134,94 +144,101 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
                 smooth={true}
                 offset={-85}
                 duration={500}
-                activeClass="text-[#00c2b2] border-b-2 border-[#00c2b2]"
-                className="text-gray-300 hover:text-[#00c2b2] cursor-pointer py-1 transition-all duration-200 tracking-widest"
+                activeClass="text-[#00c2b2] border-b-2 border-[#00c2b2] pb-0.5"
+                className="text-slate-300 hover:text-[#00c2b2] cursor-pointer py-1 transition-all duration-200 tracking-widest relative group"
               >
                 {item.name}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00c2b2] transition-all duration-300 group-hover:w-full" />
               </ScrollLink>
             ))}
 
             {/* Search Icon Button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
+              whileTap={{ scale: 0.92 }}
               onClick={onOpenSearch}
-              className="text-gray-300 hover:text-[#00c2b2] p-1.5 rounded-full hover:bg-gray-800/60 transition-colors cursor-pointer"
+              className="text-slate-300 hover:text-[#00c2b2] p-2 rounded-full border border-white/10 hover:border-cyan-500/40 transition-colors cursor-pointer"
               aria-label="Buscar cursos"
-              title="Buscar cursos"
+              title="Buscar cursos (Ctrl+K)"
             >
-              <Search size={16} />
-            </button>
-
-            {/* Search Icon Button */}
-            <button
-              onClick={onOpenSearch}
-              className="text-gray-300 hover:text-[#00c2b2] p-1.5 rounded-full hover:bg-gray-800/60 transition-colors cursor-pointer"
-              aria-label="Buscar cursos"
-              title="Buscar cursos"
-            >
-              <Search size={16} />
-            </button>
+              <Search size={15} />
+            </motion.button>
 
             {/* Plataforma Virtual Button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
+              whileTap={{ scale: 0.96 }}
               onClick={onOpenPlatform}
-              className="bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white text-xs font-bold uppercase tracking-wider py-2.5 px-5 rounded shadow-lg shadow-sky-900/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+              className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-5 rounded-lg shadow-lg shadow-sky-950/50 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
             >
+              <Sparkles size={13} className="text-cyan-300 animate-pulse" />
               <span>PLATAFORMA VIRTUAL</span>
-            </button>
+            </motion.button>
           </div>
 
           {/* Mobile Hamburger Button */}
-          <div className="flex items-center gap-3 lg:hidden">
-            <button
+          <div className="flex items-center gap-2 lg:hidden">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={onOpenSearch}
-              className="text-gray-300 hover:text-[#00c2b2] p-2"
+              className="text-slate-300 hover:text-[#00c2b2] p-2 rounded-lg border border-white/10"
               aria-label="Buscar"
             >
               <Search size={18} />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-200 hover:text-white p-2 rounded focus:outline-none"
+              className="text-slate-200 hover:text-white p-2 rounded-lg border border-white/10 focus:outline-none"
               aria-label="Abrir menú"
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </motion.button>
           </div>
         </div>
 
-        {/* Mobile Menu Dropdown */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pt-4 border-t border-gray-800 flex flex-col space-y-3 pb-4 animate-in fade-in slide-in-from-top-4 duration-200">
-            {navItems.map((item) => (
-              <ScrollLink
-                key={item.name}
-                to={item.to}
-                spy={true}
-                smooth={true}
-                offset={-85}
-                duration={500}
-                onClick={() => setMobileMenuOpen(false)}
-                activeClass="text-[#00c2b2] font-extrabold"
-                className="text-gray-200 hover:text-[#00c2b2] text-sm font-semibold tracking-wider px-2 py-1.5 rounded transition-colors cursor-pointer"
-              >
-                {item.name}
-              </ScrollLink>
-            ))}
+        {/* Mobile Menu Dropdown with Framer Motion */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="lg:hidden mt-3 pt-3 border-t border-white/10 flex flex-col space-y-2 pb-3 overflow-hidden"
+            >
+              {navItems.map((item) => (
+                <ScrollLink
+                  key={item.name}
+                  to={item.to}
+                  spy={true}
+                  smooth={true}
+                  offset={-85}
+                  duration={500}
+                  onClick={() => setMobileMenuOpen(false)}
+                  activeClass="text-[#00c2b2] font-extrabold bg-white/5"
+                  className="text-slate-200 hover:text-[#00c2b2] text-sm font-semibold tracking-wider px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                >
+                  {item.name}
+                </ScrollLink>
+              ))}
 
-            <div className="pt-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenPlatform();
-                }}
-                className="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded shadow-md text-center flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>PLATAFORMA VIRTUAL</span>
-                <ExternalLink size={14} />
-              </button>
-            </div>
-          </div>
-        )}
+              <div className="pt-2">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenPlatform();
+                  }}
+                  className="w-full bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-lg shadow-lg text-center flex items-center justify-center gap-2 cursor-pointer border border-sky-400/30"
+                >
+                  <span>PLATAFORMA VIRTUAL</span>
+                  <ExternalLink size={14} />
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </header>
   );

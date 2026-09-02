@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
   ChevronDown, 
@@ -339,25 +340,28 @@ const SiteAdminView = ({ currentUser }) => {
         </div>
       </div>
 
-      {/* 2. Lista de Filas y Cajas Expandibles (Replicando exactamente el contenido de las 3 imágenes con UI mejorada) */}
+      {/* 2. Lista de Filas y Cajas Expandibles con Framer Motion */}
       <div className="space-y-4">
-        {filteredCategories.map((cat) => {
+        {filteredCategories.map((cat, idx) => {
           const IconComponent = cat.icon;
           const isExpanded = expandedSections[cat.id];
 
           return (
-            <div
+            <motion.div
               key={cat.id}
-              className="bg-[#121316] rounded-2xl border border-gray-800/90 overflow-hidden shadow-xl transition-all duration-200"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: idx * 0.03 }}
+              className="bg-gradient-to-b from-[#151619] to-[#111214] rounded-3xl border border-white/10 overflow-hidden shadow-xl transition-all duration-200"
             >
-              {/* Encabezado de Categoría (Fila Clickeable) */}
+              {/* Encabezado de Categoría */}
               <button
                 type="button"
                 onClick={() => toggleSection(cat.id)}
-                className="w-full flex items-center justify-between p-5 bg-[#16171a] hover:bg-gray-800/40 transition-colors text-left cursor-pointer border-b border-gray-800/60 select-none group"
+                className="w-full flex items-center justify-between p-5 bg-[#16171a]/80 hover:bg-white/5 transition-colors text-left cursor-pointer border-b border-white/10 select-none group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-gray-900 border border-gray-700/80 flex items-center justify-center text-[#38bdf8] group-hover:scale-105 transition-transform flex-shrink-0 shadow-inner">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-center text-[#38bdf8] group-hover:scale-105 transition-transform flex-shrink-0 shadow-inner">
                     <IconComponent size={20} />
                   </div>
                   <div>
@@ -366,127 +370,154 @@ const SiteAdminView = ({ currentUser }) => {
                         {cat.title}
                       </h3>
                       {cat.badge && (
-                        <span className={`text-[10px] font-bold px-2 py-0.2 rounded-full uppercase ${
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                           cat.badge === 'Crítico' 
-                            ? 'bg-red-950 text-red-300 border border-red-800' 
-                            : 'bg-teal-950 text-teal-300 border border-teal-800'
+                            ? 'bg-red-950/80 text-red-300 border border-red-500/40' 
+                            : 'bg-teal-950/80 text-teal-300 border border-teal-500/40'
                         }`}>
                           {cat.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-gray-400">
-                      {cat.subtitle} • {cat.items.length} opciones disponibles
+                    <p className="text-xs text-slate-400">
+                      {cat.subtitle} • {cat.items.length} opciones configurables
                     </p>
                   </div>
                 </div>
 
-                <div className="text-gray-400 group-hover:text-white transition-colors p-1">
-                  {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                <div className="flex items-center gap-2 text-slate-400">
+                  <span className="text-xs font-semibold hidden sm:inline">
+                    {isExpanded ? 'Ocultar' : 'Ver opciones'}
+                  </span>
+                  <div className="p-1 rounded-full bg-slate-800/80 text-slate-300 group-hover:bg-slate-700 transition-colors">
+                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </div>
                 </div>
               </button>
 
-              {/* Sub-items (Lista vertical de enlaces en color azul claro/blanco como en la captura) */}
-              {isExpanded && (
-                <div className="p-4 sm:p-6 bg-[#121316] space-y-2 divide-y divide-gray-800/40">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
-                    {cat.items.map((item, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => handleOpenSetting(cat.title, item)}
-                        className="p-3 rounded-xl bg-[#18191c]/70 hover:bg-gray-800/80 border border-gray-800 hover:border-sky-500/40 transition-all cursor-pointer flex items-start justify-between group shadow-sm"
-                      >
-                        <div className="space-y-0.5">
-                          {/* Enlace en texto azul claro matching screenshot */}
-                          <div className="text-xs sm:text-sm font-semibold text-gray-100 group-hover:text-[#38bdf8] group-hover:underline transition-colors">
-                            {item.name}
+              {/* Contenido Expandible con AnimatePresence */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 bg-[#111214]/60">
+                      {cat.items.map((item, itemIdx) => (
+                        <motion.div
+                          key={itemIdx}
+                          whileHover={{ scale: 1.02, x: 2 }}
+                          onClick={() => handleOpenSetting(cat.title, item)}
+                          className="p-3.5 rounded-2xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/10 hover:border-cyan-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between group/item shadow-sm"
+                        >
+                          <div className="space-y-1">
+                            <div className="text-xs sm:text-sm font-bold text-slate-200 group-hover/item:text-[#38bdf8] transition-colors flex items-center justify-between">
+                              <span>{item.name}</span>
+                              <ChevronRight size={13} className="text-slate-500 group-hover/item:translate-x-1 group-hover/item:text-[#38bdf8] transition-transform" />
+                            </div>
+                            <p className="text-[11px] text-slate-400 leading-snug">
+                              {item.desc}
+                            </p>
                           </div>
-                          <p className="text-[11px] text-gray-400 leading-relaxed">
-                            {item.desc}
-                          </p>
-                        </div>
-                        <span className="text-gray-500 group-hover:text-sky-400 text-xs font-bold pt-0.5 ml-2 flex-shrink-0">
-                          →
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                          <div className="pt-2 mt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+                            <span>SENCE LMS</span>
+                            <span className="text-[#00c2b2] opacity-0 group-hover/item:opacity-100 transition-opacity">Configurar →</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           );
         })}
       </div>
 
       {/* 3. Modal Interactivo para Ajustes de Configuración */}
-      {selectedSetting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#18191c] border border-gray-700 w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 relative">
-            <button
-              onClick={() => setSelectedSetting(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
+      <AnimatePresence>
+        {selectedSetting && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ duration: 0.25 }}
+              className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-white/15 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative backdrop-blur-2xl"
             >
-              <X size={20} />
-            </button>
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setSelectedSetting(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </motion.button>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-[#00c2b2] bg-teal-950/80 border border-teal-800/60 px-2.5 py-0.5 rounded-full uppercase">
-                  {selectedSetting.category}
-                </span>
-                <span className="text-xs text-gray-400">• Parámetro de Administración</span>
-              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-[#00c2b2] bg-teal-950/80 border border-teal-500/40 px-3 py-1 rounded-full uppercase tracking-wider">
+                    {selectedSetting.category}
+                  </span>
+                  <span className="text-xs text-slate-400">• Parámetro de Administración</span>
+                </div>
 
-              <h3 className="text-xl font-bold text-white">
-                {selectedSetting.name}
-              </h3>
+                <h3 className="text-xl font-bold text-white">
+                  {selectedSetting.name}
+                </h3>
 
-              <p className="text-xs text-gray-300 leading-relaxed">
-                {selectedSetting.desc}
-              </p>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  {selectedSetting.desc}
+                </p>
 
-              <div className="p-4 bg-[#121316] rounded-xl border border-gray-700/80 space-y-3">
-                <label className="block text-xs font-semibold text-gray-300">
-                  Estado del Ajuste en el Servidor
-                </label>
-                <select className="w-full bg-[#18191c] border border-gray-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#0284c7]">
-                  <option>Habilitado / Activo por defecto</option>
-                  <option>Deshabilitado</option>
-                  <option>Solo Administradores y Fiscalizadores SENCE</option>
-                </select>
-
-                <div className="pt-2">
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">
-                    Comentario o Nota de Auditoría
+                <div className="p-4 bg-[#121315] rounded-2xl border border-white/10 space-y-3 shadow-inner">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Estado del Ajuste en el Servidor
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Parámetro verificado según estándar OS-10"
-                    className="w-full bg-[#18191c] border border-gray-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#0284c7]"
-                  />
+                  <select className="w-full bg-[#18191c] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all">
+                    <option>Habilitado / Activo por defecto</option>
+                    <option>Deshabilitado</option>
+                    <option>Solo Administradores y Fiscalizadores SENCE</option>
+                  </select>
+
+                  <div className="pt-2">
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Comentario o Nota de Auditoría
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Parámetro verificado según estándar OS-10"
+                      className="w-full bg-[#18191c] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSetting(null)}
+                    className="px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    type="button"
+                    onClick={handleSaveSetting}
+                    className="px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 rounded-xl shadow-lg shadow-sky-950/50 cursor-pointer border border-sky-400/30"
+                  >
+                    Guardar Configuración
+                  </motion.button>
                 </div>
               </div>
-
-              <div className="pt-3 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setSelectedSetting(null)}
-                  className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white rounded-lg cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveSetting}
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#0284c7] hover:bg-[#0369a1] rounded-lg shadow cursor-pointer"
-                >
-                  Guardar Configuración
-                </button>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
     </div>
   );

@@ -309,25 +309,44 @@ const JobBoardView = ({ currentUser }) => {
           </div>
 
           {loading ? (
-            <div className="py-20 text-center text-gray-400">
-              <div className="inline-block w-8 h-8 border-2 border-[#00c2b2] border-t-transparent rounded-full animate-spin mb-3"></div>
-              <p className="text-sm">Cargando bolsa de empleo desde la base de datos...</p>
+            <div className="space-y-4">
+              {[1, 2, 3].map((sk) => (
+                <div key={sk} className="bg-slate-900/60 rounded-3xl border border-white/10 p-6 space-y-4 animate-pulse">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2 w-2/3">
+                      <div className="h-5 bg-slate-800/80 rounded w-3/4" />
+                      <div className="h-3 bg-slate-800/80 rounded w-1/3" />
+                    </div>
+                    <div className="h-6 bg-slate-800/80 rounded-full w-36" />
+                  </div>
+                  <div className="h-12 bg-slate-800/80 rounded-2xl w-full" />
+                  <div className="h-4 bg-slate-800/80 rounded w-5/6" />
+                </div>
+              ))}
             </div>
           ) : filteredJobs.length === 0 ? (
-            <div className="bg-[#121316] rounded-2xl border border-gray-800 p-12 text-center space-y-3">
-              <AlertCircle size={36} className="text-gray-500 mx-auto" />
-              <h3 className="text-base font-bold text-gray-200">No se encontraron ofertas laborales</h3>
-              <p className="text-xs text-gray-400">Prueba ajustando los filtros de búsqueda o ubicación.</p>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-[#121316] rounded-3xl border border-white/10 p-12 text-center space-y-3 shadow-xl"
+            >
+              <AlertCircle size={36} className="text-slate-500 mx-auto" />
+              <h3 className="text-base font-bold text-slate-200">No se encontraron ofertas laborales</h3>
+              <p className="text-xs text-slate-400">Prueba ajustando los filtros de búsqueda o ubicación.</p>
+            </motion.div>
           ) : (
             <div className="space-y-4">
-              {filteredJobs.map((job) => {
+              {filteredJobs.map((job, idx) => {
                 const isApplied = appliedJobs.includes(job.id);
 
                 return (
-                  <div
+                  <motion.div
                     key={job.id}
-                    className="bg-[#121316] rounded-2xl border border-gray-800 hover:border-teal-500/50 p-6 space-y-5 transition-all duration-200 shadow-xl group"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: idx * 0.06 }}
+                    whileHover={{ y: -4, scale: 1.008 }}
+                    className="bg-gradient-to-b from-[#16171a] to-[#121316] rounded-3xl border border-white/10 hover:border-teal-500/40 hover:shadow-2xl hover:shadow-teal-950/40 p-6 space-y-5 transition-all duration-300 shadow-xl group"
                   >
                     {/* Fila Superior: Cargo, Empresa y Badge Verde */}
                     <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -338,13 +357,13 @@ const JobBoardView = ({ currentUser }) => {
                           </h3>
                         </div>
 
-                        <div className="flex items-center gap-3 text-xs text-gray-300 font-semibold">
-                          <span className="flex items-center gap-1.5 text-gray-200">
+                        <div className="flex items-center gap-3 text-xs text-slate-300 font-semibold">
+                          <span className="flex items-center gap-1.5 text-slate-200">
                             <Building2 size={14} className="text-[#0284c7]" />
                             {job.company}
                           </span>
                           <span>•</span>
-                          <span className="text-gray-400">{job.postedDate}</span>
+                          <span className="text-slate-400">{job.postedDate}</span>
                         </div>
                       </div>
 
@@ -356,7 +375,7 @@ const JobBoardView = ({ currentUser }) => {
                     </div>
 
                     {/* Metadata con Íconos (Dinero, Ubicación, Turno) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 bg-[#18191c] rounded-xl border border-gray-800/80 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-[#18191c]/80 rounded-2xl border border-white/10 text-xs">
                       
                       {/* Renta ofrecida */}
                       <div className="flex items-center gap-2 text-emerald-400 font-bold">
@@ -365,13 +384,13 @@ const JobBoardView = ({ currentUser }) => {
                       </div>
 
                       {/* Ubicación */}
-                      <div className="flex items-center gap-2 text-gray-300">
+                      <div className="flex items-center gap-2 text-slate-300">
                         <MapPin size={15} className="text-[#00c2b2] flex-shrink-0" />
                         <span>{job.location}</span>
                       </div>
 
                       {/* Turnos */}
-                      <div className="flex items-center gap-2 text-gray-300">
+                      <div className="flex items-center gap-2 text-slate-300">
                         <Clock size={15} className="text-sky-400 flex-shrink-0" />
                         <span>{job.shift}</span>
                       </div>
@@ -379,48 +398,48 @@ const JobBoardView = ({ currentUser }) => {
                     </div>
 
                     {/* Descripción de la oferta */}
-                    <p className="text-xs text-gray-400 leading-relaxed">
+                    <p className="text-xs text-slate-400 leading-relaxed">
                       {job.description}
                     </p>
 
                     {/* Requisitos rápidos */}
                     <div className="flex flex-wrap gap-2 pt-1">
                       {job.requirements.map((req, rIdx) => (
-                        <span key={rIdx} className="text-[11px] bg-gray-800/80 text-gray-300 px-2.5 py-1 rounded-lg border border-gray-700/60 flex items-center gap-1">
+                        <span key={rIdx} className="text-[11px] bg-slate-800/80 text-slate-300 px-3 py-1 rounded-xl border border-white/10 flex items-center gap-1.5">
                           <CheckCircle size={12} className="text-[#00c2b2]" />
                           <span>{req}</span>
                         </span>
                       ))}
                     </div>
 
-                    {/* Botón de Postulación */}
-                    <div className="pt-3 border-t border-gray-800/80 flex flex-col sm:flex-row justify-between items-center gap-3">
-                      <span className="text-xs text-gray-500 font-medium">
-                        {job.spots}
+                    {/* Footer de Tarjeta con Botón de Postulación */}
+                    <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <span className="text-xs text-slate-400 font-medium">
+                        Disponibilidad: <strong className="text-emerald-400 font-bold">{job.spots}</strong>
                       </span>
 
-                      <div className="flex items-center gap-3 w-full sm:w-auto">
-                        {isApplied ? (
-                          <div className="bg-emerald-950/80 text-emerald-300 text-xs font-bold px-5 py-2.5 rounded-xl border border-emerald-500/40 flex items-center gap-2">
-                            <CheckCircle size={15} />
-                            <span>Postulación Enviada</span>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setSelectedJob(job);
-                              setShowApplyModal(true);
-                            }}
-                            className="w-full sm:w-auto bg-[#00c2b2] hover:bg-teal-500 active:scale-95 text-gray-950 text-xs font-black px-6 py-2.5 rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
-                          >
-                            <Send size={14} />
-                            <span>Postular con mi Perfil PrevySeg</span>
-                          </button>
-                        )}
-                      </div>
+                      {isApplied ? (
+                        <div className="bg-emerald-950/80 text-emerald-300 text-xs font-bold px-5 py-2.5 rounded-xl border border-emerald-500/40 flex items-center gap-2">
+                          <CheckCircle size={15} />
+                          <span>Postulación Enviada ✓</span>
+                        </div>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.04 }}
+                          whileTap={{ scale: 0.96 }}
+                          onClick={() => {
+                            setSelectedJob(job);
+                            setShowApplyModal(true);
+                          }}
+                          className="w-full sm:w-auto bg-gradient-to-r from-[#00c2b2] to-teal-400 hover:from-teal-400 hover:to-teal-500 text-gray-950 text-xs font-black px-6 py-2.5 rounded-xl shadow-lg shadow-teal-950/50 transition-all cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          <Send size={14} />
+                          <span>Postular con mi Perfil PrevySeg</span>
+                        </motion.button>
+                      )}
                     </div>
 
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -430,76 +449,88 @@ const JobBoardView = ({ currentUser }) => {
       </div>
 
       {/* Modal de Confirmación de Postulación */}
-      {showApplyModal && selectedJob && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#18191c] border border-gray-700 w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 relative">
-            <button
-              onClick={() => setShowApplyModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
+      <AnimatePresence>
+        {showApplyModal && selectedJob && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ duration: 0.25 }}
+              className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-white/15 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative backdrop-blur-2xl"
             >
-              <X size={20} />
-            </button>
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowApplyModal(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X size={20} />
+              </motion.button>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-700 uppercase">
-                  Oferta Laboral Directa
-                </span>
-                <span className="text-xs text-gray-400">{selectedJob.company}</span>
-              </div>
-
-              <h2 className="text-xl font-bold text-white">
-                {selectedJob.title}
-              </h2>
-
-              <div className="p-4 bg-[#121316] rounded-xl border border-gray-800 space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Renta Líquida:</span>
-                  <strong className="text-[#00c2b2] font-bold font-mono">{selectedJob.salary}</strong>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-500/40 uppercase tracking-wider">
+                    Oferta Laboral Directa
+                  </span>
+                  <span className="text-xs text-slate-400">{selectedJob.company}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Ubicación de Faena:</span>
-                  <strong className="text-gray-200">{selectedJob.location}</strong>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Jornada:</span>
-                  <strong className="text-gray-200">{selectedJob.shift}</strong>
-                </div>
-              </div>
 
-              <div className="p-3 bg-teal-950/30 rounded-xl border border-teal-800/40 text-xs text-gray-300 space-y-1">
-                <p className="font-bold text-teal-300 flex items-center gap-1.5">
-                  <ShieldCheck size={15} /> Datos que se adjuntarán automáticamente:
-                </p>
-                <p className="text-[11px] text-gray-400">
-                  • Nombre: <strong className="text-white">{currentUser?.nombre || 'Alumno Registrado'}</strong>
-                  <br />• RUT: <strong className="text-white">{currentUser?.rut}</strong>
-                  <br />• Certificados emitidos por OTEC PrevySeg
-                  <br />• Registro oficial ante la Dirección General de Carabineros (OS-10)
-                </p>
-              </div>
+                <h2 className="text-xl font-bold text-white">
+                  {selectedJob.title}
+                </h2>
 
-              <div className="pt-3 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowApplyModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white rounded-lg cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleApply(selectedJob.id)}
-                  className="px-6 py-2.5 text-xs font-bold text-gray-950 bg-[#00c2b2] hover:bg-teal-400 rounded-xl shadow-lg cursor-pointer flex items-center gap-2"
-                >
-                  <Send size={14} />
-                  <span>Enviar Postulación Directa</span>
-                </button>
+                <div className="p-4 bg-[#121315] rounded-2xl border border-white/10 space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Renta Líquida:</span>
+                    <strong className="text-[#00c2b2] font-bold font-mono text-sm">{selectedJob.salary}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Ubicación de Faena:</span>
+                    <strong className="text-slate-200">{selectedJob.location}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Jornada:</span>
+                    <strong className="text-slate-200">{selectedJob.shift}</strong>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-teal-950/30 rounded-2xl border border-teal-500/30 text-xs text-slate-300 space-y-1.5 shadow-inner">
+                  <p className="font-bold text-teal-300 flex items-center gap-1.5">
+                    <ShieldCheck size={15} /> Datos que se adjuntarán automáticamente:
+                  </p>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    • Nombre: <strong className="text-white">{currentUser?.nombre || 'Alumno Registrado'}</strong>
+                    <br />• RUT: <strong className="text-white font-mono">{currentUser?.rut}</strong>
+                    <br />• Certificados emitidos por OTEC PrevySeg
+                    <br />• Registro oficial ante la Dirección General de Carabineros (OS-10)
+                  </p>
+                </div>
+
+                <div className="pt-3 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowApplyModal(false)}
+                    className="px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    type="button"
+                    onClick={() => handleApply(selectedJob.id)}
+                    className="px-6 py-2.5 text-xs font-bold text-gray-950 bg-gradient-to-r from-[#00c2b2] to-teal-400 hover:from-teal-400 hover:to-teal-500 rounded-xl shadow-lg shadow-teal-950/50 cursor-pointer flex items-center gap-2"
+                  >
+                    <Send size={14} />
+                    <span>Enviar Postulación Directa</span>
+                  </motion.button>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
     </div>
   );

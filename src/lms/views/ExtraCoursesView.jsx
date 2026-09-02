@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Award, 
   Calendar, 
@@ -328,39 +329,59 @@ const ExtraCoursesView = ({ currentUser }) => {
       {/* Filter Categories Bar */}
       <div className="flex flex-wrap items-center gap-2">
         {categories.map((cat) => (
-          <button
+          <motion.button
             key={cat}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
               selectedCategory === cat
-                ? 'bg-[#00c2b2] text-gray-950 shadow-lg shadow-teal-900/40'
-                : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700 border border-gray-700'
+                ? 'bg-gradient-to-r from-[#00c2b2] to-teal-400 text-gray-950 border-teal-300 shadow-lg shadow-teal-500/25'
+                : 'bg-[#121315]/80 text-slate-300 hover:text-white hover:bg-slate-800 border-white/10'
             }`}
           >
             {cat}
-          </button>
+          </motion.button>
         ))}
       </div>
 
-      {/* Grid de Tarjetas de Cursos Extras */}
+      {/* Grid de Tarjetas de Cursos Extras con Skeleton Loader */}
       {loading ? (
-        <div className="py-20 text-center text-gray-400">
-          <div className="inline-block w-8 h-8 border-2 border-[#0284c7] border-t-transparent rounded-full animate-spin mb-3"></div>
-          <p className="text-sm">Cargando capacitaciones extras desde el servidor SENCE...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {[1, 2, 3, 4, 5, 6].map((sk) => (
+            <div key={sk} className="bg-slate-900/60 rounded-3xl overflow-hidden border border-white/10 p-4 space-y-4 animate-pulse">
+              <div className="aspect-[16/10] bg-slate-800/80 rounded-2xl w-full" />
+              <div className="h-4 bg-slate-800/80 rounded w-3/4" />
+              <div className="h-3 bg-slate-800/80 rounded w-1/2" />
+              <div className="pt-4 flex justify-between items-center border-t border-white/10">
+                <div className="h-5 bg-slate-800/80 rounded w-20" />
+                <div className="h-8 bg-slate-800/80 rounded-xl w-24" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filtered.map((course) => (
-            <div
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+        >
+          {filtered.map((course, idx) => (
+            <motion.div
               key={course.id}
-              className="bg-[#121316] rounded-2xl overflow-hidden border border-gray-800 hover:border-sky-500/40 transition-all duration-300 shadow-xl flex flex-col justify-between group hover:-translate-y-1.5"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: idx * 0.07 }}
+              whileHover={{ y: -6, scale: 1.015 }}
+              className="bg-gradient-to-b from-[#18191c] to-[#121315] rounded-3xl overflow-hidden border border-white/10 hover:border-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/15 transition-all duration-300 shadow-xl flex flex-col justify-between group"
             >
               <div>
                 {/* 1. Cover Visual */}
                 <ExtraCourseCover item={course} />
 
-                {/* 2. Course Title (Sin descripción, solo título visual) */}
-                <div className="p-5">
+                {/* 2. Course Title */}
+                <div className="p-6">
                   <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-[#38bdf8] transition-colors leading-snug line-clamp-3">
                     {course.title}
                   </h3>
@@ -368,42 +389,53 @@ const ExtraCoursesView = ({ currentUser }) => {
               </div>
 
               {/* 3. Bottom Price & Enrollment Button */}
-              <div className="p-5 pt-3 border-t border-gray-800/80 bg-black/25 flex items-center justify-between gap-3">
+              <div className="p-6 pt-3 border-t border-white/10 bg-black/25 flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
+                  <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
                     Valor Alumno:
                   </div>
                   <div className="text-lg sm:text-xl font-black text-[#00c2b2] tracking-tight">
                     {course.price}
                   </div>
-                  <div className="text-[10px] font-semibold text-emerald-400">
+                  <div className="text-[11px] font-semibold text-emerald-400">
                     {course.priceDetail}
                   </div>
                 </div>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedCourseForModal(course)}
-                  className="bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn"
+                  className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn border border-sky-400/30"
                 >
                   <span>Inscribirme</span>
                   <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
       {/* MODAL INTERACTIVO DE INSCRIPCIÓN & PAGO PARA EL ALUMNO */}
-      {selectedCourseForModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#18191c] border border-sky-500/50 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 relative max-h-[92vh] overflow-y-auto">
-            <button
+      <AnimatePresence>
+        {selectedCourseForModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.92, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 15 }}
+            transition={{ duration: 0.25 }}
+            className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-sky-500/40 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 relative max-h-[92vh] overflow-y-auto backdrop-blur-2xl"
+          >
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => setSelectedCourseForModal(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors z-10"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10 cursor-pointer"
             >
               <X size={20} />
-            </button>
+            </motion.button>
 
             {enrollSuccess ? (
               <div className="py-12 text-center space-y-4">
@@ -469,27 +501,30 @@ const ExtraCoursesView = ({ currentUser }) => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="pt-4 border-t border-gray-800 flex justify-end gap-3">
+                <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setSelectedCourseForModal(null)}
-                    className="px-4 py-2.5 rounded-xl border border-gray-700 text-gray-300 hover:bg-gray-800 text-xs font-semibold cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-white/10 text-slate-300 hover:bg-white/5 text-xs font-semibold cursor-pointer transition-colors"
                   >
                     Cancelar
                   </button>
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-[#00c2b2] hover:bg-[#08978a] active:scale-95 text-gray-950 text-xs font-black shadow-lg shadow-teal-950/40 flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#00c2b2] to-teal-400 hover:from-teal-400 hover:to-teal-500 text-gray-950 text-xs font-black shadow-lg shadow-teal-950/40 flex items-center gap-2 cursor-pointer"
                   >
                     <CheckCircle2 size={16} />
                     <span>Confirmar Postulación</span>
-                  </button>
+                  </motion.button>
                 </div>
               </form>
             )}
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
     </div>
   );

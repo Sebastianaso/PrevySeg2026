@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
   Settings, 
@@ -20,11 +21,30 @@ import promoImg from '../../assets/images/security_promo.jpg';
 import blogCctv from '../../assets/images/blog_cctv.jpg';
 import blogPort from '../../assets/images/blog_port_security.jpg';
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: 'easeOut' }
+  }
+};
+
 const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
   const [statusFilter, setStatusFilter] = useState('todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('nombre');
-  const [viewMode, setViewMode] = useState('tarjeta'); // 'tarjeta' | 'lista' | 'resumen'
+  const [viewMode, setViewMode] = useState('tarjeta');
   const [activeCourseOptions, setActiveCourseOptions] = useState(null);
 
   const courses = [
@@ -81,48 +101,57 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
   });
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-8">
       
-      {/* 1. Encabezado: Título "Mis cursos" a la izquierda y dos botones de acción a la derecha */}
+      {/* 1. Encabezado */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
             Mis cursos
           </h1>
-          <p className="text-xs sm:text-sm text-gray-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Visualiza y administra tus programas formativos activos y acreditados por SENCE.
           </p>
         </div>
 
         {/* Botones de acción a la derecha */}
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => alert("Abriendo panel de gestión y asignación de cohortes SENCE...")}
-            className="flex-1 sm:flex-none border border-gray-700 hover:border-gray-500 hover:bg-gray-800 text-gray-200 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+            className="flex-1 sm:flex-none border border-white/10 hover:border-white/20 hover:bg-white/5 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
           >
-            <Settings size={14} className="text-gray-400" />
+            <Settings size={14} className="text-slate-400" />
             <span>Gestionar cursos</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.03, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => alert("Abriendo asistente para crear un nuevo curso...")}
-            className="flex-1 sm:flex-none bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-sky-950/40 transition-all cursor-pointer flex items-center justify-center gap-2"
+            className="flex-1 sm:flex-none bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-sky-950/40 transition-all cursor-pointer flex items-center justify-center gap-2 border border-sky-400/30"
           >
             <Plus size={15} />
             <span>Crear curso</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
-      {/* 2. Contenedor Vista general: Tarjeta oscura con el subtítulo "Vista general de curso" */}
-      <div className="bg-[#121316] rounded-2xl border border-gray-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      {/* 2. Contenedor Vista general */}
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45 }}
+        className="bg-gradient-to-b from-[#151619] to-[#111214] rounded-3xl border border-white/10 p-6 sm:p-8 space-y-6 shadow-2xl backdrop-blur-xl"
+      >
         
-        <div className="flex items-center justify-between border-b border-gray-800 pb-4">
+        <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <h2 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
             <BookOpen size={18} className="text-[#0284c7]" />
             <span>Vista general de curso</span>
           </h2>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-slate-400">
             {filteredCourses.length} cursos encontrados
           </span>
         </div>
@@ -135,7 +164,7 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-[#121315] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
             >
               <option value="todos">Todos</option>
               <option value="en_progreso">En progreso</option>
@@ -152,9 +181,9 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
               placeholder="Buscar en mis cursos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-[#121315] border border-white/10 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
             />
-            <Search size={15} className="absolute left-3 top-3 text-gray-400" />
+            <Search size={15} className="absolute left-3 top-3 text-slate-400" />
           </div>
 
           {/* Desplegable: "Ordenar por nombre del curso" */}
@@ -162,19 +191,19 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3.5 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-[#121315] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
             >
               <option value="nombre">Ordenar por nombre del curso</option>
               <option value="acceso">Ordenar por último acceso</option>
             </select>
           </div>
 
-          {/* Selector de vista: "Tarjeta" / "Lista" / "Resumen" */}
+          {/* Selector de vista */}
           <div className="sm:col-span-2">
             <select
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-[#121315] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
             >
               <option value="tarjeta">Vista: Tarjeta</option>
               <option value="lista">Vista: Lista</option>
@@ -184,115 +213,118 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
 
         </div>
 
-        {/* 3. Cuadrícula de Tarjetas de Curso (Replicando la tarjeta con patrón azul superior) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+        {/* 3. Cuadrícula de Tarjetas de Curso con Framer Motion Staggered Grid */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2"
+        >
           {filteredCourses.map((course) => (
-            <div
+            <motion.div
               key={course.id}
-              className="bg-[#18191c] rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all duration-300 shadow-xl flex flex-col justify-between group hover:-translate-y-1"
+              variants={cardVariants}
+              whileHover={{ y: -6, scale: 1.015 }}
+              transition={{ duration: 0.25 }}
+              className="bg-gradient-to-b from-[#18191c] to-[#121315] rounded-3xl overflow-hidden border border-white/10 hover:border-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/15 transition-all duration-300 shadow-xl flex flex-col justify-between group"
             >
-              {/* Imagen superior con patrón de círculos azules abstractos / foto con badge */}
+              {/* Imagen superior */}
               <div className="relative aspect-[16/9] bg-gradient-to-tr from-sky-950 via-blue-900 to-slate-900 overflow-hidden">
-                
-                {/* Patrón SVG decorativo de círculos y red azul en la cabecera */}
-                <svg className="absolute inset-0 w-full h-full opacity-30" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <radialGradient id={`blueGrad-${course.id}`} cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#0284c7" stopOpacity="0.8" />
-                      <stop offset="100%" stopColor="#0f172a" stopOpacity="0.2" />
-                    </radialGradient>
-                  </defs>
-                  <circle cx="20%" cy="30%" r="60" fill={`url(#blueGrad-${course.id})`} />
-                  <circle cx="80%" cy="70%" r="90" fill={`url(#blueGrad-${course.id})`} />
-                  <circle cx="50%" cy="50%" r="40" fill="none" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 4" />
-                </svg>
-
                 <img
                   src={course.image}
                   alt={course.title}
                   className="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-105 transition-transform duration-500"
                 />
 
-                {/* Etiqueta de categoría "Seguridad Privada" en azul */}
                 <div className="absolute top-3 left-3">
-                  <span className="bg-[#0284c7] text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md border border-sky-400/40">
+                  <span className="bg-[#0284c7] text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md border border-sky-400/40">
                     {course.category}
                   </span>
                 </div>
 
-                {/* Botón de tres puntos (opciones) en la esquina inferior derecha de la imagen */}
                 <div className="absolute bottom-2.5 right-2.5">
                   <button
                     onClick={() => setActiveCourseOptions(activeCourseOptions === course.id ? null : course.id)}
-                    className="p-1.5 rounded-full bg-black/70 hover:bg-black text-gray-300 hover:text-white border border-white/10 backdrop-blur-sm transition-colors cursor-pointer"
+                    className="p-1.5 rounded-full bg-black/70 hover:bg-black text-slate-300 hover:text-white border border-white/10 backdrop-blur-sm transition-colors cursor-pointer"
                     title="Opciones del curso"
                   >
                     <MoreVertical size={16} />
                   </button>
 
-                  {activeCourseOptions === course.id && (
-                    <div className="absolute right-0 bottom-8 w-44 bg-[#121316] border border-gray-700 rounded-xl shadow-2xl p-1.5 z-30 text-xs space-y-1 animate-in fade-in">
-                      <button onClick={() => { onSelectCourse(course); setActiveCourseOptions(null); }} className="w-full text-left px-2.5 py-1.5 rounded hover:bg-gray-800 text-gray-200 flex items-center gap-2 cursor-pointer">
-                        <BookOpen size={12} /> <span>Abrir curso</span>
-                      </button>
-                      <button onClick={() => { alert(`Descargando programa curricular de: ${course.title}`); setActiveCourseOptions(null); }} className="w-full text-left px-2.5 py-1.5 rounded hover:bg-gray-800 text-gray-200 flex items-center gap-2 cursor-pointer">
-                        <FolderKanban size={12} /> <span>Ver sílabo SENCE</span>
-                      </button>
-                      <button onClick={() => { alert(`Marcando como favorito: ${course.title}`); setActiveCourseOptions(null); }} className="w-full text-left px-2.5 py-1.5 rounded hover:bg-gray-800 text-[#00c2b2] flex items-center gap-2 cursor-pointer">
-                        <CheckCircle size={12} /> <span>Fijar en destacados</span>
-                      </button>
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {activeCourseOptions === course.id && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="absolute right-0 bottom-8 w-48 bg-gradient-to-b from-[#18191c] to-[#121315] border border-white/15 rounded-2xl shadow-2xl p-2 z-30 text-xs space-y-1 backdrop-blur-2xl"
+                      >
+                        <button onClick={() => { onSelectCourse(course); setActiveCourseOptions(null); }} className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 text-slate-200 flex items-center gap-2 cursor-pointer transition-colors">
+                          <BookOpen size={12} /> <span>Abrir curso</span>
+                        </button>
+                        <button onClick={() => { alert(`Descargando programa curricular de: ${course.title}`); setActiveCourseOptions(null); }} className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 text-slate-200 flex items-center gap-2 cursor-pointer transition-colors">
+                          <FolderKanban size={12} /> <span>Ver sílabo SENCE</span>
+                        </button>
+                        <button onClick={() => { alert(`Marcando como favorito: ${course.title}`); setActiveCourseOptions(null); }} className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 text-[#00c2b2] flex items-center gap-2 cursor-pointer transition-colors">
+                          <CheckCircle size={12} /> <span>Fijar en destacados</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
-              {/* Contenido de la Tarjeta con título truncado */}
-              <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+              {/* Contenido */}
+              <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                 <div className="space-y-2">
                   <h3 
                     onClick={() => onSelectCourse && onSelectCourse(course)}
-                    className="text-sm font-bold text-white group-hover:text-[#38bdf8] transition-colors leading-snug line-clamp-2 cursor-pointer"
+                    className="text-sm sm:text-base font-bold text-white group-hover:text-[#38bdf8] transition-colors leading-snug line-clamp-2 cursor-pointer"
                     title={course.title}
                   >
                     {course.title}
                   </h3>
-                  <p className="text-[11px] text-gray-400">
+                  <p className="text-xs text-slate-400">
                     {course.cohort}
                   </p>
                 </div>
 
                 {/* Barra de progreso y botón de ingreso */}
-                <div className="space-y-3 pt-2 border-t border-gray-800">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-semibold text-gray-400">
+                <div className="space-y-3 pt-3 border-t border-white/10">
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-semibold text-slate-400">
                       <span>{course.progress}% completado</span>
-                      <span className="font-mono text-gray-500">{course.senceCode}</span>
+                      <span className="font-mono text-slate-500">{course.senceCode}</span>
                     </div>
-                    <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                      <div
+                    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-white/5">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${course.progress}%` }}
+                        transition={{ duration: 0.8 }}
                         className={`h-full rounded-full ${
-                          course.progress === 100 ? 'bg-emerald-500' : 'bg-[#0284c7]'
+                          course.progress === 100 ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-sm shadow-emerald-400' : 'bg-gradient-to-r from-[#0284c7] to-cyan-400 shadow-sm shadow-sky-400'
                         }`}
-                        style={{ width: `${course.progress}%` }}
-                      ></div>
+                      ></motion.div>
                     </div>
                   </div>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => onSelectCourse && onSelectCourse(course)}
-                    className="w-full bg-[#0284c7]/20 hover:bg-[#0284c7] text-[#38bdf8] hover:text-white border border-[#0284c7]/40 hover:border-transparent text-xs font-bold py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full bg-[#0284c7]/20 hover:bg-[#0284c7] text-[#38bdf8] hover:text-white border border-[#0284c7]/40 hover:border-transparent text-xs font-bold py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-md"
                   >
                     <span>Entrar al Aula Virtual</span>
                     <ExternalLink size={13} />
-                  </button>
+                  </motion.button>
                 </div>
               </div>
 
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.div>
 
     </div>
   );

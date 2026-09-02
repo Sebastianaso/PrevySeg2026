@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
   Send,
@@ -11,7 +12,8 @@ import {
   ShieldCheck,
   Phone,
   Mail,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
 
@@ -68,59 +70,69 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#18191c] border border-gray-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.92, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 15 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-white/15 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative backdrop-blur-2xl"
+      >
 
         {/* Close button */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
         >
           <X size={20} />
-        </button>
+        </motion.button>
 
         {isSubmitted ? (
           <div className="py-8 text-center space-y-5">
-            <div className="w-16 h-16 bg-emerald-500/20 text-[#22c55e] rounded-full flex items-center justify-center mx-auto animate-bounce">
+            <div className="w-16 h-16 bg-emerald-500/20 text-[#22c55e] rounded-full flex items-center justify-center mx-auto border border-emerald-500/40 shadow-lg shadow-emerald-950/50">
               <CheckCircle size={36} />
             </div>
 
             <div className="space-y-2">
               <h3 className="text-2xl font-black text-white">¡Mensaje Preparado con Éxito!</h3>
-              <p className="text-gray-300 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+              <p className="text-slate-300 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
                 Tu mensaje para <strong className="text-white">PrevySeg</strong> ha sido transferido al WhatsApp oficial <strong className="text-emerald-400 font-mono">+56 9 7869 1869</strong>.
               </p>
             </div>
 
-            <div className="p-3.5 bg-[#121315] rounded-xl border border-gray-800 text-left text-xs space-y-1 font-mono text-gray-300">
-              <div><strong className="text-gray-500">De:</strong> {formData.nombre} ({formData.telefono})</div>
-              <div><strong className="text-gray-500">Para:</strong> +56 9 7869 1869 (WhatsApp PrevySeg)</div>
-              <div><strong className="text-gray-500">Curso:</strong> {formData.curso}</div>
+            <div className="p-4 bg-[#121315]/90 rounded-2xl border border-white/10 text-left text-xs space-y-1.5 font-mono text-slate-300 shadow-inner">
+              <div><strong className="text-slate-500">De:</strong> {formData.nombre} ({formData.telefono})</div>
+              <div><strong className="text-slate-500">Para:</strong> +56 9 7869 1869 (WhatsApp PrevySeg)</div>
+              <div><strong className="text-slate-500">Curso:</strong> {formData.curso}</div>
             </div>
 
-            <div className="space-y-2 pt-2">
-              <a
+            <div className="space-y-2.5 pt-2">
+              <motion.a
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-[#22c55e] hover:bg-[#16a34a] active:scale-95 text-gray-950 font-black py-3 px-4 rounded-xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 transition-all cursor-pointer text-xs sm:text-sm"
+                className="w-full bg-gradient-to-r from-[#22c55e] to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-gray-950 font-black py-3.5 px-4 rounded-xl shadow-xl shadow-emerald-950/50 flex items-center justify-center gap-2 transition-all cursor-pointer text-xs sm:text-sm border border-emerald-300"
               >
                 <Send size={16} />
                 <span>Abrir WhatsApp (+56 9 7869 1869)</span>
-              </a>
+              </motion.a>
 
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="flex-1 border border-gray-700 hover:bg-gray-800 text-gray-300 py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                  className="flex-1 border border-white/10 hover:bg-white/5 text-slate-300 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Enviar otro mensaje
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2.5 rounded-xl text-xs font-semibold cursor-pointer"
+                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Cerrar
                 </button>
@@ -128,59 +140,64 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
-            <div>
-              <span className="text-[#22c55e] text-xs font-bold uppercase tracking-wider">Contacto Directo</span>
-              <h3 className="text-2xl font-bold text-white mt-1">Envíanos Un Mensaje</h3>
-              <p className="text-gray-400 text-xs mt-1">
-                Consulta fechas de inicio, costos con código SENCE o requerimientos especiales. Se enviará a nuestro WhatsApp oficial: <strong className="text-emerald-400 font-mono">+56 9 7869 1869</strong>.
+          <div>
+            <div className="space-y-1.5 mb-6">
+              <div className="inline-flex items-center gap-1.5 text-[#00c2b2] text-xs font-bold uppercase tracking-wider">
+                <Sparkles size={13} />
+                <span>Contacto y Matrículas</span>
+              </div>
+              <h3 className="text-2xl font-black text-white tracking-tight">
+                Envíanos Tu Consulta
+              </h3>
+              <p className="text-xs text-slate-400">
+                Completa tus datos y nos comunicaremos contigo a la brevedad por WhatsApp o correo.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">Nombre Completo *</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ej. Carlos Morales"
+                  placeholder="Ej: Juan Pérez Morales"
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                  className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors"
+                  className="w-full bg-[#121315] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Correo Electrónico *</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Correo Electrónico</label>
                   <input
                     type="email"
                     required
-                    placeholder="carlos@correo.cl"
+                    placeholder="juan.perez@gmail.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors"
+                    className="w-full bg-[#121315] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-300 mb-1">Teléfono / WhatsApp *</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Teléfono / Celular</label>
                   <input
                     type="tel"
                     required
                     placeholder="+56 9 1234 5678"
                     value={formData.telefono}
                     onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                    className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors"
+                    className="w-full bg-[#121315] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">Programa de Interés</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Programa de Interés</label>
                 <select
                   value={formData.curso}
                   onChange={(e) => setFormData({ ...formData, curso: e.target.value })}
-                  className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors"
+                  className="w-full bg-[#121315] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
                 >
                   <option value="_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725">_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725</option>
                   <option value="Operador de Central de Cámaras de Televigilancia. C.C.T.V.">Operador de Central de Cámaras de Televigilancia. C.C.T.V.</option>
@@ -193,28 +210,30 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1">Mensaje o Consulta</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Mensaje o Consulta (Opcional)</label>
                 <textarea
                   rows="3"
-                  placeholder="Escribe aquí tu consulta sobre requisitos, certificados o financiamiento..."
+                  placeholder="Escribe aquí si necesitas financiamiento SENCE, fechas especiales o cotización por grupo de trabajadores..."
                   value={formData.mensaje}
                   onChange={(e) => setFormData({ ...formData, mensaje: e.target.value })}
-                  className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors resize-none"
+                  className="w-full bg-[#121315] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all resize-none"
                 ></textarea>
               </div>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03, boxShadow: '0 0 20px rgba(16, 185, 129, 0.4)' }}
+                whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="w-full bg-[#10b981] hover:bg-[#059669] text-white font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full bg-gradient-to-r from-[#10b981] to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-xl flex items-center justify-center gap-2 transition-all cursor-pointer border border-emerald-400/30"
               >
                 <Send size={16} />
                 <span>Enviar Consulta</span>
-              </button>
+              </motion.button>
             </form>
           </div>
         )}
 
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -265,11 +284,9 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setTimeout(() => {
       setLoading(false);
 
-      // Normalizar entrada de RUT (quitar puntos o espacios)
       const cleanInputUser = rut.trim().replace(/\./g, '');
       const cleanPassword = password.trim();
 
-      // Para el estudiante 21778425-6 permitir cualquier contraseña o 21778425
       let matched = validUsers.find((u) => u.user === cleanInputUser && u.pass === cleanPassword);
 
       if (!matched && cleanInputUser === '21778425-6') {
@@ -298,35 +315,43 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#18191c] border border-sky-600/40 w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 relative">
-        <button
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.92, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 15 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-sky-500/30 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative backdrop-blur-2xl"
+      >
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
         >
           <X size={20} />
-        </button>
+        </motion.button>
 
         <div className="text-center space-y-2 mb-6">
-          <div className="w-14 h-14 bg-sky-500/20 text-[#0284c7] rounded-2xl flex items-center justify-center mx-auto border border-sky-500/30">
-            <ShieldCheck size={32} />
+          <div className="w-14 h-14 bg-sky-500/20 text-[#0284c7] rounded-2xl flex items-center justify-center mx-auto border border-sky-500/40 shadow-lg shadow-sky-950/50">
+            <ShieldCheck size={32} className="text-cyan-400" />
           </div>
           <h3 className="text-2xl font-black text-white">
             <span className="text-[#0284c7]">Prevy</span>
             <span className="text-[#00c2b2]">Seg</span> Virtual
           </h3>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-400">
             Portal del Alumno y Aula Virtual de Capacitaciones
           </p>
         </div>
 
         {success ? (
           <div className="py-8 text-center space-y-3">
-            <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto animate-bounce">
+            <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto animate-bounce border border-emerald-500/40">
               <CheckCircle size={32} />
             </div>
             <h4 className="text-lg font-bold text-white">¡Acceso Autorizado!</h4>
-            <p className="text-xs text-gray-300">Ingresando a la plataforma virtual...</p>
+            <p className="text-xs text-slate-300">Ingresando a la plataforma virtual...</p>
           </div>
         ) : (
           <form onSubmit={handleLogin} className="space-y-4">
@@ -337,7 +362,7 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">RUT de Usuario</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">RUT de Usuario</label>
               <div className="relative">
                 <input
                   type="text"
@@ -345,14 +370,14 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
                   placeholder="15692858-5 o 21778425-6"
                   value={rut}
                   onChange={(e) => setRut(e.target.value)}
-                  className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7] font-mono"
+                  className="w-full bg-[#121315] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 font-mono transition-all"
                 />
-                <User size={16} className="absolute left-3.5 top-3 text-gray-400" />
+                <User size={16} className="absolute left-3.5 top-3 text-slate-400" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1">Contraseña</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Contraseña</label>
               <div className="relative">
                 <input
                   type="password"
@@ -360,58 +385,67 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#121315] border border-gray-700 rounded-lg pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#0284c7]"
+                  className="w-full bg-[#121315] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
                 />
-                <Lock size={16} className="absolute left-3.5 top-3 text-gray-400" />
+                <Lock size={16} className="absolute left-3.5 top-3 text-slate-400" />
               </div>
             </div>
 
             {/* Quick Demo Credentials */}
-            <div className="p-3 bg-gray-900/80 border border-gray-800 rounded-xl text-[11px] space-y-1.5">
-              <span className="text-gray-400 font-bold block uppercase text-[10px]">Credenciales de Prueba Disponibles:</span>
-              <div className="flex flex-col gap-1.5 text-gray-300">
+            <div className="p-3.5 bg-[#121315]/80 border border-white/10 rounded-2xl text-[11px] space-y-2">
+              <span className="text-slate-400 font-bold block uppercase text-[10px] tracking-wider">Credenciales de Prueba:</span>
+              <div className="flex flex-col gap-1.5 text-slate-300">
                 <button
                   type="button"
                   onClick={() => handleFillDemo('15692858-5', '15692858')}
-                  className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer"
+                  className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer p-1 rounded hover:bg-white/5"
                 >
                   <span>👑 Ashley Adaros (ADMIN)</span>
-                  <span className="font-mono text-gray-400">15692858-5 / 15692858</span>
+                  <span className="font-mono text-slate-400">15692858-5</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleFillDemo('21778425-5', '21778425')}
-                  className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer"
+                  className="text-left text-[#38bdf8] hover:underline flex justify-between cursor-pointer p-1 rounded hover:bg-white/5"
                 >
                   <span>👑 Sebastián Araya (ADMIN)</span>
-                  <span className="font-mono text-gray-400">21778425-5 / 21778425</span>
+                  <span className="font-mono text-slate-400">21778425-5</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleFillDemo('21778425-6', '21778425')}
-                  className="text-left text-[#00c2b2] hover:underline flex justify-between cursor-pointer border-t border-gray-800 pt-1"
+                  className="text-left text-[#00c2b2] hover:underline flex justify-between cursor-pointer border-t border-white/10 pt-1.5 p-1 rounded hover:bg-white/5"
                 >
                   <span>🎓 Matías Silva (STUDENT)</span>
-                  <span className="font-mono text-gray-400">21778425-6 / cualquier pass</span>
+                  <span className="font-mono text-slate-400">21778425-6</span>
                 </button>
               </div>
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
+              whileTap={{ scale: 0.97 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white font-bold py-3.5 rounded-xl shadow-xl flex items-center justify-center gap-2 transition-all cursor-pointer border border-sky-400/30"
             >
-              {loading ? <span>Verificando en SENCE...</span> : <span>Ingresar al Panel Virtual</span>}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Verificando en SENCE...</span>
+                </span>
+              ) : (
+                <span>Ingresar al Panel Virtual</span>
+              )}
               <ExternalLink size={14} />
-            </button>
+            </motion.button>
           </form>
         )}
 
-        <div className="mt-6 pt-4 border-t border-gray-800 text-center text-[11px] text-gray-500">
+        <div className="mt-6 pt-4 border-t border-white/10 text-center text-[11px] text-slate-400">
           Acreditado para formación en línea sincrónica y asincrónica SENCE.
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -438,14 +472,22 @@ export const SearchModal = ({ isOpen, onClose, onSelectCourse }) => {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#18191c] border border-gray-700 w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative">
-        <button
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20 bg-black/80 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: -20 }}
+        transition={{ duration: 0.25 }}
+        className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-white/15 w-full max-w-2xl rounded-3xl shadow-2xl p-6 relative backdrop-blur-2xl"
+      >
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
         >
           <X size={20} />
-        </button>
+        </motion.button>
 
         {/* Search input */}
         <div className="relative mb-6">
@@ -455,43 +497,44 @@ export const SearchModal = ({ isOpen, onClose, onSelectCourse }) => {
             placeholder="Buscar cursos, especializaciones o requisitos..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-[#121315] border border-gray-700 rounded-xl pl-12 pr-4 py-3.5 text-base text-white focus:outline-none focus:border-[#00c2b2] shadow-inner"
+            className="w-full bg-[#121315] border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-base text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 shadow-inner transition-all"
           />
-          <Search size={20} className="absolute left-4 top-4 text-gray-400" />
+          <Search size={20} className="absolute left-4 top-4 text-slate-400" />
         </div>
 
         {/* Results */}
         <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
           {filtered.length > 0 ? (
             filtered.map((item, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                whileHover={{ scale: 1.01, x: 3 }}
                 onClick={() => {
                   onSelectCourse(item.name);
                   onClose();
                 }}
-                className="p-3.5 rounded-xl bg-gray-900/60 hover:bg-gray-800/80 border border-gray-800 hover:border-[#00c2b2]/40 transition-all cursor-pointer flex items-center justify-between group"
+                className="p-4 rounded-2xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/10 hover:border-[#00c2b2]/40 transition-all cursor-pointer flex items-center justify-between group shadow-sm"
               >
                 <div>
                   <div className="text-white text-sm font-semibold group-hover:text-[#00c2b2] transition-colors">
                     {item.name}
                   </div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-slate-400">
                     {item.category}
                   </div>
                 </div>
                 <span className="text-xs font-bold text-[#0284c7] group-hover:text-sky-300">
                   Ver detalle →
                 </span>
-              </div>
+              </motion.div>
             ))
           ) : (
-            <div className="text-center py-8 text-gray-400 text-sm">
+            <div className="text-center py-8 text-slate-400 text-sm">
               No se encontraron cursos que coincidan con "<span className="text-white">{query}</span>".
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -502,22 +545,30 @@ export const ArticleModal = ({ article, onClose, onOpenContact }) => {
   if (!article) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#18191c] border border-gray-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
-        <button
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.92, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 15 }}
+        transition={{ duration: 0.3 }}
+        className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-white/15 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto backdrop-blur-2xl"
+      >
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors z-10"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10 cursor-pointer"
         >
           <X size={20} />
-        </button>
+        </motion.button>
 
         <div className="space-y-6">
-          <div className="rounded-xl overflow-hidden aspect-[16/9]">
+          <div className="rounded-2xl overflow-hidden aspect-[16/9] border border-white/10">
             <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center gap-3 text-xs text-gray-400">
+            <div className="flex items-center gap-3 text-xs text-slate-400">
               <span className="text-[#00c2b2] font-bold">{article.category}</span>
               <span>•</span>
               <span className="flex items-center gap-1"><Calendar size={12} /> {article.date}</span>
@@ -525,33 +576,35 @@ export const ArticleModal = ({ article, onClose, onOpenContact }) => {
             <h2 className="text-2xl font-bold text-white leading-snug">{article.title}</h2>
           </div>
 
-          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             {article.summary}
           </p>
 
-          <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             En <strong className="text-white">PrevySeg Capacitaciones</strong> entregamos una preparación teórico-práctica con instructores de amplia experiencia, garantizando que cada estudiante adquiera las competencias requeridas por la normativa chilena vigente y las demandas de seguridad del entorno laboral en Arica.
           </p>
 
-          <div className="pt-4 border-t border-gray-800 flex justify-end gap-3">
+          <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 text-xs font-semibold cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border border-white/10 text-slate-300 hover:bg-white/5 text-xs font-semibold cursor-pointer transition-colors"
             >
               Cerrar
             </button>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => {
                 onClose();
                 onOpenContact();
               }}
-              className="px-5 py-2.5 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white text-xs font-bold cursor-pointer shadow-lg shadow-sky-950/50 border border-sky-400/30"
             >
               Consultar por este Curso
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

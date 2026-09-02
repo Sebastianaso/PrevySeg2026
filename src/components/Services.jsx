@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Sparkles,
+  Shield
 } from 'lucide-react';
 import cctvOperatorImg from '../assets/images/cctv_operator.jpg';
 import securityGuardsImg from '../assets/images/security_guards.jpg';
@@ -14,7 +17,7 @@ import SenceTramosSection from './SenceTramosSection';
 const CourseCover = ({ item }) => {
   if (item.image) {
     return (
-      <div className="relative aspect-[16/10] overflow-hidden bg-gray-900">
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
         <img 
           src={item.image} 
           alt={item.title} 
@@ -22,8 +25,8 @@ const CourseCover = ({ item }) => {
           loading="lazy"
         />
         {/* Top-Left Category Badge */}
-        <div className="absolute top-3 left-3">
-          <span className="inline-block bg-[#0f2942]/95 backdrop-blur-sm text-white text-[11px] font-bold px-3 py-1 rounded-md shadow-md border border-white/10">
+        <div className="absolute top-3 left-3 z-10">
+          <span className="inline-block bg-[#0f2942]/90 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-md shadow-md border border-white/15">
             {item.category}
           </span>
         </div>
@@ -32,7 +35,7 @@ const CourseCover = ({ item }) => {
   }
 
   // Geometric Pattern Renderers matching screenshot covers
-  let patternBg = 'bg-gray-800';
+  let patternBg = 'bg-slate-800';
   let patternSvg = null;
 
   if (item.coverType === 'pattern-grey') {
@@ -123,7 +126,7 @@ const CourseCover = ({ item }) => {
       {patternSvg}
       {/* Top-Left Category Badge */}
       <div className="absolute top-3 left-3 z-10">
-        <span className="inline-block bg-[#0f2942] text-white text-[11px] font-bold px-3 py-1 rounded-md shadow-md border border-white/10">
+        <span className="inline-block bg-[#0f2942]/90 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-md shadow-md border border-white/15">
           {item.category}
         </span>
       </div>
@@ -182,6 +185,25 @@ export const COURSES_DATA = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: 'easeOut' }
+  }
+};
+
 const Services = ({ onSelectCourse }) => {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
@@ -192,82 +214,114 @@ const Services = ({ onSelectCourse }) => {
     : COURSES_DATA.filter((c) => c.category === selectedCategory);
 
   return (
-    <section id="servicios" className="py-24 px-4 sm:px-8 bg-[#16171a] relative border-t border-gray-800/60">
+    <section id="servicios" className="py-24 px-4 sm:px-8 bg-gradient-to-b from-[#18191c] via-[#131416] to-[#18191c] relative border-t border-white/10">
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto space-y-4"
+        >
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-semibold backdrop-blur-md shadow-lg shadow-emerald-950/40">
+            <Shield size={14} className="text-emerald-400" />
+            <span>Oferta Académica Vigente 2026</span>
+          </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-            Cursos <span className="text-[#22c55e]">Disponibles</span>
+            Cursos <span className="text-[#00c2b2]">Disponibles</span>
           </h2>
-          <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
-            Programas formativos y especializaciones acreditadas con financiamiento SENCE y certificación oficial.
+          <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
+            Programas formativos y especializaciones acreditadas con financiamiento SENCE y certificación oficial de Carabineros OS-10.
           </p>
-        </div>
+        </motion.div>
 
         {/* Filter Categories Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="flex flex-wrap items-center justify-center gap-2.5 pt-2"
+        >
           {categories.map((cat) => (
-            <button
+            <motion.button
               key={cat}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                 selectedCategory === cat
-                  ? 'bg-[#00c2b2] text-gray-950 shadow-lg shadow-teal-900/40'
-                  : 'bg-gray-800/80 text-gray-300 hover:bg-gray-700 border border-gray-700'
+                  ? 'bg-gradient-to-r from-[#00c2b2] to-teal-400 text-gray-950 border-teal-300 shadow-lg shadow-teal-500/25'
+                  : 'bg-[#121315]/80 text-slate-300 hover:text-white hover:bg-slate-800/80 border-white/10 hover:border-cyan-500/30'
               }`}
             >
               {cat}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Courses Grid: Visual + Title Only (No Description) + Price at the bottom */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredCourses.map((course) => (
-            <div
-              key={course.id}
-              className="rounded-2xl overflow-hidden bg-[#121316] border border-gray-800 shadow-xl hover:border-gray-700 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1.5"
-            >
-              <div>
-                {/* 1. Course Visual Cover */}
-                <CourseCover item={course} />
-
-                {/* 2. Course Title (Sin descripción, solo título visual) */}
-                <div className="p-5">
-                  <h3 className="text-sm sm:text-base font-bold text-white leading-snug group-hover:text-[#00c2b2] transition-colors line-clamp-3">
-                    {course.title}
-                  </h3>
-                </div>
-              </div>
-
-              {/* 3. Bottom Price & Action Row */}
-              <div className="p-5 pt-3 border-t border-gray-800/80 bg-black/20 flex items-center justify-between gap-3">
+        {/* Courses Grid: Framer Motion Staggered Grid */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+        >
+          <AnimatePresence>
+            {filteredCourses.map((course) => (
+              <motion.div
+                key={course.id}
+                variants={cardVariants}
+                layout
+                whileHover={{ y: -6, scale: 1.015 }}
+                transition={{ duration: 0.25 }}
+                className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#16171a] to-[#111214] border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/15 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between group"
+              >
                 <div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-gray-400">
-                    Valor del Curso:
-                  </div>
-                  <div className="text-lg sm:text-xl font-black text-[#00c2b2] tracking-tight">
-                    {course.price}
-                  </div>
-                  <div className="text-[10px] font-semibold text-emerald-400">
-                    {course.priceDetail}
+                  {/* 1. Course Visual Cover */}
+                  <CourseCover item={course} />
+
+                  {/* 2. Course Title */}
+                  <div className="p-6">
+                    <h3 className="text-sm sm:text-base font-bold text-white leading-snug group-hover:text-[#00c2b2] transition-colors line-clamp-3">
+                      {course.title}
+                    </h3>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => onSelectCourse(course.title)}
-                  className="bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn"
-                >
-                  <span>Inscribirme</span>
-                  <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+                {/* 3. Bottom Price & Action Row */}
+                <div className="p-6 pt-4 border-t border-white/10 bg-black/30 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                      Arancel Oficial:
+                    </div>
+                    <div className="text-lg sm:text-xl font-black text-[#00c2b2] tracking-tight">
+                      {course.price}
+                    </div>
+                    <div className="text-[11px] font-semibold text-emerald-400">
+                      {course.priceDetail}
+                    </div>
+                  </div>
 
-        {/* SENCE Tramos & Beneficios de Franquicia Tributaria (Afiliación oficial y tramos UTM) */}
+                  <motion.button
+                    whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(2, 132, 199, 0.4)' }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => onSelectCourse(course.title)}
+                    className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn border border-sky-400/30"
+                  >
+                    <span>Inscribirme</span>
+                    <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* SENCE Tramos & Beneficios de Franquicia Tributaria */}
         <SenceTramosSection />
 
       </div>
