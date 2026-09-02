@@ -38,6 +38,7 @@ import AdminGeneralView from './views/AdminGeneralView';
 import SiteAdminView from './views/SiteAdminView';
 import ExtraCoursesView from './views/ExtraCoursesView';
 import JobBoardView from './views/JobBoardView';
+import CourseClassroomView from './views/CourseClassroomView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   // Verificación estricta de Roles (RBAC)
@@ -57,6 +58,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   // Sub-pestaña activa en "Administración del sitio": 'ajustes-sitio' | 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
   const [adminSubTab, setAdminSubTab] = useState('ajustes-sitio');
 
+  // Estado del Aula Virtual Activa (para reproducir clases)
+  const [activeClassroomCourse, setActiveClassroomCourse] = useState(null);
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
@@ -73,12 +77,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   ];
 
   const handleSelectCourse = (course) => {
-    if (isAdmin) {
-      setMainNavTab('admin-sitio');
-      setAdminSubTab('participantes');
-    } else {
-      setMainNavTab('mis-cursos');
-    }
+    setActiveClassroomCourse(course || 'Curso de formación Guardia de Seguridad online');
   };
 
   const handleNavigateFromAdminGeneral = (targetSubTab) => {
@@ -469,15 +468,23 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
 
         {/* Renderizado de Vistas según la pestaña principal */}
         
-        {/* Vista: Área Personal (image_ef434c.png) */}
-        {mainNavTab === 'area-personal' && (
-          <PersonalAreaView onSelectCourse={handleSelectCourse} />
-        )}
+        {/* Vista: Aula Virtual de Clase Activa */}
+        {activeClassroomCourse ? (
+          <CourseClassroomView 
+            courseTitle={activeClassroomCourse} 
+            onBack={() => setActiveClassroomCourse(null)} 
+          />
+        ) : (
+          <>
+            {/* Vista: Área Personal */}
+            {mainNavTab === 'area-personal' && (
+              <PersonalAreaView onSelectCourse={handleSelectCourse} />
+            )}
 
-        {/* Vista: Mis Cursos (image_ef45f7.png) */}
-        {mainNavTab === 'mis-cursos' && (
-          <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode && isAdmin} />
-        )}
+            {/* Vista: Mis Cursos */}
+            {mainNavTab === 'mis-cursos' && (
+              <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={isEditMode && isAdmin} />
+            )}
 
         {/* Vista: Capacitaciones Extras (Para Alumnos) */}
         {mainNavTab === 'capacitaciones-extras' && (
@@ -523,8 +530,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
             )}
           </>
         )}
-
-      </main>
+      </>
+    )}
+  </main>
 
       {/* Footer del LMS */}
       <footer className="bg-[#0f1012] border-t border-gray-800 text-gray-500 text-xs py-4 px-6 text-center">

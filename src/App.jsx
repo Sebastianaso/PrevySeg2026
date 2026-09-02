@@ -10,6 +10,8 @@ import ContactFooter from './components/ContactFooter';
 import NetworkBackground from './components/NetworkBackground';
 import ScrollToTop from './components/ScrollToTop';
 import LMSLayout from './lms/LMSLayout';
+import CertificateVerifierModal from './components/CertificateVerifierModal';
+import SenceCalculatorModal from './components/SenceCalculatorModal';
 import { 
   ContactModal, 
   PlatformModal, 
@@ -21,6 +23,8 @@ function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isVerifierOpen, setIsVerifierOpen] = useState(false);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState('');
   
@@ -64,6 +68,8 @@ function App() {
       <Header 
         onOpenPlatform={() => setIsPlatformOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
+        onOpenCalculator={() => setIsCalculatorOpen(true)}
+        onOpenVerifier={() => setIsVerifierOpen(true)}
       />
 
       {/* Main Page Layout */}
@@ -72,6 +78,7 @@ function App() {
         {/* Section #inicio (Hero) */}
         <Hero 
           onOpenContact={() => handleOpenContactWithCourse('')}
+          onOpenCalculator={() => setIsCalculatorOpen(true)}
         />
 
         {/* Section #quienes-somos (About Us: Misión, Visión, Valores) */}
@@ -80,6 +87,7 @@ function App() {
         {/* Section #servicios (Programas de Formación & Cursos de Especialización) */}
         <Services 
           onSelectCourse={(course) => handleOpenContactWithCourse(course)}
+          onOpenCalculator={() => setIsCalculatorOpen(true)}
         />
 
         {/* Execution Section (Cyan Checkmarks, Action, and Promo Image) */}
@@ -100,6 +108,8 @@ function App() {
       {/* Section #contacto & Footer */}
       <ContactFooter 
         onOpenContactModal={() => handleOpenContactWithCourse('')}
+        onOpenVerifier={() => setIsVerifierOpen(true)}
+        onOpenCalculator={() => setIsCalculatorOpen(true)}
       />
 
       {/* Floating Scroll To Top Button */}
@@ -128,6 +138,18 @@ function App() {
         article={selectedArticle} 
         onClose={() => setSelectedArticle(null)}
         onOpenContact={() => handleOpenContactWithCourse(selectedArticle?.category || '')}
+      />
+
+      {/* Feature 2: Verificador Público de Certificados y Credenciales OS-10 */}
+      <CertificateVerifierModal
+        isOpen={isVerifierOpen}
+        onClose={() => setIsVerifierOpen(false)}
+      />
+
+      {/* Feature 3: Simulador de Franquicia SENCE y Cotizador Masivo para Empresas */}
+      <SenceCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
       />
 
     </div>

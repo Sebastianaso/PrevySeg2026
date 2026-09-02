@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { FacebookIcon, TwitterIcon, InstagramIcon, YoutubeIcon } from './SocialIcons';
 
-const Header = ({ onOpenPlatform, onOpenSearch }) => {
+const Header = ({ onOpenPlatform, onOpenSearch, onOpenCalculator, onOpenVerifier }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -146,8 +146,25 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               onClick={onOpenSearch}
               className="text-gray-300 hover:text-[#00c2b2] p-1.5 rounded-full hover:bg-gray-800/60 transition-colors cursor-pointer"
               aria-label="Buscar cursos"
+              title="Buscar cursos"
             >
               <Search size={16} />
+            </button>
+
+            {/* Simulador SENCE Button */}
+            <button
+              onClick={onOpenCalculator}
+              className="text-[#00c2b2] hover:text-teal-300 border border-[#00c2b2]/40 hover:border-[#00c2b2] px-3 py-1.5 rounded-lg transition-all text-xs font-bold cursor-pointer"
+            >
+              Simulador SENCE
+            </button>
+
+            {/* Verificador QR Button */}
+            <button
+              onClick={onOpenVerifier}
+              className="text-sky-300 hover:text-white border border-sky-500/40 hover:border-sky-400 px-3 py-1.5 rounded-lg transition-all text-xs font-bold cursor-pointer"
+            >
+              Validar Certificado
             </button>
 
             {/* Plataforma Virtual Button */}
@@ -196,6 +213,28 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
                 {item.name}
               </ScrollLink>
             ))}
+
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenCalculator();
+                }}
+                className="bg-[#121315] border border-[#00c2b2]/50 text-[#00c2b2] text-xs font-bold py-2.5 px-3 rounded-lg text-center cursor-pointer"
+              >
+                Simulador SENCE
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenVerifier();
+                }}
+                className="bg-[#121315] border border-sky-500/50 text-sky-300 text-xs font-bold py-2.5 px-3 rounded-lg text-center cursor-pointer"
+              >
+                Validar Certificado
+              </button>
+            </div>
+
             <div className="pt-2">
               <button
                 onClick={() => {

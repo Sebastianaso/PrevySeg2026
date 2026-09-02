@@ -1065,13 +1065,23 @@ async function generateGanttChart() {
       status: 'Implementado'
     },
     {
-      ver: 'v1.9.0 (Futuro)',
+      ver: 'v1.9.0',
+      date: '02/09/2026',
+      file: 'src/components/CertificateVerifierModal.jsx, SenceCalculatorModal.jsx, lms/views/CourseClassroomView.jsx',
+      type: 'Nuevas Features / LMS & B2B',
+      desc: 'Implementación del Verificador Público de Certificados OS-10 con QR, Simulador de Franquicia SENCE 100% y Cotizador Formal PDF para empresas, y Aula Virtual interactiva con reproductor de clases, temarios y simulador de examen teórico OS-10.',
+      reason: 'Aumentar la conversión comercial B2B, dar validación legal inmediata a egresados y enriquecer la experiencia educativa del estudiante en el campus virtual.',
+      impact: 'Plataforma líder en el norte de Chile con verificación en tiempo real, autoservicio corporativo y aula virtual interactiva.',
+      status: 'Implementado'
+    },
+    {
+      ver: 'v2.0.0 (Futuro)',
       date: '05/10/2026',
-      file: 'Backend API / Base de Datos',
-      type: 'Próxima Iteración',
-      desc: 'Conexión a base de datos PostgreSQL, pasarela de pagos Webpay y generación de certificados con código QR.',
-      reason: 'Automatización total de matrículas y validación pública de alumnos.',
-      impact: 'Plataforma 100% autoservicio.',
+      file: 'Backend API / Base de Datos / Webpay',
+      type: 'Próxima Iteración Mayor',
+      desc: 'Conexión a base de datos PostgreSQL en producción, pasarela de pagos Webpay Plus en cuotas y webhook de matriculación automática.',
+      reason: 'Automatización total de pagos en línea y alta disponibilidad.',
+      impact: 'Ecosistema 100% autosuficiente y transaccional.',
       status: 'En Planificación'
     }
   ];
