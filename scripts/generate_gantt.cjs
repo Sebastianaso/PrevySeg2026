@@ -1095,6 +1095,16 @@ async function generateGanttChart() {
       status: 'Implementado'
     },
     {
+      ver: 'v1.9.3',
+      date: '02/09/2026',
+      file: 'Requerimientos_Funcionales_y_No_Funcionales_PrevySeg.docx',
+      type: 'Documentación & Ingeniería de Software',
+      desc: 'Generación del Documento Formal de Especificación de Requerimientos de Software (ERS / SRS) en formato Word (.docx) con portada institucional PrevySeg, matriz de 17 Requerimientos Funcionales (RF) y 12 Requerimientos No Funcionales (RNF) alineados a SENCE, OS-10 y NCh 2728.',
+      reason: 'Formalizar los requerimientos técnicos y funcionales de la plataforma para auditoría, desarrollo y certificación.',
+      impact: 'Documentación de ingeniería de software formal y completa para el cliente y dirección académica.',
+      status: 'Implementado'
+    },
+    {
       ver: 'v2.0.0 (Futuro)',
       date: '05/10/2026',
       file: 'Backend API / Base de Datos / Webpay',
