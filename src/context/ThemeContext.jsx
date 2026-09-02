@@ -1,8 +1,174 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
 
 const ThemeContext = createContext();
+
+const LIGHT_MODE_CSS = `
+  /* Global page background and high-contrast text */
+  html, body, #root, .min-h-screen, main, section, footer {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+  }
+  
+  /* Sticky header & navigation */
+  header, nav {
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* All dark cards, panels and containers converted to clean white */
+  div[class*="bg-[#"],
+  div[class*="bg-slate-9"],
+  div[class*="bg-gray-9"],
+  div[class*="bg-black"],
+  div[class*="bg-gray-950"],
+  div[class*="bg-slate-950"],
+  section[class*="bg-[#"],
+  article[class*="bg-[#"],
+  aside[class*="bg-[#"] {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Deactivate dark background gradients in light mode */
+  div[class*="from-[#"],
+  div[class*="to-[#"],
+  div[class*="via-[#"],
+  section[class*="from-[#"],
+  section[class*="to-[#"],
+  section[class*="via-[#"] {
+    background-image: none !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Text color transformations for WCAG 2.1 AAA high contrast */
+  .text-white,
+  [class*="text-white"],
+  [class*="text-slate-100"],
+  [class*="text-slate-200"],
+  [class*="text-gray-100"],
+  [class*="text-gray-200"] {
+    color: #0f172a !important;
+  }
+
+  .text-slate-300,
+  .text-slate-400,
+  .text-gray-300,
+  .text-gray-400,
+  [class*="text-slate-300"],
+  [class*="text-slate-400"] {
+    color: #334155 !important;
+  }
+
+  .text-slate-500,
+  .text-gray-500,
+  [class*="text-slate-500"] {
+    color: #64748b !important;
+  }
+
+  /* Accessible accent colors on white background */
+  [class*="text-[#00c2b2]"] {
+    color: #0d9488 !important;
+  }
+
+  [class*="text-[#38bdf8]"] {
+    color: #0284c7 !important;
+  }
+
+  .text-emerald-400,
+  .text-emerald-300 {
+    color: #047857 !important;
+  }
+
+  /* Form inputs & dropdowns */
+  input, select, textarea {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  /* Preserve primary gradient buttons with crisp contrast */
+  button[class*="bg-gradient-to-r"],
+  a[class*="bg-gradient-to-r"] {
+    background-image: inherit !important;
+    color: #ffffff !important;
+  }
+
+  button[class*="bg-gradient-to-r"] span,
+  a[class*="bg-gradient-to-r"] span {
+    color: #ffffff !important;
+  }
+
+  [class*="bg-gradient-to-r from-[#00c2b2]"] span,
+  [class*="bg-[#00c2b2]"] span {
+    color: #0f172a !important;
+  }
+
+  /* Badges & Pills */
+  [class*="bg-emerald-950"] {
+    background-color: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+    color: #065f46 !important;
+  }
+
+  [class*="bg-sky-950"] {
+    background-color: #f0f9ff !important;
+    border-color: #bae6fd !important;
+    color: #0369a1 !important;
+  }
+
+  [class*="bg-teal-950"] {
+    background-color: #f0fdfa !important;
+    border-color: #99f6e4 !important;
+    color: #0f766e !important;
+  }
+
+  [class*="bg-purple-950"],
+  [class*="bg-purple-900"] {
+    background-color: #faf5ff !important;
+    border-color: #e9d5ff !important;
+    color: #6b21a8 !important;
+  }
+
+  /* Subtle light borders */
+  [class*="border-white"],
+  [class*="border-gray-8"],
+  [class*="border-gray-7"] {
+    border-color: #e2e8f0 !important;
+  }
+
+  /* Secondary buttons */
+  .bg-slate-800,
+  [class*="bg-slate-800"],
+  [class*="bg-gray-800"] {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  /* Backdrop overlays */
+  [class*="bg-black/8"] {
+    background-color: rgba(15, 23, 42, 0.65) !important;
+  }
+
+  /* Scrollbar in Light Mode */
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+  }
+`;
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
@@ -24,6 +190,7 @@ export const ThemeProvider = ({ children }) => {
 
     const root = document.documentElement;
     const body = document.body;
+    let existingStyle = document.getElementById('prevyseg-theme-dynamic-styles');
 
     if (theme === 'light') {
       root.classList.add('light');
@@ -34,6 +201,12 @@ export const ThemeProvider = ({ children }) => {
         body.classList.remove('dark');
         body.setAttribute('data-theme', 'light');
       }
+      if (!existingStyle) {
+        const styleEl = document.createElement('style');
+        styleEl.id = 'prevyseg-theme-dynamic-styles';
+        styleEl.innerHTML = LIGHT_MODE_CSS;
+        document.head.appendChild(styleEl);
+      }
     } else {
       root.classList.add('dark');
       root.classList.remove('light');
@@ -42,6 +215,9 @@ export const ThemeProvider = ({ children }) => {
         body.classList.add('dark');
         body.classList.remove('light');
         body.setAttribute('data-theme', 'dark');
+      }
+      if (existingStyle) {
+        existingStyle.remove();
       }
     }
   }, [theme]);
