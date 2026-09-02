@@ -262,23 +262,19 @@ const Services = ({ onSelectCourse }) => {
           ))}
         </motion.div>
 
-        {/* Courses Grid: Framer Motion Staggered Grid */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-        >
-          <AnimatePresence>
+        {/* Courses Grid: Framer Motion Responsive Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <AnimatePresence mode="popLayout">
             {filteredCourses.map((course) => (
               <motion.div
                 key={course.id}
-                variants={cardVariants}
                 layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
                 whileHover={{ y: -6, scale: 1.015 }}
-                transition={{ duration: 0.25 }}
-                className="rounded-2xl overflow-hidden bg-gradient-to-b from-[#16171a] to-[#111214] border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/15 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between group"
+                className="rounded-3xl overflow-hidden bg-gradient-to-b from-[#16171a] to-[#111214] border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/15 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   {/* 1. Course Visual Cover */}
@@ -319,7 +315,7 @@ const Services = ({ onSelectCourse }) => {
               </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
 
         {/* SENCE Tramos & Beneficios de Franquicia Tributaria */}
         <SenceTramosSection />
