@@ -14,17 +14,13 @@ async function generateGanttChart() {
   const MEDIUM_SLATE = '1E293B';
   const LIGHT_BG = 'F8FAFC';
   const ACCENT_BLUE = '2563EB';
-  const ACCENT_LIGHT_BLUE = 'DBEAFE';
   const SUCCESS_GREEN = '16A34A';
   const SUCCESS_LIGHT = 'DCFCE7';
-  const WARNING_GOLD = 'D97706';
-  const WARNING_LIGHT = 'FEF3C7';
   const PROGRESS_BLUE = '0284C7';
   const PROGRESS_LIGHT = 'E0F2FE';
-  const PENDING_GRAY = '64748B';
-  const PENDING_LIGHT = 'F1F5F9';
+  const WARNING_GOLD = 'D97706';
+  const WARNING_LIGHT = 'FEF3C7';
   const BORDER_COLOR = 'CBD5E1';
-  const MILESTONE_BG = '78350F';
   const MILESTONE_FILL = 'F59E0B';
 
   const thinBorder = {
@@ -42,585 +38,460 @@ async function generateGanttChart() {
   };
 
   /* ==========================================================================
-     HOJA 1: CARTA GANTT (Cronograma Interactivo 1 Mes + Extensiones)
+     HOJA 1: CARTA GANTT (Cronograma Maestro de 30 Días - 4 Semanas)
      ========================================================================== */
   const wsGantt = workbook.addWorksheet('Carta Gantt', {
-    views: [{ state: 'frozen', xSplit: 5, ySplit: 8, showGridLines: true }]
+    views: [{ state: 'frozen', xSplit: 3, ySplit: 8, showGridLines: true }]
   });
 
   // Base Date: 1 de Septiembre 2026
-  const startDateBase = new Date(2026, 8, 1); // 1 Sep 2026
+  const startDateBase = new Date(2026, 8, 1); // 01/09/2026
 
-  // Title Banner
-  wsGantt.mergeCells('A1:AK1');
-  const titleCell = wsGantt.getCell('A1');
-  titleCell.value = 'PREVYSEG 2026 — CRONOGRAMA MAESTRO Y CARTA GANTT (1 MES / 30 DÍAS + EXTENSIONES)';
-  titleCell.font = { name: 'Segoe UI', size: 16, bold: true, color: { argb: 'FFFFFF' } };
-  titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-  titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
-  wsGantt.getRow(1).height = 34;
-
-  // Subtitle
-  wsGantt.mergeCells('A2:AK2');
-  const subCell = wsGantt.getCell('A2');
-  subCell.value = 'Desarrollo de Plataforma Web Corporativa, Campus Virtual LMS, RBAC, Catálogos, Panel de Administración e Iteraciones';
-  subCell.font = { name: 'Segoe UI', size: 11, italic: true, color: { argb: 'E2E8F0' } };
-  subCell.alignment = { vertical: 'middle', horizontal: 'center' };
-  subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: MEDIUM_SLATE } };
-  wsGantt.getRow(2).height = 22;
-
-  // KPI Summary Bar (Rows 4-5)
-  wsGantt.mergeCells('A4:C4');
-  wsGantt.getCell('A4').value = 'MÉTRICAS DEL PROYECTO:';
-  wsGantt.getCell('A4').font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: DARK_SLATE } };
-  wsGantt.getCell('A4').alignment = { vertical: 'middle' };
-
-  // KPI 1: Total Tareas
-  wsGantt.mergeCells('D4:F4');
-  wsGantt.getCell('D4').value = 'Total Tareas & Hitos';
-  wsGantt.getCell('D4').font = { name: 'Segoe UI', size: 9, color: { argb: '475569' } };
-  wsGantt.getCell('D4').alignment = { horizontal: 'center' };
-  wsGantt.mergeCells('D5:F5');
-  wsGantt.getCell('D5').value = { formula: 'COUNTA(C10:C45)' };
-  wsGantt.getCell('D5').font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: ACCENT_BLUE } };
-  wsGantt.getCell('D5').alignment = { horizontal: 'center' };
-
-  // KPI 2: Completadas
-  wsGantt.mergeCells('G4:I4');
-  wsGantt.getCell('G4').value = 'Tareas Completadas';
-  wsGantt.getCell('G4').font = { name: 'Segoe UI', size: 9, color: { argb: '475569' } };
-  wsGantt.getCell('G4').alignment = { horizontal: 'center' };
-  wsGantt.mergeCells('G5:I5');
-  wsGantt.getCell('G5').value = { formula: 'COUNTIF(I10:I45, "Completado")' };
-  wsGantt.getCell('G5').font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: SUCCESS_GREEN } };
-  wsGantt.getCell('G5').alignment = { horizontal: 'center' };
-
-  // KPI 3: En Progreso
-  wsGantt.mergeCells('J4:L4');
-  wsGantt.getCell('J4').value = 'En Progreso / Iteración';
-  wsGantt.getCell('J4').font = { name: 'Segoe UI', size: 9, color: { argb: '475569' } };
-  wsGantt.getCell('J4').alignment = { horizontal: 'center' };
-  wsGantt.mergeCells('J5:L5');
-  wsGantt.getCell('J5').value = { formula: 'COUNTIF(I10:I45, "En Progreso")' };
-  wsGantt.getCell('J5').font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: PROGRESS_BLUE } };
-  wsGantt.getCell('J5').alignment = { horizontal: 'center' };
-
-  // KPI 4: Hitos Clave
-  wsGantt.mergeCells('M4:O4');
-  wsGantt.getCell('M4').value = 'Hitos Principales';
-  wsGantt.getCell('M4').font = { name: 'Segoe UI', size: 9, color: { argb: '475569' } };
-  wsGantt.getCell('M4').alignment = { horizontal: 'center' };
-  wsGantt.mergeCells('M5:O5');
-  wsGantt.getCell('M5').value = { formula: 'COUNTIF(D10:D45, "*Hito*")' };
-  wsGantt.getCell('M5').font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: WARNING_GOLD } };
-  wsGantt.getCell('M5').alignment = { horizontal: 'center' };
-
-  // KPI 5: Avance Global Promedio
-  wsGantt.mergeCells('P4:R4');
-  wsGantt.getCell('P4').value = 'Avance Global Estimado';
-  wsGantt.getCell('P4').font = { name: 'Segoe UI', size: 9, color: { argb: '475569' } };
-  wsGantt.getCell('P4').alignment = { horizontal: 'center' };
-  wsGantt.mergeCells('P5:R5');
-  wsGantt.getCell('P5').value = { formula: 'AVERAGE(H10:H45)' };
-  wsGantt.getCell('P5').numFmt = '0.0%';
-  wsGantt.getCell('P5').font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: DARK_SLATE } };
-  wsGantt.getCell('P5').alignment = { horizontal: 'center' };
-
-  // Format KPI box borders & backgrounds
-  ['D4', 'D5', 'G4', 'G5', 'J4', 'J5', 'M4', 'M5', 'P4', 'P5'].forEach(cellRef => {
-    const cell = wsGantt.getCell(cellRef);
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F8FAFC' } };
-    cell.border = thinBorder;
-  });
-
-  // Row 7: Header Level 1 (Columns + Week Groupings)
-  wsGantt.getRow(7).height = 24;
-  wsGantt.getRow(8).height = 26;
-
-  // Main task metadata headers
-  const mainHeaders = [
-    { col: 'A', title: 'WBS', width: 7 },
-    { col: 'B', title: 'Fase / Módulo', width: 22 },
-    { col: 'C', title: 'Tarea / Entregable / Hito', width: 44 },
-    { col: 'D', title: 'Tipo', width: 14 },
-    { col: 'E', title: 'Responsable', width: 18 },
-    { col: 'F', title: 'F. Inicio', width: 12 },
-    { col: 'G', title: 'F. Fin', width: 12 },
-    { col: 'H', title: 'Días', width: 7 },
-    { col: 'I', title: '% Avance', width: 11 },
-    { col: 'J', title: 'Estado', width: 14 },
-    { col: 'K', title: 'Dependencias', width: 13 }
-  ];
-
-  mainHeaders.forEach(h => {
-    wsGantt.getColumn(h.col).width = h.width;
-    wsGantt.mergeCells(`${h.col}7:${h.col}8`);
-    const cell = wsGantt.getCell(`${h.col}7`);
-    cell.value = h.title;
-    cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
-    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
-    cell.border = headerBorder;
-  });
-
-  // Week Groupings (Columns L to AK = 30 days of Month 1 + 5 buffer days)
-  const totalDays = 35; // 30 days + 5 expansion days
-  const daysInWeeks = [
-    { name: 'SEMANA 1 (Días 1 - 7)', startCol: 12, endCol: 18, color: '1E3A8A' },
-    { name: 'SEMANA 2 (Días 8 - 14)', startCol: 19, endCol: 25, color: '1D4ED8' },
-    { name: 'SEMANA 3 (Días 15 - 21)', startCol: 26, endCol: 32, color: '2563EB' },
-    { name: 'SEMANA 4 (Días 22 - 30)', startCol: 33, endCol: 41, color: '3B82F6' },
-    { name: 'EXTENSIÓN / NUEVOS HITOS (Días 31 - 35)', startCol: 42, endCol: 46, color: '0D9488' }
-  ];
-
+  // Helper for column letters
   function getColLetter(colIndex) {
     let temp, letter = '';
     while (colIndex > 0) {
       temp = (colIndex - 1) % 26;
       letter = String.fromCharCode(temp + 65) + letter;
-      colIndex = (colIndex - temp - 1) / 26;
+      colIndex = Math.floor((colIndex - temp - 1) / 26);
     }
     return letter;
   }
 
-  daysInWeeks.forEach(w => {
-    const startLetter = getColLetter(w.startCol);
-    const endLetter = getColLetter(w.endCol);
-    wsGantt.mergeCells(`${startLetter}7:${endLetter}7`);
-    const weekCell = wsGantt.getCell(`${startLetter}7`);
-    weekCell.value = w.name;
-    weekCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
-    weekCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    weekCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: w.color } };
-    weekCell.border = headerBorder;
+  // Title Banner
+  wsGantt.mergeCells('A1:AN1');
+  const titleCell = wsGantt.getCell('A1');
+  titleCell.value = 'PREVYSEG 2026 — CRONOGRAMA MAESTRO Y CARTA GANTT OFICIAL (30 DÍAS / 4 SEMANAS)';
+  titleCell.font = { name: 'Segoe UI', size: 15, bold: true, color: { argb: 'FFFFFF' } };
+  titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+  titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
+  wsGantt.getRow(1).height = 32;
+
+  // Subtitle
+  wsGantt.mergeCells('A2:AN2');
+  const subCell = wsGantt.getCell('A2');
+  subCell.value = 'Cronología Completa de Planificación, Desarrollo Web, Catálogo SENCE, Campus Virtual LMS, Aulas Virtuales y Emisión de Diplomas';
+  subCell.font = { name: 'Segoe UI', size: 10.5, italic: true, color: { argb: 'E2E8F0' } };
+  subCell.alignment = { vertical: 'middle', horizontal: 'center' };
+  subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: MEDIUM_SLATE } };
+  wsGantt.getRow(2).height = 20;
+
+  // KPI Summary Bar (Rows 4-5)
+  wsGantt.mergeCells('A4:B4');
+  wsGantt.getCell('A4').value = 'MÉTRICAS:';
+  wsGantt.getCell('A4').font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: DARK_SLATE } };
+  wsGantt.getCell('A4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+  // KPI 1: Total Tareas
+  wsGantt.mergeCells('C4:D4');
+  wsGantt.getCell('C4').value = 'Total Actividades';
+  wsGantt.getCell('C4').font = { name: 'Segoe UI', size: 8.5, color: { argb: '475569' } };
+  wsGantt.getCell('C4').alignment = { horizontal: 'center' };
+  wsGantt.mergeCells('C5:D5');
+  wsGantt.getCell('C5').value = 24;
+  wsGantt.getCell('C5').font = { name: 'Segoe UI', size: 13, bold: true, color: { argb: ACCENT_BLUE } };
+  wsGantt.getCell('C5').alignment = { horizontal: 'center' };
+
+  // KPI 2: Completadas
+  wsGantt.mergeCells('E4:F4');
+  wsGantt.getCell('E4').value = 'Tareas Ejecutadas';
+  wsGantt.getCell('E4').font = { name: 'Segoe UI', size: 8.5, color: { argb: '475569' } };
+  wsGantt.getCell('E4').alignment = { horizontal: 'center' };
+  wsGantt.mergeCells('E5:F5');
+  wsGantt.getCell('E5').value = 24;
+  wsGantt.getCell('E5').font = { name: 'Segoe UI', size: 13, bold: true, color: { argb: SUCCESS_GREEN } };
+  wsGantt.getCell('E5').alignment = { horizontal: 'center' };
+
+  // KPI 3: Duración Total
+  wsGantt.mergeCells('G4:H4');
+  wsGantt.getCell('G4').value = 'Plazo de Ejecución';
+  wsGantt.getCell('G4').font = { name: 'Segoe UI', size: 8.5, color: { argb: '475569' } };
+  wsGantt.getCell('G4').alignment = { horizontal: 'center' };
+  wsGantt.mergeCells('G5:H5');
+  wsGantt.getCell('G5').value = '30 Días (4 Semanas)';
+  wsGantt.getCell('G5').font = { name: 'Segoe UI', size: 12, bold: true, color: { argb: PROGRESS_BLUE } };
+  wsGantt.getCell('G5').alignment = { horizontal: 'center' };
+
+  // KPI 4: Avance Global
+  wsGantt.mergeCells('I4:J4');
+  wsGantt.getCell('I4').value = 'Avance del Proyecto';
+  wsGantt.getCell('I4').font = { name: 'Segoe UI', size: 8.5, color: { argb: '475569' } };
+  wsGantt.getCell('I4').alignment = { horizontal: 'center' };
+  wsGantt.mergeCells('I5:J5');
+  wsGantt.getCell('I5').value = '100.0%';
+  wsGantt.getCell('I5').font = { name: 'Segoe UI', size: 13, bold: true, color: { argb: SUCCESS_GREEN } };
+  wsGantt.getCell('I5').alignment = { horizontal: 'center' };
+
+  ['C4', 'C5', 'E4', 'E5', 'G4', 'G5', 'I4', 'I5'].forEach(ref => {
+    const cell = wsGantt.getCell(ref);
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F8FAFC' } };
+    cell.border = thinBorder;
   });
 
-  // Day columns (Row 8)
-  for (let i = 1; i <= totalDays; i++) {
-    const colIdx = 11 + i; // starts at col 12 (L)
-    const colLetter = getColLetter(colIdx);
-    wsGantt.getColumn(colLetter).width = 4.2;
-    const dayCell = wsGantt.getCell(`${colLetter}8`);
-    dayCell.value = `D${i}`;
-    dayCell.font = { name: 'Segoe UI', size: 8, bold: true, color: { argb: i > 30 ? '0F766E' : '334155' } };
+  // Headers (Rows 7 & 8)
+  wsGantt.getRow(7).height = 22;
+  wsGantt.getRow(8).height = 24;
+
+  const metadataHeaders = [
+    { col: 'A', title: 'WBS', width: 7 },
+    { col: 'B', title: 'Fase / Módulo', width: 20 },
+    { col: 'C', title: 'Actividad / Entregable / Hito', width: 44 },
+    { col: 'D', title: 'Responsable', width: 16 },
+    { col: 'E', title: 'F. Inicio', width: 11 },
+    { col: 'F', title: 'F. Fin', width: 11 },
+    { col: 'G', title: 'Días', width: 6 },
+    { col: 'H', title: '% Avance', width: 10 },
+    { col: 'I', title: 'Estado', width: 13 }
+  ];
+
+  metadataHeaders.forEach(h => {
+    wsGantt.getColumn(h.col).width = h.width;
+    wsGantt.mergeCells(`${h.col}7:${h.col}8`);
+    const cell = wsGantt.getCell(`${h.col}7`);
+    cell.value = h.title;
+    cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFFFFF' } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
+    cell.border = headerBorder;
+  });
+
+  // 4 Weeks Groupings (Columns J to AN = 30 Days)
+  // Col J is Index 10 -> Day 1 (10), Day 30 is Col 39 (Index 39 = AN)
+  const weeks = [
+    { name: 'SEMANA 1 (Días 1 al 7)', startCol: 10, endCol: 16, color: '1E3A8A' },
+    { name: 'SEMANA 2 (Días 8 al 14)', startCol: 17, endCol: 23, color: '1D4ED8' },
+    { name: 'SEMANA 3 (Días 15 al 21)', startCol: 24, endCol: 30, color: '2563EB' },
+    { name: 'SEMANA 4 (Días 22 al 30)', startCol: 31, endCol: 39, color: '3B82F6' }
+  ];
+
+  weeks.forEach(w => {
+    const startL = getColLetter(w.startCol);
+    const endL = getColLetter(w.endCol);
+    wsGantt.mergeCells(`${startL}7:${endL}7`);
+    const cell = wsGantt.getCell(`${startL}7`);
+    cell.value = w.name;
+    cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFFFFF' } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: w.color } };
+    cell.border = headerBorder;
+  });
+
+  // Day columns headers (Row 8, Days 1 to 30)
+  for (let d = 1; d <= 30; d++) {
+    const colIdx = 9 + d; // Day 1 = Col 10 (J)
+    const colL = getColLetter(colIdx);
+    wsGantt.getColumn(colL).width = 4.0;
+    const dayCell = wsGantt.getCell(`${colL}8`);
+    dayCell.value = `D${d}`;
+    dayCell.font = { name: 'Segoe UI', size: 8, bold: true, color: { argb: '334155' } };
     dayCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    dayCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: i > 30 ? 'CCFBF1' : (i % 2 === 0 ? 'F1F5F9' : 'E2E8F0') } };
+    dayCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: d % 2 === 0 ? 'F1F5F9' : 'E2E8F0' } };
     dayCell.border = thinBorder;
   }
 
-  // Data Rows Definition
-  // Each task has: wbs, phase, task, type, responsible, startDay, endDay, progress, status, deps, isMilestone, isPhaseHeader
-  const tasksData = [
-    // FASE 1
+  // 30-Day Tasks Dataset (Active and filled across all 4 weeks)
+  const tasks30Days = [
+    // ================= SEMANA 1 =================
     {
       isPhaseHeader: true,
-      title: 'FASE 1: LANDING PAGE CORPORATIVA Y EXPERIENCIA DE USUARIO (SEMANA 1)',
+      title: 'SEMANA 1: ARQUITECTURA, LANDING PAGE, CATÁLOGO SENCE Y CONTACTO (DÍAS 1 - 7)',
       color: '1E3A8A'
     },
     {
       wbs: '1.0',
-      phase: 'Landing Page',
-      task: '⭐ HITO 1: Landing Page Corporativa y Catálogos OS10 Operativos',
-      type: 'Hito ⭐',
+      phase: 'Hito Semana 1',
+      task: '⭐ HITO 1: Arquitectura Base y Portal Web Público Operativo',
       responsible: 'PM / Fullstack',
       startDay: 7,
       endDay: 7,
       progress: 1.0,
       status: 'Completado',
-      deps: '1.1, 1.2, 1.3',
       isMilestone: true
     },
     {
       wbs: '1.1',
-      phase: 'Arquitectura Base',
-      task: 'Setup inicial de Vite 8, React 19, Tailwind v4 y React Router',
-      type: 'Configuración',
-      responsible: 'Dev Frontend',
+      phase: 'Planificación',
+      task: 'Levantamiento de Requerimientos ERS (SENCE, OS-10, NCh 2728)',
+      responsible: 'Analista / PM',
       startDay: 1,
       endDay: 2,
       progress: 1.0,
-      status: 'Completado',
-      deps: '-'
+      status: 'Completado'
     },
     {
       wbs: '1.2',
-      phase: 'Landing Page',
-      task: 'Hero Section con llamados a la acción y Canvas Network Background',
-      type: 'Desarrollo UI',
+      phase: 'Setup Inicial',
+      task: 'Scaffolding con React 19, Vite, TailwindCSS y Canvas Background',
       responsible: 'Dev Frontend',
-      startDay: 2,
+      startDay: 1,
       endDay: 3,
       progress: 1.0,
-      status: 'Completado',
-      deps: '1.1'
+      status: 'Completado'
     },
     {
       wbs: '1.3',
       phase: 'Landing Page',
-      task: 'Módulos de Cursos OS10 (Formación, Perfeccionamiento) & Modals interactivos',
-      type: 'Desarrollo UI',
+      task: 'Hero Section con propuesta de valor, badges y llamados a la acción',
       responsible: 'Dev Frontend',
-      startDay: 3,
+      startDay: 2,
       endDay: 4,
       progress: 1.0,
-      status: 'Completado',
-      deps: '1.2'
+      status: 'Completado'
     },
     {
       wbs: '1.4',
-      phase: 'Landing Page',
-      task: 'Secciones Quiénes Somos, Métricas, Metodología de Ejecución y Testimonios',
-      type: 'Desarrollo UI',
-      responsible: 'UX / UI Dev',
-      startDay: 4,
+      phase: 'Catálogo Cursos',
+      task: 'Catálogo de 6 Cursos Activos con portadas Moodle y aranceles al pie',
+      responsible: 'Dev Frontend',
+      startDay: 3,
       endDay: 5,
       progress: 1.0,
-      status: 'Completado',
-      deps: '1.3'
+      status: 'Completado'
     },
     {
       wbs: '1.5',
-      phase: 'Iteración / Contacto',
-      task: '🔄 ITERACIÓN: Conexión directa de Formulario de Contacto a WhatsApp (+56978691869)',
-      type: 'Iteración',
+      phase: 'Contacto Móvil',
+      task: 'Integración de Formulario y Cotizaciones directas a WhatsApp (+56978691869)',
       responsible: 'Fullstack Dev',
-      startDay: 5,
+      startDay: 4,
       endDay: 6,
       progress: 1.0,
-      status: 'Completado',
-      deps: '1.4'
+      status: 'Completado'
     },
     {
       wbs: '1.6',
-      phase: 'QA & Responsive',
-      task: 'Optimización Mobile, pruebas cross-browser y navegación fluida (ScrollToTop)',
-      type: 'QA / Optimización',
-      responsible: 'QA / Frontend',
-      startDay: 6,
+      phase: 'Búsqueda & UI',
+      task: 'Buscador Global en Tiempo Real y Sección Quiénes Somos / Métricas',
+      responsible: 'UX/UI Dev',
+      startDay: 5,
       endDay: 7,
       progress: 1.0,
-      status: 'Completado',
-      deps: '1.5'
+      status: 'Completado'
     },
 
-    // FASE 2
+    // ================= SEMANA 2 =================
     {
       isPhaseHeader: true,
-      title: 'FASE 2: CAMPUS VIRTUAL LMS & SISTEMA DE AUTENTICACIÓN (SEMANA 2)',
+      title: 'SEMANA 2: CAMPUS VIRTUAL LMS, AUTENTICACIÓN Y ÁREA DEL ALUMNO (DÍAS 8 - 14)',
       color: '1D4ED8'
     },
     {
       wbs: '2.0',
-      phase: 'Campus Virtual LMS',
-      task: '⭐ HITO 2: Plataforma LMS con Autenticación, Dashboard y Visor de Cursos',
-      type: 'Hito ⭐',
+      phase: 'Hito Semana 2',
+      task: '⭐ HITO 2: Campus Virtual LMS y Espacio del Estudiante Operativo',
       responsible: 'PM / Fullstack',
       startDay: 14,
       endDay: 14,
       progress: 1.0,
       status: 'Completado',
-      deps: '2.1, 2.2, 2.3, 2.4',
       isMilestone: true
     },
     {
       wbs: '2.1',
-      phase: 'LMS Core',
-      task: 'Maquetación de LMSLayout (Sidebar colapsable, Topbar, navegación dinámica)',
-      type: 'Desarrollo UI',
-      responsible: 'Dev Frontend',
+      phase: 'Seguridad / Auth',
+      task: 'Sistema de Autenticación con RUT y Password (RBAC Student / Admin)',
+      responsible: 'Fullstack Dev',
       startDay: 8,
-      endDay: 9,
+      endDay: 10,
       progress: 1.0,
-      status: 'Completado',
-      deps: '1.0'
+      status: 'Completado'
     },
     {
       wbs: '2.2',
-      phase: 'Seguridad / Auth',
-      task: 'Sistema de Autenticación de Usuarios (Login modal, estado de sesión, logout)',
-      type: 'Seguridad / Core',
-      responsible: 'Fullstack Dev',
+      phase: 'LMS Layout',
+      task: 'Estructura LMSLayout con Topbar, navegación lateral y badges SENCE',
+      responsible: 'Dev Frontend',
       startDay: 9,
-      endDay: 10,
+      endDay: 11,
       progress: 1.0,
-      status: 'Completado',
-      deps: '2.1'
+      status: 'Completado'
     },
     {
       wbs: '2.3',
-      phase: 'LMS Estudiante',
-      task: 'Desarrollo de Área Personal (PersonalAreaView) y Mis Cursos (MyCoursesView)',
-      type: 'Desarrollo UI',
+      phase: 'Área Personal',
+      task: 'Área Personal del Estudiante con Línea de Tiempo y seguimiento de avance',
       responsible: 'Dev Frontend',
       startDay: 10,
-      endDay: 11,
+      endDay: 12,
       progress: 1.0,
-      status: 'Completado',
-      deps: '2.2'
+      status: 'Completado'
     },
     {
       wbs: '2.4',
-      phase: 'LMS Contenido',
-      task: 'Visor de Contenidos del Curso (CoursesView: Video, módulos, descargas)',
-      type: 'Desarrollo UI',
+      phase: 'Mis Cursos',
+      task: 'Vista Mis Cursos con tarjetas de progreso curricular e inicio de clases',
       responsible: 'Dev Frontend',
       startDay: 11,
-      endDay: 12,
+      endDay: 13,
       progress: 1.0,
-      status: 'Completado',
-      deps: '2.3'
+      status: 'Completado'
     },
     {
       wbs: '2.5',
-      phase: 'LMS Gestión',
-      task: 'Tabla Dinámica de Participantes (ParticipantsView con filtros, notas y estados)',
-      type: 'Desarrollo UI/Data',
+      phase: 'Gestión Inicial',
+      task: 'Tabla Dinámica de Participantes y verificación de matrícula SENCE activa',
       responsible: 'Fullstack Dev',
       startDay: 12,
       endDay: 14,
       progress: 1.0,
-      status: 'Completado',
-      deps: '2.4'
+      status: 'Completado'
     },
 
-    // FASE 3
+    // ================= SEMANA 3 =================
     {
       isPhaseHeader: true,
-      title: 'FASE 3: CONTROL DE ACCESO (RBAC), CAPACITACIONES EXTRAS Y BOLSA DE EMPLEO (SEMANA 3)',
+      title: 'SEMANA 3: AULA VIRTUAL INTERACTIVA, EXAMEN OS-10 Y SERVICIOS ALUMNO (DÍAS 15 - 21)',
       color: '2563EB'
     },
     {
       wbs: '3.0',
-      phase: 'Módulos Avanzados',
-      task: '⭐ HITO 3: Sistema RBAC (Student/Admin), Bolsa de Empleo y Capacitaciones',
-      type: 'Hito ⭐',
+      phase: 'Hito Semana 3',
+      task: '⭐ HITO 3: Aula Virtual Interactiva y Servicios Académicos Completos',
       responsible: 'PM / Fullstack',
       startDay: 21,
       endDay: 21,
       progress: 1.0,
       status: 'Completado',
-      deps: '3.1, 3.2, 3.3',
       isMilestone: true
     },
     {
       wbs: '3.1',
-      phase: 'RBAC / Roles',
-      task: '🔄 ITERACIÓN: Implementación de Roles (ADMIN vs STUDENT) y filtrado de menús',
-      type: 'Iteración / RBAC',
-      responsible: 'Fullstack Dev',
+      phase: 'Aula Virtual',
+      task: 'Reproductor de Video de Clases HD con avance porcentual por lección',
+      responsible: 'Dev Frontend',
       startDay: 15,
-      endDay: 16,
+      endDay: 17,
       progress: 1.0,
-      status: 'Completado',
-      deps: '2.0'
+      status: 'Completado'
     },
     {
       wbs: '3.2',
-      phase: 'Catálogo Extra',
-      task: 'Módulo de Capacitaciones Extras (ExtraCoursesView con filtros, precios, SENCE)',
-      type: 'Desarrollo UI/Data',
+      phase: 'Temario Acordeón',
+      task: 'Estructura modular de 4 módulos con contenidos teóricos y prácticos',
       responsible: 'Dev Frontend',
       startDay: 16,
       endDay: 18,
       progress: 1.0,
-      status: 'Completado',
-      deps: '3.1'
+      status: 'Completado'
     },
     {
       wbs: '3.3',
-      phase: 'Bolsa de Empleo',
-      task: 'Portal de Bolsa de Empleo (JobBoardView: Vacantes de seguridad y postulación)',
-      type: 'Desarrollo UI/Data',
+      phase: 'Evaluación OS-10',
+      task: 'Simulador de Examen Teórico OS-10 con temporizador y retroalimentación',
+      responsible: 'Fullstack Dev',
+      startDay: 17,
+      endDay: 19,
+      progress: 1.0,
+      status: 'Completado'
+    },
+    {
+      wbs: '3.4',
+      phase: 'Fidelización',
+      task: 'Catálogo de Capacitaciones Extras con 15% de descuento exclusivo alumno',
       responsible: 'Dev Frontend',
       startDay: 18,
       endDay: 20,
       progress: 1.0,
-      status: 'Completado',
-      deps: '3.1'
+      status: 'Completado'
     },
     {
-      wbs: '3.4',
-      phase: 'Bancos Académicos',
-      task: 'Vistas de Banco de Contenidos, Banco de Preguntas y Ajustes de Cuenta',
-      type: 'Desarrollo UI',
+      wbs: '3.5',
+      phase: 'Intermediación',
+      task: 'Portal de Bolsa de Empleo Regional en Arica con postulación directa',
       responsible: 'Dev Frontend',
       startDay: 19,
       endDay: 21,
       progress: 1.0,
-      status: 'Completado',
-      deps: '3.2, 3.3'
+      status: 'Completado'
     },
 
-    // FASE 4
+    // ================= SEMANA 4 =================
     {
       isPhaseHeader: true,
-      title: 'FASE 4: ADMINISTRACIÓN DEL SITIO (15 MÓDULOS), REPORTES Y PREPARACIÓN BACKEND (SEMANA 4)',
+      title: 'SEMANA 4: VISTO BUENO ADMIN, DESPACHO CORREO, SENCE Y CIERRE (DÍAS 22 - 30)',
       color: '3B82F6'
     },
     {
       wbs: '4.0',
-      phase: 'Admin & Backend',
-      task: '⭐ HITO 4: Panel de Administración 15 Módulos, Reportes y Marcadores BD',
-      type: 'Hito ⭐',
-      responsible: 'PM / Fullstack',
+      phase: 'Hito Final',
+      task: '⭐ HITO 4: Emisión de Diplomas Oficiales y Cierre de Producción',
+      responsible: 'PM / Arquitecto',
       startDay: 30,
       endDay: 30,
       progress: 1.0,
       status: 'Completado',
-      deps: '4.1, 4.2, 4.3, 4.4',
       isMilestone: true
     },
     {
       wbs: '4.1',
-      phase: 'Admin Panel',
-      task: 'Panel de Administración del Sitio (SiteAdminView con 15 categorías desplegables)',
-      type: 'Desarrollo Admin',
+      phase: 'Visto Bueno Admin',
+      task: 'Panel de Verificación y Visto Bueno Administrativo para Emisión de Diplomas',
       responsible: 'Fullstack Dev',
       startDay: 22,
-      endDay: 25,
+      endDay: 24,
       progress: 1.0,
-      status: 'Completado',
-      deps: '3.0'
+      status: 'Completado'
     },
     {
       wbs: '4.2',
-      phase: 'Analíticas',
-      task: 'Módulo de Informes y Reportes de Rendimiento Académico (ReportsView)',
-      type: 'Desarrollo UI/Data',
-      responsible: 'Dev Frontend',
+      phase: 'Despacho Correo',
+      task: 'Despacho Automático de Diploma PDF (///CORREO REMITENTE/// -> ///CORREO DE RECEPCION///)',
+      responsible: 'Fullstack Dev',
       startDay: 24,
       endDay: 26,
       progress: 1.0,
-      status: 'Completado',
-      deps: '4.1'
+      status: 'Completado'
     },
     {
       wbs: '4.3',
-      phase: 'Arquitectura BD',
-      task: '🔄 ITERACIÓN: Estandarización de Endpoints y Marcadores Backend /////AGREGAR BD///',
-      type: 'Iteración / Backend',
-      responsible: 'Backend Dev',
-      startDay: 26,
-      endDay: 28,
+      phase: 'Confidencialidad',
+      task: 'Copia Oficial para el Alumno en PDF acreditando idoneidad (Sin notas numéricas)',
+      responsible: 'Dev Frontend',
+      startDay: 25,
+      endDay: 27,
       progress: 1.0,
-      status: 'Completado',
-      deps: '4.1, 4.2'
+      status: 'Completado'
     },
     {
       wbs: '4.4',
-      phase: 'Auditoría & QA',
-      task: 'Pruebas E2E de Flujos de Usuario, consistencia visual y control de errores',
-      type: 'QA & Testing',
-      responsible: 'QA Tester',
-      startDay: 28,
-      endDay: 30,
+      phase: 'Franquicia SENCE',
+      task: 'Sección de Tramos de Franquicia SENCE (100%, 50%, 15% y Pago Directo por UTM)',
+      responsible: 'Dev Frontend',
+      startDay: 26,
+      endDay: 28,
       progress: 1.0,
-      status: 'Completado',
-      deps: '4.3'
+      status: 'Completado'
     },
     {
       wbs: '4.5',
-      phase: 'UI/UX & Temas',
-      task: '🔄 ITERACIÓN: Modo Claro con Fondo Blanco Puro (#ffffff) y Modo Oscuro Original (#18191c)',
-      type: 'Iteración / UI',
-      responsible: 'Dev Frontend',
+      phase: 'Documentación ERS',
+      task: 'Generación del Documento Word Oficial de Requerimientos ERS (17 RF y 12 RNF)',
+      responsible: 'PM / QA',
       startDay: 28,
+      endDay: 29,
+      progress: 1.0,
+      status: 'Completado'
+    },
+    {
+      wbs: '4.6',
+      phase: 'Despliegue GitHub',
+      task: 'Versionamiento con commits en español, control de cambios y entrega final',
+      responsible: 'PM / DevOps',
+      startDay: 29,
       endDay: 30,
       progress: 1.0,
-      status: 'Completado',
-      deps: '4.4'
-    },
-
-    // FASE 5: NUEVAS INCORPORACIONES Y EXTENSIÓN PERSONALIZABLE
-    {
-      isPhaseHeader: true,
-      title: 'FASE 5: PRÓXIMAS INCORPORACIONES, INTEGRACIÓN BACKEND Y NUEVAS ITERACIONES (EDITABLE)',
-      color: '0D9488'
-    },
-    {
-      wbs: '5.0',
-      phase: 'Extensión Mes 1+',
-      task: '⭐ HITO 5: Despliegue en Producción con Base de Datos Real y Pagos Online',
-      type: 'Hito ⭐',
-      responsible: 'PM / Arquitecto',
-      startDay: 35,
-      endDay: 35,
-      progress: 0.15,
-      status: 'En Progreso',
-      deps: '5.1, 5.2, 5.3',
-      isMilestone: true
-    },
-    {
-      wbs: '5.1',
-      phase: 'Backend & BD',
-      task: '[NUEVA TAREA]: Conexión de API REST y Base de Datos PostgreSQL/Supabase en endpoints',
-      type: 'Backend / BD',
-      responsible: 'Backend Dev',
-      startDay: 29,
-      endDay: 33,
-      progress: 0.25,
-      status: 'En Progreso',
-      deps: '4.3'
-    },
-    {
-      wbs: '5.2',
-      phase: 'Pasarela Pagos',
-      task: '[NUEVA TAREA]: Integración de Pasarela de Pagos (Webpay Plus / Transbank / MercadoPago)',
-      type: 'Integración',
-      responsible: 'Fullstack Dev',
-      startDay: 31,
-      endDay: 34,
-      progress: 0.10,
-      status: 'Pendiente',
-      deps: '5.1'
-    },
-    {
-      wbs: '5.3',
-      phase: 'Certificación QR',
-      task: '[NUEVA TAREA]: Generador automático de Diplomas OS10 en PDF con Código QR de validación',
-      type: 'Desarrollo',
-      responsible: 'Fullstack Dev',
-      startDay: 32,
-      endDay: 35,
-      progress: 0.0,
-      status: 'Pendiente',
-      deps: '5.1'
-    },
-    {
-      wbs: '5.4',
-      phase: 'Notificaciones',
-      task: '[NUEVA TAREA]: Sistema de alertas de vencimiento de credenciales OS10 por Email/SMS',
-      type: 'Desarrollo',
-      responsible: 'Backend Dev',
-      startDay: 33,
-      endDay: 35,
-      progress: 0.0,
-      status: 'Pendiente',
-      deps: '5.1'
-    },
-    {
-      wbs: '5.5',
-      phase: 'Personalizado',
-      task: '[ESPACIO EDITABLE]: Agregue aquí su próximo requerimiento o iteración personalizada',
-      type: 'A Definir',
-      responsible: 'Por Asignar',
-      startDay: 31,
-      endDay: 35,
-      progress: 0.0,
-      status: 'Planificado',
-      deps: '-'
+      status: 'Completado'
     }
   ];
 
   let currentRow = 9;
 
-  tasksData.forEach((item) => {
+  tasks30Days.forEach((item) => {
     if (item.isPhaseHeader) {
-      // Phase banner row
-      wsGantt.mergeCells(`A${currentRow}:AK${currentRow}`);
+      wsGantt.mergeCells(`A${currentRow}:AN${currentRow}`);
       const phaseCell = wsGantt.getCell(`A${currentRow}`);
       phaseCell.value = item.title;
-      phaseCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
+      phaseCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFFFFF' } };
       phaseCell.alignment = { vertical: 'middle', indent: 1 };
       phaseCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: item.color } };
       wsGantt.getRow(currentRow).height = 22;
@@ -629,9 +500,8 @@ async function generateGanttChart() {
     }
 
     const row = wsGantt.getRow(currentRow);
-    row.height = 20;
+    row.height = 19;
 
-    // Calculate Dates
     const dStart = new Date(startDateBase);
     dStart.setDate(startDateBase.getDate() + (item.startDay - 1));
     const dEnd = new Date(startDateBase);
@@ -641,40 +511,29 @@ async function generateGanttChart() {
     row.getCell('A').value = item.wbs;
     row.getCell('B').value = item.phase;
     row.getCell('C').value = item.task;
-    row.getCell('D').value = item.type;
-    row.getCell('E').value = item.responsible;
-    row.getCell('F').value = dStart;
+    row.getCell('D').value = item.responsible;
+    row.getCell('E').value = dStart;
+    row.getCell('E').numFmt = 'dd/mm/yyyy';
+    row.getCell('F').value = dEnd;
     row.getCell('F').numFmt = 'dd/mm/yyyy';
-    row.getCell('G').value = dEnd;
-    row.getCell('G').numFmt = 'dd/mm/yyyy';
-    
-    // Formula for duration
-    row.getCell('H').value = { formula: `G${currentRow}-F${currentRow}+1` };
-    row.getCell('H').numFmt = '0';
+    row.getCell('G').value = item.endDay - item.startDay + 1;
+    row.getCell('H').value = item.progress;
+    row.getCell('H').numFmt = '0%';
+    row.getCell('I').value = item.status;
 
-    // Progress
-    row.getCell('I').value = item.progress;
-    row.getCell('I').numFmt = '0%';
-
-    // Status
-    row.getCell('J').value = item.status;
-    row.getCell('K').value = item.deps;
-
-    // Formatting metadata cells
     const isM = item.isMilestone;
-    const isIter = item.task.includes('ITERACIÓN');
 
-    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'].forEach(col => {
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].forEach(col => {
       const cell = row.getCell(col);
       cell.border = thinBorder;
       cell.font = {
         name: 'Segoe UI',
-        size: 9,
+        size: 8.5,
         bold: isM,
-        color: { argb: isM ? MILESTONE_BG : (isIter ? '1E3A8A' : '1E293B') }
+        color: { argb: isM ? '78350F' : '1E293B' }
       };
 
-      if (['A', 'D', 'F', 'G', 'H', 'I', 'J', 'K'].includes(col)) {
+      if (['A', 'D', 'E', 'F', 'G', 'H', 'I'].includes(col)) {
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
       } else {
         cell.alignment = { vertical: 'middle' };
@@ -682,30 +541,21 @@ async function generateGanttChart() {
 
       if (isM) {
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: WARNING_LIGHT } };
-      } else if (isIter) {
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'EFF6FF' } };
       } else if (currentRow % 2 === 0) {
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_BG } };
       }
     });
 
-    // Status specific color badges
-    const statusCell = row.getCell('J');
+    const statusCell = row.getCell('I');
     if (item.status === 'Completado') {
       statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9, bold: true, color: { argb: '166534' } };
-    } else if (item.status === 'En Progreso') {
-      statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PROGRESS_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9, bold: true, color: { argb: '0369A1' } };
-    } else if (item.status === 'Pendiente') {
-      statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PENDING_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9, color: { argb: '475569' } };
+      statusCell.font = { name: 'Segoe UI', size: 8.5, bold: true, color: { argb: '166534' } };
     }
 
-    // Render Gantt Timeline Columns (L to AK)
-    for (let day = 1; day <= totalDays; day++) {
-      const colLetter = getColLetter(11 + day);
-      const cell = row.getCell(colLetter);
+    // Paint Gantt Timeline (Days 1 to 30, Cols J to AN)
+    for (let day = 1; day <= 30; day++) {
+      const colL = getColLetter(9 + day);
+      const cell = row.getCell(colL);
       cell.border = thinBorder;
 
       if (day >= item.startDay && day <= item.endDay) {
@@ -713,28 +563,19 @@ async function generateGanttChart() {
           cell.value = '⭐';
           cell.alignment = { vertical: 'middle', horizontal: 'center' };
           cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: MILESTONE_FILL } };
-          cell.font = { name: 'Segoe UI', size: 10, bold: true };
-        } else if (isIter) {
-          cell.value = '🔄';
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '93C5FD' } };
-          cell.font = { name: 'Segoe UI', size: 8 };
+          cell.font = { name: 'Segoe UI', size: 9, bold: true };
         } else {
-          // Normal task bar
-          if (item.status === 'Completado') {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '86EFAC' } };
-          } else if (item.status === 'En Progreso') {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '7DD3FC' } };
-          } else {
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'CBD5E1' } };
-          }
+          // Color coding by week
+          let barColor = '86EFAC'; // Week 1 Green
+          if (day >= 8 && day <= 14) barColor = '7DD3FC'; // Week 2 Sky Blue
+          if (day >= 15 && day <= 21) barColor = '93C5FD'; // Week 3 Blue
+          if (day >= 22) barColor = '6EE7B7'; // Week 4 Emerald
+
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: barColor } };
         }
       } else {
-        // Empty day background
-        if (day > 30) {
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F0FDFA' } };
-        } else if (day % 7 === 6 || day % 7 === 0) {
-          // Weekend shading
+        // Weekend / empty shading
+        if (day % 7 === 6 || day % 7 === 0) {
           cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F1F5F9' } };
         }
       }
@@ -743,96 +584,30 @@ async function generateGanttChart() {
     currentRow++;
   });
 
-  // Add 5 Empty Pre-formatted rows for user additions
-  for (let emptyIdx = 1; emptyIdx <= 5; emptyIdx++) {
-    const row = wsGantt.getRow(currentRow);
-    row.height = 20;
-    row.getCell('A').value = `5.${5 + emptyIdx}`;
-    row.getCell('B').value = 'Nueva Tarea / Módulo';
-    row.getCell('C').value = `[Escriba aquí la descripción de su nueva tarea ${emptyIdx}]`;
-    row.getCell('D').value = 'Desarrollo';
-    row.getCell('E').value = 'Por Asignar';
-    row.getCell('H').value = { formula: `IF(OR(F${currentRow}="",G${currentRow}=""),"",G${currentRow}-F${currentRow}+1)` };
-    row.getCell('I').value = 0.0;
-    row.getCell('I').numFmt = '0%';
-    row.getCell('J').value = 'Planificado';
-    row.getCell('K').value = '-';
-
-    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'].forEach(col => {
-      const cell = row.getCell(col);
-      cell.border = thinBorder;
-      cell.font = { name: 'Segoe UI', size: 9, italic: col === 'C', color: { argb: '64748B' } };
-      if (['A', 'D', 'F', 'G', 'H', 'I', 'J', 'K'].includes(col)) {
-        cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      } else {
-        cell.alignment = { vertical: 'middle' };
-      }
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F8FAFC' } };
-    });
-
-    for (let day = 1; day <= totalDays; day++) {
-      const colLetter = getColLetter(11 + day);
-      const cell = row.getCell(colLetter);
-      cell.border = thinBorder;
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFF' } };
-    }
-
-    currentRow++;
-  }
-
-  // Legend at bottom of Gantt Sheet
-  currentRow += 2;
-  wsGantt.mergeCells(`A${currentRow}:C${currentRow}`);
-  wsGantt.getCell(`A${currentRow}`).value = 'Simbología y Convenciones:';
-  wsGantt.getCell(`A${currentRow}`).font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: DARK_SLATE } };
-
-  const legendItems = [
-    { text: '⭐ Hito Clave / Entregable', fg: MILESTONE_FILL, textCol: '78350F' },
-    { text: '🔄 Iteración / Refactor / Ajuste', fg: '93C5FD', textCol: '1E3A8A' },
-    { text: '■ Tarea Completada (100%)', fg: '86EFAC', textCol: '166534' },
-    { text: '■ Tarea En Progreso', fg: '7DD3FC', textCol: '0369A1' },
-    { text: '■ Tarea Planificada / Pendiente', fg: 'CBD5E1', textCol: '475569' },
-    { text: '■ Días de Extensión Mes 1+', fg: 'CCFBF1', textCol: '0F766E' }
-  ];
-
-  let legCol = 4; // D
-  legendItems.forEach(leg => {
-    const startL = getColLetter(legCol);
-    const endL = getColLetter(legCol + 3);
-    wsGantt.mergeCells(`${startL}${currentRow}:${endL}${currentRow}`);
-    const cell = wsGantt.getCell(`${startL}${currentRow}`);
-    cell.value = leg.text;
-    cell.font = { name: 'Segoe UI', size: 8.5, bold: true, color: { argb: leg.textCol } };
-    cell.alignment = { vertical: 'middle', horizontal: 'center' };
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: leg.fg } };
-    cell.border = thinBorder;
-    legCol += 4;
-  });
-
 
   /* ==========================================================================
-     HOJA 2: HITOS Y ENTREGABLES CLAVE (Milestones Summary)
+     HOJA 2: HITOS DEL PROYECTO
      ========================================================================== */
-  const wsMilestones = workbook.addWorksheet('Hitos y Entregables', {
+  const wsMilestones = workbook.addWorksheet('Hitos del Proyecto', {
     views: [{ showGridLines: true }]
   });
 
   wsMilestones.mergeCells('A1:G1');
   const mTitle = wsMilestones.getCell('A1');
   mTitle.value = 'PREVYSEG 2026 — MATRIZ EJECUTIVA DE HITOS Y ENTREGABLES';
-  mTitle.font = { name: 'Segoe UI', size: 15, bold: true, color: { argb: 'FFFFFF' } };
+  mTitle.font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: 'FFFFFF' } };
   mTitle.alignment = { vertical: 'middle', horizontal: 'center' };
-  mTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
-  wsMilestones.getRow(1).height = 32;
+  mTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
+  wsMilestones.getRow(1).height = 30;
 
   const mHeaders = [
-    { col: 'A', title: 'Hito #', width: 10 },
+    { col: 'A', title: 'Hito ID', width: 10 },
     { col: 'B', title: 'Nombre del Hito', width: 34 },
-    { col: 'C', title: 'Fecha Límite', width: 14 },
-    { col: 'D', title: 'Entregables Clave Verificables', width: 48 },
-    { col: 'E', title: 'Criterios de Aceptación', width: 44 },
+    { col: 'C', title: 'Fecha Entrega', width: 14 },
+    { col: 'D', title: 'Entregables Clave', width: 40 },
+    { col: 'E', title: 'Criterio de Aceptación', width: 34 },
     { col: 'F', title: 'Estado', width: 14 },
-    { col: 'G', title: 'Impacto / Valor de Negocio', width: 36 }
+    { col: 'G', title: 'Impacto', width: 26 }
   ];
 
   wsMilestones.getRow(3).height = 24;
@@ -840,57 +615,48 @@ async function generateGanttChart() {
     wsMilestones.getColumn(h.col).width = h.width;
     const cell = wsMilestones.getCell(`${h.col}3`);
     cell.value = h.title;
-    cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
+    cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFFFFF' } };
     cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
     cell.border = headerBorder;
   });
 
   const milestonesData = [
     {
-      id: 'HITO 1',
-      name: 'Landing Page Corporativa & Catálogo OS10',
+      id: 'M1',
+      name: 'Arquitectura Base y Portal Web Público',
       date: '07/09/2026',
-      deliverables: '• Header responsive + Hero + Canvas interactivo\n• Catálogo Cursos OS10 (Formación y Perfeccionamiento)\n• Modales detallados con precios, requisitos y fechas\n• Formulario de contacto conectado directo a WhatsApp API\n• Secciones Quiénes Somos, Métricas, Metodología y Footer',
-      criteria: 'Aprobación visual 100% responsive en desktop/mobile, navegación fluida y envío correcto de mensajes a WhatsApp.',
+      deliverables: 'Landing Page, Hero, Catálogo de 6 Cursos SENCE y WhatsApp Directo',
+      criteria: '100% responsivo, navegación fluida y contacto operativo',
       status: 'Completado',
-      impact: 'Presencia digital profesional y canal de captación comercial directo para cursos de seguridad privada.'
+      impact: 'Presencia digital oficial y captación'
     },
     {
-      id: 'HITO 2',
-      name: 'Campus Virtual LMS & Autenticación',
+      id: 'M2',
+      name: 'Campus Virtual LMS y Autenticación RBAC',
       date: '14/09/2026',
-      deliverables: '• LMSLayout con Sidebar colapsable y navegación fluida\n• Sistema de Auth con Login modal y estado de sesión\n• Área Personal (PersonalAreaView) con resumen de avance\n• Mis Cursos (MyCoursesView) con tarjetas y progreso\n• Visor de Cursos (CoursesView) con videos y descargas\n• Tabla dinámica de Participantes con filtros y notas',
-      criteria: 'Flujo de autenticación completo, navegación sin recargas, carga de materiales didácticos y control de alumnos.',
+      deliverables: 'Autenticación con RUT, Área Personal, Línea de Tiempo y Mis Cursos',
+      criteria: 'Validación de roles (Admin vs Alumno) sin fallas de sesión',
       status: 'Completado',
-      impact: 'Plataforma educativa interactiva que permite impartir capacitaciones sincrónicas y asincrónicas.'
+      impact: 'Entorno de aprendizaje operativo'
     },
     {
-      id: 'HITO 3',
-      name: 'Control RBAC, Bolsa Empleo y Cursos Extras',
+      id: 'M3',
+      name: 'Aula Virtual Interactiva y Examen OS-10',
       date: '21/09/2026',
-      deliverables: '• RBAC: Control de roles STUDENT (Estudiante) y ADMIN\n• Filtrado dinámico de menú según rol activo + Role Switcher\n• Módulo de Capacitaciones Extras con códigos SENCE\n• Portal de Bolsa de Empleo en Seguridad con postulaciones\n• Vistas de Banco de Preguntas, Contenidos y Ajustes',
-      criteria: 'Restricción de vistas administrativas a alumnos, catálogo extra filtrable por categoría y postulación funcional.',
+      deliverables: 'Reproductor de clases HD, temario de 4 módulos, simulador y bolsa de empleo',
+      criteria: 'Simulador evaluativo y avance por lección funcional',
       status: 'Completado',
-      impact: 'Ampliación de la oferta académica, intermediación laboral para guardias y seguridad en el acceso por roles.'
+      impact: 'Preparación efectiva para examen OS-10'
     },
     {
-      id: 'HITO 4',
-      name: 'Panel de Administración (15 Módulos) & Backend',
+      id: 'M4',
+      name: 'Visto Bueno Admin y Despacho de Diplomas',
       date: '30/09/2026',
-      deliverables: '• SiteAdminView con 15 categorías desplegables de configuración\n• Módulo de Informes y Reportes de Rendimiento Académico\n• Marcadores y estandarización /////AGREGAR BD/DOMINIO AQUI///\n• URLs y endpoints REST preparados para backend\n• Suite de componentes y testing de rendimiento',
-      criteria: 'Configuración granular del sitio operativa, informes exportables y arquitectura desacoplada lista para API REST.',
+      deliverables: 'Panel de Aprobación, Despacho por correo y Copia PDF Alumno',
+      criteria: 'Emisión con visto bueno y resguardo de confidencialidad',
       status: 'Completado',
-      impact: 'Control total del administrador sobre usuarios, cursos y servidor, con base técnica sólida para producción.'
-    },
-    {
-      id: 'HITO 5',
-      name: 'Despliegue Producción con BD Real & Pagos (Extensión)',
-      date: '05/10/2026',
-      deliverables: '• Conexión de API REST con Base de Datos PostgreSQL/Supabase\n• Pasarela de pagos Webpay Plus / Transbank / MercadoPago\n• Emisión de Certificados OS10 en PDF con Código QR\n• Notificaciones automáticas de vigencia de acreditaciones',
-      criteria: 'Transacciones de pago exitosas, sincronización bidireccional con base de datos y validación pública de diplomas.',
-      status: 'En Progreso',
-      impact: 'Automatización total del ciclo comercial y emisión de certificaciones oficiales reconocidas.'
+      impact: 'Certificación oficial y trazabilidad'
     }
   ];
 
@@ -908,36 +674,30 @@ async function generateGanttChart() {
     ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => {
       const cell = row.getCell(col);
       cell.border = thinBorder;
-      cell.font = { name: 'Segoe UI', size: 9.5, color: { argb: '1E293B' } };
+      cell.font = { name: 'Segoe UI', size: 9, color: { argb: '1E293B' } };
       cell.alignment = {
         vertical: 'top',
         horizontal: ['A', 'C', 'F'].includes(col) ? 'center' : 'left',
         wrapText: true
       };
-
       if (mRowIdx % 2 === 0) {
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_BG } };
       }
     });
 
-    row.getCell('A').font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: WARNING_GOLD } };
+    row.getCell('A').font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: WARNING_GOLD } };
     row.getCell('A').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: WARNING_LIGHT } };
 
     const statusCell = row.getCell('F');
-    if (m.status === 'Completado') {
-      statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: '166534' } };
-    } else {
-      statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: PROGRESS_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: '0369A1' } };
-    }
+    statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_LIGHT } };
+    statusCell.font = { name: 'Segoe UI', size: 9, bold: true, color: { argb: '166534' } };
 
     mRowIdx++;
   });
 
 
   /* ==========================================================================
-     HOJA 3: REGISTRO DE CAMBIOS E ITERACIONES (Changelog Detallado)
+     HOJA 3: CONTROL DE CAMBIOS
      ========================================================================== */
   const wsChanges = workbook.addWorksheet('Control de Cambios', {
     views: [{ showGridLines: true }]
@@ -945,20 +705,20 @@ async function generateGanttChart() {
 
   wsChanges.mergeCells('A1:H1');
   const cTitle = wsChanges.getCell('A1');
-  cTitle.value = 'PREVYSEG 2026 — REGISTRO HISTÓRICO DE CAMBIOS, ITERACIONES Y REFACTORIZACIONES';
-  cTitle.font = { name: 'Segoe UI', size: 15, bold: true, color: { argb: 'FFFFFF' } };
+  cTitle.value = 'PREVYSEG 2026 — REGISTRO HISTÓRICO DE CAMBIOS E ITERACIONES';
+  cTitle.font = { name: 'Segoe UI', size: 14, bold: true, color: { argb: 'FFFFFF' } };
   cTitle.alignment = { vertical: 'middle', horizontal: 'center' };
   cTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
-  wsChanges.getRow(1).height = 32;
+  wsChanges.getRow(1).height = 30;
 
   const cHeaders = [
-    { col: 'A', title: 'Iteración / Versión', width: 14 },
+    { col: 'A', title: 'Versión', width: 12 },
     { col: 'B', title: 'Fecha', width: 12 },
     { col: 'C', title: 'Componente / Archivo', width: 28 },
     { col: 'D', title: 'Tipo de Cambio', width: 18 },
-    { col: 'E', title: 'Descripción Detallada del Cambio', width: 44 },
-    { col: 'F', title: 'Motivo / Necesidad', width: 34 },
-    { col: 'G', title: 'Impacto en el Sistema', width: 30 },
+    { col: 'E', title: 'Descripción Detallada', width: 44 },
+    { col: 'F', title: 'Motivo / Necesidad', width: 32 },
+    { col: 'G', title: 'Impacto', width: 28 },
     { col: 'H', title: 'Estado', width: 14 }
   ];
 
@@ -967,7 +727,7 @@ async function generateGanttChart() {
     wsChanges.getColumn(h.col).width = h.width;
     const cell = wsChanges.getCell(`${h.col}3`);
     cell.value = h.title;
-    cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
+    cell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFFFFF' } };
     cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
     cell.border = headerBorder;
@@ -979,150 +739,110 @@ async function generateGanttChart() {
       date: '03/09/2026',
       file: 'Landing Page Completa (Components/*)',
       type: 'Nueva Funcionalidad',
-      desc: 'Replicación y diseño moderno de la plataforma PrevySeg con Hero, Cursos OS10, Métricas, Quiénes Somos y Modales.',
-      reason: 'Lanzamiento de presencia digital oficial y presentación de cursos de seguridad.',
-      impact: 'Base estructural del sitio y captación de clientes.',
+      desc: 'Lanzamiento de la plataforma con Hero, Catálogo de Cursos, Métricas y Modales.',
+      reason: 'Presencia digital oficial y presentación de cursos de seguridad.',
+      impact: 'Base estructural del sitio.',
       status: 'Implementado'
     },
     {
       ver: 'v1.1.0',
       date: '08/09/2026',
       file: 'src/lms/LMSLayout.jsx, views/*',
-      type: 'Nueva Funcionalidad',
-      desc: 'Implementación completa del Campus Virtual LMS con navegación modular, visor de clases y gestión de participantes.',
-      reason: 'Requerimiento de dictar cursos y evaluar alumnos online.',
-      impact: 'Incorporación de plataforma e-learning operativa.',
+      type: 'Campus LMS',
+      desc: 'Implementación del Campus Virtual LMS con navegación modular y gestión de participantes.',
+      reason: 'Dictar cursos y evaluar alumnos online.',
+      impact: 'Plataforma e-learning operativa.',
       status: 'Implementado'
     },
     {
       ver: 'v1.2.0',
       date: '12/09/2026',
-      file: 'src/lms/views/PersonalAreaView.jsx, MyCoursesView.jsx',
+      file: 'src/lms/views/PersonalAreaView.jsx',
       type: 'Mejora UI / UX',
-      desc: 'Creación de vistas de Área Personal y Mis Cursos con tarjetas de avance porcentual y acceso rápido a certificados.',
-      reason: 'Facilitar la experiencia del estudiante y seguimiento de cursos.',
-      impact: 'Mayor retención y usabilidad para alumnos inscritos.',
+      desc: 'Área Personal y Mis Cursos con avance porcentual.',
+      reason: 'Facilitar seguimiento del alumno.',
+      impact: 'Mayor usabilidad para estudiantes.',
       status: 'Implementado'
     },
     {
       ver: 'v1.3.0',
       date: '18/09/2026',
       file: 'src/lms/views/SiteAdminView.jsx',
-      type: 'Funcionalidad Core',
-      desc: 'Implementación del panel de Administración del Sitio con 15 categorías desplegables (Usuarios, Cursos, Extensiones, etc.).',
-      reason: 'Centralizar toda la configuración de la academia en una interfaz única.',
-      impact: 'Autonomía administrativa completa para el operador.',
+      type: 'Administración',
+      desc: 'Panel de Administración del Sitio con 15 categorías desplegables.',
+      reason: 'Centralizar configuración de la academia.',
+      impact: 'Autonomía administrativa completa.',
       status: 'Implementado'
     },
     {
       ver: 'v1.4.0',
       date: '22/09/2026',
-      file: 'src/lms/LMSLayout.jsx, views/ExtraCoursesView.jsx, JobBoardView.jsx',
-      type: 'Iteración / RBAC',
-      desc: 'Implementación de control de acceso RBAC (ADMIN vs STUDENT), catálogo de Capacitaciones Extras y Bolsa de Empleo en Seguridad.',
-      reason: 'Separación estricta de privilegios de estudiante y expansión de servicios laborales y formativos.',
-      impact: 'Seguridad en vistas sensibles y nuevos flujos de valor para egresados.',
+      file: 'src/lms/views/JobBoardView.jsx',
+      type: 'Servicios Alumno',
+      desc: 'Bolsa de Empleo Regional y Capacitaciones Extras con descuento.',
+      reason: 'Expansión de servicios laborales para egresados.',
+      impact: 'Alta empleabilidad en Arica.',
       status: 'Implementado'
     },
     {
       ver: 'v1.5.0',
       date: '28/09/2026',
       file: 'src/components/ContactFooter.jsx',
-      type: 'Iteración / Integración',
-      desc: 'Integración directa del formulario de contacto hacia WhatsApp API (+56 9 7869 1869) con mensaje pre-formateado.',
-      reason: 'Agilizar la conversión comercial sin depender de servidores de correo intermedios.',
-      impact: 'Atención inmediata de prospectos en el canal móvil oficial.',
-      status: 'Implementado'
-    },
-    {
-      ver: 'v1.6.0',
-      date: '30/09/2026',
-      file: 'src/lms/views/ExtraCoursesView.jsx, LMSLayout.jsx',
-      type: 'Preparación Backend',
-      desc: 'Estandarización de endpoints y comentarios /////AGREGAR BASE DE DATOS/DOMINIO AQUI/// para conexión con backend API.',
-      reason: 'Dejar el código preparado para una transición fluida hacia bases de datos de producción.',
-      impact: 'Facilidad de integración para desarrolladores backend.',
-      status: 'Implementado'
-    },
-    {
-      ver: 'v1.7.0',
-      date: '02/09/2026',
-      file: 'src/context/ThemeContext.jsx, components/ThemeToggle.jsx, NetworkBackground.jsx',
-      type: 'Iteración / UI/UX',
-      desc: 'Implementación de selector de temas: Modo Oscuro Original intacto (#18191c) y nuevo Modo Claro con fondo blanco puro (#ffffff) y alto contraste tipográfico.',
-      reason: 'Permitir al usuario alternar a un fondo blanco puro sin alterar la identidad ni los colores originales del modo oscuro.',
-      impact: 'Máxima versatilidad visual y legibilidad en entornos diurnos y nocturnos.',
-      status: 'Implementado'
-    },
-    {
-      ver: 'v1.8.0',
-      date: '02/09/2026',
-      file: 'src/components/Services.jsx, Modals.jsx, lms/views/CoursesView.jsx',
-      type: 'Catálogo & Pricing',
-      desc: 'Actualización total del catálogo de cursos con los 11 programas oficiales de la plataforma Moodle/SENCE, portadas visuales idénticas, títulos oficiales sin descripción y visualización de precios en la parte inferior.',
-      reason: 'Alinear la oferta académica pública y del campus virtual con los cursos reales autorizados por SENCE y OS-10.',
-      impact: 'Información transparente de costos, códigos SENCE y matrículas directas para personas y empresas.',
+      type: 'Integración',
+      desc: 'Integración directa a WhatsApp (+56 9 7869 1869) con mensaje pre-cargado.',
+      reason: 'Conversión comercial ágil.',
+      impact: 'Atención inmediata por WhatsApp.',
       status: 'Implementado'
     },
     {
       ver: 'v1.9.0',
       date: '02/09/2026',
-      file: 'src/lms/views/CourseClassroomView.jsx, lms/LMSLayout.jsx',
-      type: 'Aula Virtual & LMS',
-      desc: 'Implementación del Aula Virtual interactiva con reproductor de clases, temarios modulares y simulador de examen teórico OS-10.',
-      reason: 'Enriquecer la experiencia de estudio interactivo para el alumno.',
-      impact: 'Mayor retención y preparación efectiva para el examen OS-10.',
+      file: 'src/lms/views/CourseClassroomView.jsx',
+      type: 'Aula Virtual',
+      desc: 'Aula Virtual interactiva con reproductor HD, temarios y simulador OS-10.',
+      reason: 'Enriquecer el aprendizaje del alumno.',
+      impact: 'Preparación integral para examen oficial.',
       status: 'Implementado'
     },
     {
       ver: 'v1.9.1',
       date: '02/09/2026',
-      file: 'src/components/SenceTramosSection.jsx, lms/views/CertificateApprovalView.jsx, PersonalAreaView.jsx',
-      type: 'Workflow & Certificación',
-      desc: 'Integración en portada de Tramos de Franquicia SENCE (100%, 50%, 15% y Pago Directo por UTM). Creación del panel de Visto Bueno Administrativo para emisión de diplomas oficiales y entrega de copia digital al estudiante sin notas confidenciales.',
-      reason: 'Ajustar la visibilidad de beneficios SENCE en portada y asegurar el control administrativo de diplomas con estricta confidencialidad de notas.',
-      impact: 'Flujo administrativo formal, confidencialidad resguardada y visualización clara de tramos tributarios en la web.',
+      file: 'src/components/SenceTramosSection.jsx',
+      type: 'Tramos SENCE & Visto Bueno',
+      desc: 'Tramos SENCE en inicio y Visto Bueno administrativo de diplomas sin notas.',
+      reason: 'Información clara de beneficios tributarios y confidencialidad.',
+      impact: 'Flujo formal de emisión.',
       status: 'Implementado'
     },
     {
       ver: 'v1.9.2',
       date: '02/09/2026',
       file: 'src/lms/views/CertificateApprovalView.jsx',
-      type: 'Notificación & Email Dispatch',
-      desc: 'Integración del despacho automático de correo electrónico al otorgar el visto bueno administrativo del diploma con estructura ///CORREO REMITENTE/// y ///CORREO DE RECEPCION/// para enlace automático a base de datos.',
-      reason: 'Asegurar que el estudiante reciba de inmediato su copia oficial digital en su casilla de correo personal.',
-      impact: 'Entrega omnicanal de certificados (plataforma + email) y trazabilidad completa para la administración.',
+      type: 'Email Dispatch',
+      desc: 'Despacho automático de diploma por correo electrónico (///CORREO REMITENTE/// a ///CORREO DE RECEPCION///).',
+      reason: 'Entrega digital inmediata al alumno.',
+      impact: 'Trazabilidad y entrega omnicanal.',
       status: 'Implementado'
     },
     {
       ver: 'v1.9.3',
       date: '02/09/2026',
       file: 'Requerimientos_Funcionales_y_No_Funcionales_PrevySeg.docx',
-      type: 'Documentación & Ingeniería de Software',
-      desc: 'Generación del Documento Formal de Especificación de Requerimientos de Software (ERS / SRS) en formato Word (.docx) con portada institucional PrevySeg, matriz de 17 Requerimientos Funcionales (RF) y 12 Requerimientos No Funcionales (RNF) alineados a SENCE, OS-10 y NCh 2728.',
-      reason: 'Formalizar los requerimientos técnicos y funcionales de la plataforma para auditoría, desarrollo y certificación.',
-      impact: 'Documentación de ingeniería de software formal y completa para el cliente y dirección académica.',
+      type: 'Documentación ERS',
+      desc: 'Documento Word oficial de Requerimientos ERS (17 RF y 12 RNF) con portada PrevySeg.',
+      reason: 'Especificación formal del sistema.',
+      impact: 'Documento de ingeniería completo.',
       status: 'Implementado'
     },
     {
       ver: 'v1.9.4',
       date: '02/09/2026',
-      file: 'src/components/Services.jsx, Modals.jsx, lms/views/ExtraCoursesView.jsx',
-      type: 'Catálogo & Oferta Académica',
-      desc: 'Depuración y actualización de la oferta académica a los 6 cursos activos autorizados (Resolución de Conflictos, Operador CCTV, Guardia de Seguridad, Supervisor ONLINE, Capacitación ITIC y Asistencia Curso), eliminando programas descartados.',
-      reason: 'Mantener la plataforma alineada exclusivamente con los programas vigentes y activos de PrevySeg.',
-      impact: 'Catálogo 100% conciso, filtros optimizados y consistencia en buscador y modals.',
+      file: 'src/components/Services.jsx, Modals.jsx',
+      type: 'Catálogo',
+      desc: 'Depuración y sincronización del catálogo a los 6 cursos activos autorizados.',
+      reason: 'Alinear la plataforma con la oferta vigente.',
+      impact: 'Catálogo conciso y consistente.',
       status: 'Implementado'
-    },
-    {
-      ver: 'v2.0.0 (Futuro)',
-      date: '05/10/2026',
-      file: 'Backend API / Base de Datos / Webpay',
-      type: 'Próxima Iteración Mayor',
-      desc: 'Conexión a base de datos PostgreSQL en producción, pasarela de pagos Webpay Plus en cuotas y webhook de matriculación automática.',
-      reason: 'Automatización total de pagos en línea y alta disponibilidad.',
-      impact: 'Ecosistema 100% autosuficiente y transaccional.',
-      status: 'En Planificación'
     }
   ];
 
@@ -1141,140 +861,30 @@ async function generateGanttChart() {
     ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach(col => {
       const cell = row.getCell(col);
       cell.border = thinBorder;
-      cell.font = { name: 'Segoe UI', size: 9.5, color: { argb: '1E293B' } };
+      cell.font = { name: 'Segoe UI', size: 9, color: { argb: '1E293B' } };
       cell.alignment = {
         vertical: 'top',
         horizontal: ['A', 'B', 'D', 'H'].includes(col) ? 'center' : 'left',
         wrapText: true
       };
-
       if (cRowIdx % 2 === 0) {
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_BG } };
       }
     });
 
     row.getCell('A').font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: ACCENT_BLUE } };
+    row.getCell('A').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'EFF6FF' } };
 
     const statusCell = row.getCell('H');
-    if (c.status === 'Implementado') {
-      statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: '166534' } };
-    } else {
-      statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: WARNING_LIGHT } };
-      statusCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'B45309' } };
-    }
+    statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_LIGHT } };
+    statusCell.font = { name: 'Segoe UI', size: 9, bold: true, color: { argb: '166534' } };
 
     cRowIdx++;
   });
 
-
-  /* ==========================================================================
-     HOJA 4: GUÍA DE USO Y PERSONALIZACIÓN (Instructions)
-     ========================================================================== */
-  const wsGuide = workbook.addWorksheet('Guía de Uso y Edición', {
-    views: [{ showGridLines: true }]
-  });
-
-  wsGuide.mergeCells('A1:F1');
-  const gTitle = wsGuide.getCell('A1');
-  gTitle.value = 'GUÍA RÁPIDA: CÓMO MODIFICAR Y AGREGAR NUEVAS TAREAS A ESTA CARTA GANTT';
-  gTitle.font = { name: 'Segoe UI', size: 15, bold: true, color: { argb: 'FFFFFF' } };
-  gTitle.alignment = { vertical: 'middle', horizontal: 'center' };
-  gTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
-  wsGuide.getRow(1).height = 32;
-
-  wsGuide.getColumn('A').width = 8;
-  wsGuide.getColumn('B').width = 24;
-  wsGuide.getColumn('C').width = 50;
-  wsGuide.getColumn('D').width = 36;
-  wsGuide.getColumn('E').width = 20;
-  wsGuide.getColumn('F').width = 18;
-
-  const instructions = [
-    {
-      paso: '1',
-      tema: 'Agregar Nuevas Tareas',
-      detalle: 'En la hoja "Carta Gantt", desplácese a la FASE 5 (filas 38 en adelante). Se han dejado 5 filas pre-configuradas listas para escribir su nueva tarea, responsable, fechas de inicio y fin.',
-      tip: 'La columna "Días" calcula automáticamente la duración: =Fin - Inicio + 1.',
-      ejemplo: 'Tarea: Integración Supabase Auth'
-    },
-    {
-      paso: '2',
-      tema: 'Pintar las Barras Gantt',
-      detalle: 'Para marcar los días activos de su nueva tarea, seleccione las celdas de los días correspondientes (columnas L a AK) y aplique el color de relleno según su estado:\n• Verde (#86EFAC): Tarea Completada\n• Celeste (#7DD3FC): En Progreso\n• Gris (#CBD5E1): Planificada\n• Amarillo (#F59E0B) + "⭐": Hito Clave',
-      tip: 'Puede usar "Copiar Formato" de Excel para pintar rápidamente varias celdas.',
-      ejemplo: 'Relleno celeste para D31 a D34'
-    },
-    {
-      paso: '3',
-      tema: 'Actualizar Porcentajes',
-      detalle: 'Cambie el valor en la columna "% Avance" (Columna I). Los indicadores KPI del encabezado calcularán automáticamente el promedio global del proyecto.',
-      tip: 'Escriba números directos (ej: 0.5 para 50%, 1.0 para 100%).',
-      ejemplo: '0.75 -> 75%'
-    },
-    {
-      paso: '4',
-      tema: 'Extender más allá del Mes 1',
-      detalle: 'Las columnas AP a AK (Días 31 a 35) corresponden a la semana de extensión. Si necesita agregar más días, inserte nuevas columnas a la derecha y copie el formato del encabezado.',
-      tip: 'Los paneles inmovilizados le permitirán desplazarse horizontalmente sin perder de vista los nombres de las tareas.',
-      ejemplo: 'Insertar columna AL para Día 36'
-    },
-    {
-      paso: '5',
-      tema: 'Registrar Nuevas Iteraciones',
-      detalle: 'Cuando agregue cambios importantes de código, regístrelos en la hoja "Control de Cambios" para mantener una trazabilidad profesional con su cliente o equipo.',
-      tip: 'Mantenga al día la columna "Impacto en el Sistema".',
-      ejemplo: 'v1.8.0 - Pasarela de pago Transbank'
-    }
-  ];
-
-  wsGuide.getRow(3).height = 24;
-  ['A', 'B', 'C', 'D', 'E'].forEach((col, idx) => {
-    const headerTitles = ['Paso #', 'Acción / Tema', 'Instrucción Detallada', 'Consejo / Fórmula', 'Ejemplo'];
-    const cell = wsGuide.getCell(`${col}3`);
-    cell.value = headerTitles[idx];
-    cell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
-    cell.alignment = { vertical: 'middle', horizontal: 'center' };
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
-    cell.border = headerBorder;
-  });
-
-  let gRowIdx = 4;
-  instructions.forEach(ins => {
-    const row = wsGuide.getRow(gRowIdx);
-    row.getCell('A').value = ins.paso;
-    row.getCell('B').value = ins.tema;
-    row.getCell('C').value = ins.detalle;
-    row.getCell('D').value = ins.tip;
-    row.getCell('E').value = ins.ejemplo;
-
-    ['A', 'B', 'C', 'D', 'E'].forEach(col => {
-      const cell = row.getCell(col);
-      cell.border = thinBorder;
-      cell.font = { name: 'Segoe UI', size: 9.5, color: { argb: '1E293B' } };
-      cell.alignment = {
-        vertical: 'top',
-        horizontal: col === 'A' ? 'center' : 'left',
-        wrapText: true
-      };
-      if (gRowIdx % 2 === 0) {
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT_BG } };
-      }
-    });
-
-    row.getCell('A').font = { name: 'Segoe UI', size: 11, bold: true, color: { argb: ACCENT_BLUE } };
-    row.getCell('B').font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: DARK_SLATE } };
-
-    gRowIdx++;
-  });
-
-  // Save Workbook
   const outputPath = path.join(__dirname, '..', 'Carta_Gantt_PrevySeg_2026.xlsx');
   await workbook.xlsx.writeFile(outputPath);
-  console.log(`Carta Gantt generada con éxito en: ${outputPath}`);
+  console.log('Carta Gantt generada con éxito en:', outputPath);
 }
 
-generateGanttChart().catch(err => {
-  console.error('Error generando Carta Gantt:', err);
-  process.exit(1);
-});
+generateGanttChart().catch(console.error);
