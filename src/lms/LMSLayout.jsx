@@ -39,6 +39,7 @@ import SiteAdminView from './views/SiteAdminView';
 import ExtraCoursesView from './views/ExtraCoursesView';
 import JobBoardView from './views/JobBoardView';
 import CourseClassroomView from './views/CourseClassroomView';
+import CertificateApprovalView from './views/CertificateApprovalView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   // Verificación estricta de Roles (RBAC)
@@ -55,7 +56,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   // Para STUDENT: 'area-personal' | 'mis-cursos' | 'capacitaciones-extras' | 'bolsa-empleo'
   const [mainNavTab, setMainNavTab] = useState('area-personal');
   
-  // Sub-pestaña activa en "Administración del sitio": 'ajustes-sitio' | 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido'
+  // Sub-pestaña activa en "Administración del sitio": 'ajustes-sitio' | 'cursos' | 'configuracion' | 'participantes' | 'informes' | 'preguntas' | 'contenido' | 'certificados'
   const [adminSubTab, setAdminSubTab] = useState('ajustes-sitio');
 
   // Estado del Aula Virtual Activa (para reproducir clases)
@@ -71,6 +72,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
     { id: 'cursos', label: 'Página Principal', icon: BookOpen },
     { id: 'configuracion', label: 'Configuración de Cursos', icon: Settings },
     { id: 'participantes', label: 'Participantes', icon: Users },
+    { id: 'certificados', label: 'Emisión de Certificados', icon: Award },
     { id: 'informes', label: 'Informes', icon: FileText },
     { id: 'preguntas', label: 'Banco de preguntas', icon: HelpCircle },
     { id: 'contenido', label: 'Banco de contenido', icon: Layers },
@@ -516,6 +518,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                 )}
                 {adminSubTab === 'participantes' && (
                   <ParticipantsView isEditMode={isEditMode} />
+                )}
+                {adminSubTab === 'certificados' && (
+                  <CertificateApprovalView currentUser={currentUser} />
                 )}
                 {adminSubTab === 'informes' && (
                   <ReportsView isEditMode={isEditMode} />

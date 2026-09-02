@@ -8,6 +8,7 @@ import securityGuardsImg from '../assets/images/security_guards.jpg';
 import securitySupervisorImg from '../assets/images/security_supervisor.jpg';
 import blogCctvImg from '../assets/images/blog_cctv.jpg';
 import blogPortImg from '../assets/images/blog_port_security.jpg';
+import SenceTramosSection from './SenceTramosSection';
 
 // Dynamic Pattern Cover Component matching Moodle LMS screenshots
 const CourseCover = ({ item }) => {
@@ -305,6 +306,9 @@ const Services = ({ onSelectCourse }) => {
             </div>
           ))}
         </div>
+
+        {/* SENCE Tramos & Beneficios de Franquicia Tributaria (Afiliación oficial y tramos UTM) */}
+        <SenceTramosSection />
 
       </div>
     </section>

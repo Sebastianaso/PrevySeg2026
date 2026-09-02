@@ -1067,11 +1067,21 @@ async function generateGanttChart() {
     {
       ver: 'v1.9.0',
       date: '02/09/2026',
-      file: 'src/components/CertificateVerifierModal.jsx, SenceCalculatorModal.jsx, lms/views/CourseClassroomView.jsx',
-      type: 'Nuevas Features / LMS & B2B',
-      desc: 'Implementación del Verificador Público de Certificados OS-10 con QR, Simulador de Franquicia SENCE 100% y Cotizador Formal PDF para empresas, y Aula Virtual interactiva con reproductor de clases, temarios y simulador de examen teórico OS-10.',
-      reason: 'Aumentar la conversión comercial B2B, dar validación legal inmediata a egresados y enriquecer la experiencia educativa del estudiante en el campus virtual.',
-      impact: 'Plataforma líder en el norte de Chile con verificación en tiempo real, autoservicio corporativo y aula virtual interactiva.',
+      file: 'src/lms/views/CourseClassroomView.jsx, lms/LMSLayout.jsx',
+      type: 'Aula Virtual & LMS',
+      desc: 'Implementación del Aula Virtual interactiva con reproductor de clases, temarios modulares y simulador de examen teórico OS-10.',
+      reason: 'Enriquecer la experiencia de estudio interactivo para el alumno.',
+      impact: 'Mayor retención y preparación efectiva para el examen OS-10.',
+      status: 'Implementado'
+    },
+    {
+      ver: 'v1.9.1',
+      date: '02/09/2026',
+      file: 'src/components/SenceTramosSection.jsx, lms/views/CertificateApprovalView.jsx, PersonalAreaView.jsx',
+      type: 'Workflow & Certificación',
+      desc: 'Integración en portada de Tramos de Franquicia SENCE (100%, 50%, 15% y Pago Directo por UTM). Creación del panel de Visto Bueno Administrativo para emisión de diplomas oficiales y entrega de copia digital al estudiante sin notas confidenciales.',
+      reason: 'Ajustar la visibilidad de beneficios SENCE en portada y asegurar el control administrativo de diplomas con estricta confidencialidad de notas.',
+      impact: 'Flujo administrativo formal, confidencialidad resguardada y visualización clara de tramos tributarios en la web.',
       status: 'Implementado'
     },
     {

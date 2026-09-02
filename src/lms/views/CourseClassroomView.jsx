@@ -441,37 +441,74 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
             </div>
           )}
 
-          {/* Tab 4: Certificación Digital */}
+          {/* Tab 4: Certificación Digital Oficial (Copia para el Estudiante sin puntaje confidencial) */}
           {activeTab === 'certificado' && (
-            <div className="bg-[#121316] p-6 sm:p-8 rounded-3xl border border-gray-800 text-center space-y-6">
-              <div className="w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
-                <Award size={36} />
-              </div>
-              <div className="space-y-2 max-w-md mx-auto">
-                <h3 className="text-xl font-black text-white">Diploma y Certificado de Acreditación</h3>
+            <div className="bg-[#121316] p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-6">
+              <div className="text-center space-y-2 max-w-lg mx-auto">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3">
+                  <Award size={36} />
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40">
+                  <CheckCircle2 size={13} />
+                  <span>Visto Bueno de Dirección Académica Otorgado</span>
+                </div>
+                <h3 className="text-xl font-black text-white">Certificado y Diploma de Acreditación</h3>
                 <p className="text-xs text-gray-400">
-                  Tu certificado digital se desbloquea al completar el 100% de las clases y aprobar el examen teórico.
+                  Documento oficial emitido por PrevySeg OTEC que certifica que has completado el programa formativo y te encuentras debidamente capacitado.
                 </p>
               </div>
 
-              <div className="p-4 bg-[#18191c] rounded-2xl border border-gray-800 max-w-md mx-auto text-xs text-left space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Estado de Acreditación:</span>
-                  <span className="text-emerald-400 font-bold">En Proceso Final</span>
+              {/* Official Diploma Preview Frame */}
+              <div className="bg-[#18191c] border-2 border-[#0284c7]/50 rounded-2xl p-6 text-white space-y-5 text-left shadow-xl">
+                <div className="flex justify-between items-center pb-4 border-b border-gray-800 text-xs">
+                  <div>
+                    <h4 className="font-bold text-white text-sm">PREVYSEG CAPACITACIONES</h4>
+                    <span className="text-[10px] text-gray-400">OTEC Acreditado SENCE N° 1238088725</span>
+                  </div>
+                  <div className="text-right font-mono text-[10px] text-sky-400">
+                    ID: PREVY-2026-OS10-0987
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Código de Registro:</span>
-                  <span className="text-white font-mono">PREVY-2026-OS10-0987</span>
+
+                <div className="space-y-2">
+                  <span className="text-[10px] text-gray-400 uppercase font-semibold">Certifica a:</span>
+                  <div className="text-xl font-black text-[#00c2b2]">Matías Silva Lagos</div>
+                  <div className="text-xs text-gray-300 font-mono">RUT: 21.778.425-6</div>
+                  <p className="text-xs text-gray-300 pt-1 leading-relaxed">
+                    Por cuanto ha cumplido satisfactoriamente con la totalidad de los módulos teóricos y prácticos conforme al <strong>Decreto Ley N° 3.607</strong> y normativa OS-10 de Carabineros de Chile, acreditando que <strong>se encuentra debidamente capacitado(a) para desempeñarse en el área de {courseTitle || 'Seguridad Privada'}</strong>.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] bg-black/40 p-3 rounded-xl border border-gray-800">
+                  <div>
+                    <span className="text-gray-500 block text-[9px] uppercase font-bold">Carga Horaria</span>
+                    <span className="text-white font-semibold">90 Horas Cronológicas</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block text-[9px] uppercase font-bold">Estado</span>
+                    <span className="text-emerald-400 font-bold">Aprobado y Capacitado ✓</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block text-[9px] uppercase font-bold">Vigencia Legal</span>
+                    <span className="text-white font-semibold">3 Años OS-10</span>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-800 flex justify-between items-center text-[10px] text-gray-400">
+                  <span>Firmado digitalmente: Ashley Adaros (Director Académico)</span>
+                  <span className="text-emerald-400 font-bold">✓ Copia Oficial del Alumno</span>
                 </div>
               </div>
 
-              <button
-                onClick={() => alert("Generando y descargando Diploma Oficial PrevySeg en PDF...")}
-                className="bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold py-3 px-6 rounded-xl text-xs shadow-lg flex items-center justify-center gap-2 mx-auto cursor-pointer"
-              >
-                <Download size={15} />
-                <span>Descargar Diploma Oficial (PDF)</span>
-              </button>
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => alert("Descargando copia oficial de Certificado y Diploma en PDF...")}
+                  className="bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white font-bold py-3 px-6 rounded-xl text-xs shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all"
+                >
+                  <Download size={15} />
+                  <span>Descargar Copia Oficial (PDF)</span>
+                </button>
+              </div>
             </div>
           )}
 

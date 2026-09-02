@@ -74,6 +74,35 @@ const PersonalAreaView = ({ onSelectCourse }) => {
         </div>
       </div>
 
+      {/* Banner de Certificado Oficial Emitido */}
+      <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-gray-900 border border-emerald-500/50 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+            <Award size={26} />
+          </div>
+          <div className="space-y-0.5">
+            <div className="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
+              <CheckCircle2 size={13} />
+              <span>Certificado Oficial Emitido por Dirección Académica</span>
+            </div>
+            <h3 className="text-sm sm:text-base font-bold text-white">
+              Curso de formación Guardia de Seguridad online (OS-10)
+            </h3>
+            <p className="text-[11px] text-gray-400">
+              Acreditación oficial conforme al Decreto Ley N° 3.607. Tu copia digital está lista para descarga.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => alert("Descargando copia oficial de Certificado y Diploma en PDF (Acreditado y Capacitado)...")}
+          className="bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center gap-2 cursor-pointer flex-shrink-0 transition-all active:scale-95"
+        >
+          <Award size={14} />
+          <span>Descargar Diploma Oficial</span>
+        </button>
+      </div>
+
       {/* 2. Contenedor Línea de Tiempo */}
       <div className="bg-[#121316] rounded-2xl border border-gray-800 p-6 sm:p-8 space-y-6 shadow-xl">
         <div className="flex items-center justify-between border-b border-gray-800 pb-4">
