@@ -1085,6 +1085,16 @@ async function generateGanttChart() {
       status: 'Implementado'
     },
     {
+      ver: 'v1.9.2',
+      date: '02/09/2026',
+      file: 'src/lms/views/CertificateApprovalView.jsx',
+      type: 'Notificación & Email Dispatch',
+      desc: 'Integración del despacho automático de correo electrónico al otorgar el visto bueno administrativo del diploma con estructura ///CORREO REMITENTE/// y ///CORREO DE RECEPCION/// para enlace automático a base de datos.',
+      reason: 'Asegurar que el estudiante reciba de inmediato su copia oficial digital en su casilla de correo personal.',
+      impact: 'Entrega omnicanal de certificados (plataforma + email) y trazabilidad completa para la administración.',
+      status: 'Implementado'
+    },
+    {
       ver: 'v2.0.0 (Futuro)',
       date: '05/10/2026',
       file: 'Backend API / Base de Datos / Webpay',

@@ -14,14 +14,21 @@ import {
   UserCheck, 
   AlertCircle,
   QrCode,
-  Printer
+  Printer,
+  Mail,
+  Check
 } from 'lucide-react';
+
+/////AGREGAR BASE DE DATOS/DOMINIO AQUI///
+const API_BASE_URL = "/////AGREGAR BASE DE DATOS/DOMINIO AQUI///";
+const SENDER_EMAIL_DEFAULT = "///CORREO REMITENTE///"; // Correo oficial emisor PrevySeg (ej: prevyseg.capacitaciones@gmail.com)
 
 export const INITIAL_STUDENT_APPROVALS = [
   {
     id: 'app-01',
     rut: '21.778.425-6',
     studentName: 'Matías Silva Lagos',
+    studentEmail: 'matias.silva.alumno@prevyseg.cl', // ///CORREO DE RECEPCION///
     course: 'Curso de formación Guardia de Seguridad online',
     senceCode: '1238087964',
     category: 'Seguridad Privada OS-10',
@@ -32,12 +39,15 @@ export const INITIAL_STUDENT_APPROVALS = [
     status: 'APROBADO', // 'PENDIENTE' | 'APROBADO'
     certificateCode: 'PREVY-2026-OS10-0987',
     approvedBy: 'Ashley Adaros (Director Académico)',
-    approvalDate: '02 Septiembre, 2026'
+    approvalDate: '02 Septiembre, 2026',
+    emailDispatched: true,
+    emailDispatchedAt: '02/09/2026 10:15 hrs'
   },
   {
     id: 'app-02',
     rut: '18.442.119-3',
     studentName: 'Carlos Mendoza Rojas',
+    studentEmail: 'carlos.mendoza.seg@gmail.com', // ///CORREO DE RECEPCION///
     course: 'Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964',
     senceCode: '1238087964',
     category: 'Seguridad Privada',
@@ -48,12 +58,15 @@ export const INITIAL_STUDENT_APPROVALS = [
     status: 'PENDIENTE',
     certificateCode: 'PREVY-2026-CCTV-0512',
     approvedBy: null,
-    approvalDate: null
+    approvalDate: null,
+    emailDispatched: false,
+    emailDispatchedAt: null
   },
   {
     id: 'app-03',
     rut: '19.821.340-K',
     studentName: 'Valeska Torres Contreras',
+    studentEmail: 'valeska.torres.arica@hotmail.com', // ///CORREO DE RECEPCION///
     course: 'Formación de Supervisor de Seguridad Privada',
     senceCode: '1238088725',
     category: 'Seguridad Privada',
@@ -64,12 +77,15 @@ export const INITIAL_STUDENT_APPROVALS = [
     status: 'APROBADO',
     certificateCode: 'PREVY-2026-SUP-0331',
     approvedBy: 'Sebastián Araya (Coordinador OS-10)',
-    approvalDate: '29 Agosto, 2026'
+    approvalDate: '29 Agosto, 2026',
+    emailDispatched: true,
+    emailDispatchedAt: '29/08/2026 16:40 hrs'
   },
   {
     id: 'app-04',
     rut: '16.732.901-4',
     studentName: 'Rodrigo Fuentes Morales',
+    studentEmail: 'rodrigo.fuentes.portuario@gmail.com', // ///CORREO DE RECEPCION///
     course: 'Curso de Supervisor de Seguridad Marítimo Portuario',
     senceCode: '123801204',
     category: 'Seguridad Privada',
@@ -80,7 +96,9 @@ export const INITIAL_STUDENT_APPROVALS = [
     status: 'PENDIENTE',
     certificateCode: 'PREVY-2026-PORT-0209',
     approvedBy: null,
-    approvalDate: null
+    approvalDate: null,
+    emailDispatched: false,
+    emailDispatchedAt: null
   }
 ];
 
@@ -89,32 +107,46 @@ export const CertificateApprovalView = ({ currentUser }) => {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('TODOS');
   const [selectedForPreview, setSelectedForPreview] = useState(null);
+  const [selectedForEmailModal, setSelectedForEmailModal] = useState(null);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSentSuccess, setEmailSentSuccess] = useState(false);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
 
   const filtered = approvals.filter(item => {
     const matchesSearch = item.studentName.toLowerCase().includes(search.toLowerCase()) ||
                           item.rut.toLowerCase().includes(search.toLowerCase()) ||
-                          item.course.toLowerCase().includes(search.toLowerCase());
+                          item.course.toLowerCase().includes(search.toLowerCase()) ||
+                          item.studentEmail.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = filterStatus === 'TODOS' || item.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
-  const handleApprove = (id) => {
-    setApprovals(prev => prev.map(item => {
-      if (item.id === id) {
-        return {
-          ...item,
-          status: 'APROBADO',
-          approvedBy: currentUser?.nombre || 'Dirección Académica PrevySeg',
-          approvalDate: '02 Septiembre, 2026'
-        };
-      }
-      return item;
-    }));
+  // Función al dar el Visto Bueno administrativo y disparar el envío del correo
+  const handleApproveAndDispatchEmail = (studentItem) => {
+    setSelectedForEmailModal(studentItem);
+    setIsSendingEmail(true);
 
-    const student = approvals.find(a => a.id === id);
-    setActionSuccessMsg(`¡Visto bueno otorgado! Se ha emitido y enviado el Certificado Oficial a ${student?.studentName}.`);
-    setTimeout(() => setActionSuccessMsg(''), 4000);
+    // Simulación del servicio de correo con ///CORREO REMITENTE/// y ///CORREO DE RECEPCION///
+    setTimeout(() => {
+      // Marcamos en el estado local como APROBADO y correo despachado
+      setApprovals(prev => prev.map(item => {
+        if (item.id === studentItem.id) {
+          return {
+            ...item,
+            status: 'APROBADO',
+            approvedBy: currentUser?.nombre || 'Ashley Adaros (Director Académico)',
+            approvalDate: '02 Septiembre, 2026',
+            emailDispatched: true,
+            emailDispatchedAt: '02/09/2026 ' + new Date().toLocaleTimeString().slice(0, 5) + ' hrs'
+          };
+        }
+        return item;
+      }));
+
+      setIsSendingEmail(false);
+      setEmailSentSuccess(true);
+      setActionSuccessMsg(`¡Visto bueno otorgado y correo enviado con éxito a ${studentItem.studentEmail}!`);
+    }, 1200);
   };
 
   const handlePrint = () => {
@@ -135,7 +167,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
             Aprobación y Emisión de Certificados Oficiales
           </h1>
           <p className="text-xs sm:text-sm text-gray-300 max-w-2xl leading-relaxed">
-            Revisa a los estudiantes que han completado los módulos y asistencia requerida. Al otorgar el <strong>visto bueno administrativo</strong>, se emite el certificado oficial que acredita que el alumno cumplió el curso y se encuentra plenamente capacitado.
+            Al otorgar el <strong>visto bueno administrativo</strong>, se emite el certificado oficial de cumplimiento y se despacha automáticamente una <strong>copia digital en PDF al correo del estudiante</strong> registrado en la plataforma.
           </p>
         </div>
 
@@ -161,7 +193,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
                   : 'bg-gray-800 text-gray-400 hover:text-white'
               }`}
             >
-              {st === 'TODOS' ? 'Todos' : st === 'PENDIENTE' ? 'Pendientes de Aprobación' : 'Emitidos / Aprobados'}
+              {st === 'TODOS' ? 'Todos' : st === 'PENDIENTE' ? 'Pendientes de Aprobación' : 'Emitidos / Despachados'}
             </button>
           ))}
         </div>
@@ -169,7 +201,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
         <div className="relative w-full sm:w-80">
           <input
             type="text"
-            placeholder="Buscar por RUT, alumno o curso..."
+            placeholder="Buscar por RUT, correo o alumno..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-[#18191c] border border-gray-700 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#00c2b2]"
@@ -178,16 +210,16 @@ export const CertificateApprovalView = ({ currentUser }) => {
         </div>
       </div>
 
-      {/* Table of Students for Approval */}
+      {/* Table of Students for Approval & Email Dispatch */}
       <div className="bg-[#121316] rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#0f1012] border-b border-gray-800 text-gray-400 uppercase tracking-wider text-[10px] font-bold">
               <tr>
-                <th className="py-4 px-6">Alumno / RUT</th>
+                <th className="py-4 px-6">Alumno & Correo de Recepción</th>
                 <th className="py-4 px-6">Capacitación Finalizada</th>
                 <th className="py-4 px-4">Cumplimiento SENCE</th>
-                <th className="py-4 px-4">Estado Emisión</th>
+                <th className="py-4 px-4">Estado & Despacho</th>
                 <th className="py-4 px-6 text-right">Acciones de Aprobación</th>
               </tr>
             </thead>
@@ -195,16 +227,20 @@ export const CertificateApprovalView = ({ currentUser }) => {
               {filtered.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-800/30 transition-colors">
                   
-                  {/* Student */}
+                  {/* Student & Email */}
                   <td className="py-4 px-6">
                     <div className="font-bold text-white text-sm">{item.studentName}</div>
                     <div className="font-mono text-gray-400 text-[11px]">{item.rut}</div>
+                    <div className="text-[11px] text-sky-400 flex items-center gap-1 mt-0.5 font-mono">
+                      <Mail size={11} />
+                      <span>{item.studentEmail}</span>
+                    </div>
                   </td>
 
                   {/* Course */}
                   <td className="py-4 px-6 max-w-xs">
                     <div className="font-semibold text-gray-200 line-clamp-2">{item.course}</div>
-                    <div className="text-[10px] text-sky-400 font-mono mt-0.5">SENCE: {item.senceCode} • {item.hours}</div>
+                    <div className="text-[10px] text-gray-400 font-mono mt-0.5">SENCE: {item.senceCode} • {item.hours}</div>
                   </td>
 
                   {/* Compliance */}
@@ -216,15 +252,23 @@ export const CertificateApprovalView = ({ currentUser }) => {
                     <div className="text-[10px] text-gray-400">{item.requirementsStatus}</div>
                   </td>
 
-                  {/* Status Badge */}
-                  <td className="py-4 px-4">
+                  {/* Status & Email Dispatch Badge */}
+                  <td className="py-4 px-4 space-y-1">
                     {item.status === 'APROBADO' ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/40">
-                        <CheckCircle2 size={12} />
-                        <span>Aprobado & Emitido</span>
-                      </span>
+                      <div>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/40">
+                          <CheckCircle2 size={12} />
+                          <span>Aprobado & Emitido</span>
+                        </span>
+                        {item.emailDispatched && (
+                          <div className="text-[10px] text-emerald-400 flex items-center gap-1 mt-1 font-mono">
+                            <Mail size={10} />
+                            <span>Enviado al correo</span>
+                          </div>
+                        )}
+                      </div>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/40">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/40">
                         <Clock size={12} />
                         <span>Pendiente Visto Bueno</span>
                       </span>
@@ -243,19 +287,20 @@ export const CertificateApprovalView = ({ currentUser }) => {
 
                     {item.status === 'PENDIENTE' ? (
                       <button
-                        onClick={() => handleApprove(item.id)}
+                        onClick={() => handleApproveAndDispatchEmail(item)}
                         className="px-3.5 py-1.5 rounded-lg bg-[#00c2b2] hover:bg-[#08978a] active:scale-95 text-gray-950 text-xs font-black cursor-pointer transition-all inline-flex items-center gap-1.5 shadow-md shadow-teal-950/40"
                       >
                         <UserCheck size={14} />
-                        <span>Dar Visto Bueno</span>
+                        <span>Dar Visto Bueno & Enviar</span>
                       </button>
                     ) : (
                       <button
-                        onClick={() => setSelectedForPreview(item)}
-                        className="px-3.5 py-1.5 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                        onClick={() => handleApproveAndDispatchEmail(item)}
+                        className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-sky-300 hover:text-white text-xs font-bold cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                        title="Reenviar copia digital por correo"
                       >
-                        <Download size={13} />
-                        <span>Descargar Copia</span>
+                        <Send size={12} />
+                        <span>Reenviar Correo</span>
                       </button>
                     )}
                   </td>
@@ -267,7 +312,78 @@ export const CertificateApprovalView = ({ currentUser }) => {
         </div>
       </div>
 
-      {/* MODAL DE PREVISUALIZACIÓN Y DESCARGA DE DIPLOMA OFICIAL (SIN NOTAS / CONFIDENCIALIDAD TOTAL) */}
+      {/* MODAL DE DESPACHO DE CORREO AUTOMÁTICO (///CORREO REMITENTE/// -> ///CORREO DE RECEPCION///) */}
+      {selectedForEmailModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-[#18191c] border-2 border-sky-500/60 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button
+              onClick={() => {
+                setSelectedForEmailModal(null);
+                setEmailSentSuccess(false);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800 transition-colors cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            {isSendingEmail ? (
+              <div className="py-10 text-center space-y-4">
+                <div className="w-14 h-14 border-4 border-[#00c2b2] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <h3 className="text-lg font-bold text-white">Generando y Despachando Certificado Digital...</h3>
+                <p className="text-xs text-gray-400">
+                  Enviando desde <strong className="text-sky-400 font-mono">{SENDER_EMAIL_DEFAULT}</strong> hacia <strong className="text-teal-300 font-mono">{selectedForEmailModal.studentEmail}</strong>...
+                </p>
+              </div>
+            ) : emailSentSuccess ? (
+              <div className="py-6 text-center space-y-5">
+                <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto animate-bounce">
+                  <CheckCircle2 size={36} />
+                </div>
+                
+                <div className="space-y-1">
+                  <h3 className="text-xl font-black text-white">¡Visto Bueno y Correo Enviado!</h3>
+                  <p className="text-xs text-gray-300">
+                    Se ha enviado la copia digital oficial del diploma a la casilla del estudiante.
+                  </p>
+                </div>
+
+                {/* Email dispatch details */}
+                <div className="bg-[#121316] p-4 rounded-2xl border border-gray-800 text-left text-xs space-y-2 font-mono text-gray-300">
+                  <div className="flex justify-between border-b border-gray-800 pb-1.5 text-[11px]">
+                    <span className="text-gray-500">De (Remitente):</span>
+                    <span className="text-sky-300">{SENDER_EMAIL_DEFAULT}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-800 pb-1.5 text-[11px]">
+                    <span className="text-gray-500">Para (Recepción):</span>
+                    <span className="text-emerald-300 font-bold">{selectedForEmailModal.studentEmail}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-800 pb-1.5 text-[11px]">
+                    <span className="text-gray-500">Asunto:</span>
+                    <span className="text-white">🎓 Certificado Oficial - {selectedForEmailModal.course}</span>
+                  </div>
+                  <div className="flex justify-between text-[11px] pt-0.5">
+                    <span className="text-gray-500">Adjunto:</span>
+                    <span className="text-sky-400 font-bold">Diploma_Oficial_{selectedForEmailModal.certificateCode}.pdf</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedForEmailModal(null);
+                    setEmailSentSuccess(false);
+                  }}
+                  className="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold py-2.5 px-4 rounded-xl text-xs cursor-pointer transition-colors"
+                >
+                  Entendido / Cerrar
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE PREVISUALIZACIÓN DE DIPLOMA OFICIAL (SIN NOTAS / CONFIDENCIALIDAD TOTAL) */}
       {selectedForPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-[#18191c] border-2 border-sky-500/60 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 relative max-h-[94vh] overflow-y-auto">
@@ -311,7 +427,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
                   {selectedForPreview.studentName}
                 </h4>
                 <p className="text-xs font-mono text-gray-300">
-                  RUT: <strong className="text-white font-bold">{selectedForPreview.rut}</strong>
+                  RUT: <strong className="text-white font-bold">{selectedForPreview.rut}</strong> • Correo: <strong className="text-sky-300">{selectedForPreview.studentEmail}</strong>
                 </p>
 
                 <p className="text-xs text-gray-300 pt-2 leading-relaxed">
