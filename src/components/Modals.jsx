@@ -182,12 +182,17 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
                   onChange={(e) => setFormData({ ...formData, curso: e.target.value })}
                   className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors"
                 >
-                  <option value="Formación de Guardias de Seguridad">Formación de Guardias de Seguridad</option>
-                  <option value="Formación de Vigilantes Privados">Formación de Vigilantes Privados</option>
-                  <option value="Formación Marítimo Portuario">Formación Guardia Marítimo Portuario</option>
-                  <option value="Perfeccionamiento de Guardias">Perfeccionamiento de Guardias</option>
-                  <option value="Operación de Circuitos Cerrados (CCTV SENCE)">Operación de CCTV y Alarmas (SENCE)</option>
-                  <option value="Supervisor de Seguridad Privada">Supervisor de Seguridad Privada</option>
+                  <option value="_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles">_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles</option>
+                  <option value="1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles">1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles</option>
+                  <option value="(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.">(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.</option>
+                  <option value="Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964">Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964</option>
+                  <option value="Curso de formación Guardia de Seguridad online">Curso de formación Guardia de Seguridad online</option>
+                  <option value="Formación de Supervisor de Seguridad Privada">Formación de Supervisor de Seguridad Privada</option>
+                  <option value="Curso de Supervisor de Seguridad Marítimo Portuario">Curso de Supervisor de Seguridad Marítimo Portuario</option>
+                  <option value="TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS">TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS</option>
+                  <option value="Capacitación ITIC">Capacitación ITIC</option>
+                  <option value="_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273">_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273</option>
+                  <option value="Original - Resolución de Conflictos y Manejo de Situaciones Difíciles">Original - Resolución de Conflictos y Manejo de Situaciones Difíciles</option>
                   <option value="Otro">Otro requerimiento o capacitación para empresas</option>
                 </select>
               </div>
@@ -422,16 +427,17 @@ export const SearchModal = ({ isOpen, onClose, onSelectCourse }) => {
   const [query, setQuery] = useState('');
 
   const coursesList = [
-    { name: 'Formación de Guardias de Seguridad (OS-10)', category: 'Formación Inicial', target: 'servicios' },
-    { name: 'Formación de Vigilantes Privados', category: 'Formación Inicial', target: 'servicios' },
-    { name: 'Formación de Guardia de Seguridad Marítimo Portuario', category: 'Formación Inicial', target: 'servicios' },
-    { name: 'Formación para Porteros, Nocheros y Rondines', category: 'Formación Inicial', target: 'servicios' },
-    { name: 'Perfeccionamiento de Guardias de Seguridad', category: 'Perfeccionamiento', target: 'servicios' },
-    { name: 'Perfeccionamiento de Guardia Marítimo Portuario', category: 'Perfeccionamiento', target: 'servicios' },
-    { name: 'Perfeccionamiento de Porteros y Nocheros', category: 'Perfeccionamiento', target: 'servicios' },
-    { name: 'Técnicas de Operación CCTV (SENCE)', category: 'Especialización', target: 'servicios' },
-    { name: 'Operación de CCTV y Alarmas de Seguridad Privada', category: 'Especialización', target: 'servicios' },
-    { name: 'Supervisor de Seguridad Privada', category: 'Especialización', target: 'servicios' },
+    { name: '_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725', category: 'Seguridad Privada', price: '$85.000 CLP' },
+    { name: '1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725', category: 'Seguridad Privada', price: '$85.000 CLP' },
+    { name: '(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.', category: 'Seguridad Privada', price: '$140.000 CLP' },
+    { name: 'Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964', category: 'Seguridad Privada', price: '$130.000 CLP' },
+    { name: 'Curso de formación Guardia de Seguridad online', category: 'Seguridad Privada', price: '$120.000 CLP' },
+    { name: 'Formación de Supervisor de Seguridad Privada', category: 'Seguridad Privada', price: '$180.000 CLP' },
+    { name: 'Curso de Supervisor de Seguridad Marítimo Portuario', category: 'Seguridad Privada', price: '$195.000 CLP' },
+    { name: 'TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS', category: 'Agricola', price: '$95.000 CLP' },
+    { name: 'Capacitación ITIC', category: 'Sistemas internos', price: '$75.000 CLP' },
+    { name: '_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273', category: 'Asistencias', price: '$60.000 CLP' },
+    { name: 'Original - Resolución de Conflictos y Manejo de Situaciones Difíciles', category: 'Originales', price: '$85.000 CLP' },
   ];
 
   if (!isOpen) return null;
