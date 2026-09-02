@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { 
-  X, 
-  Send, 
-  User, 
-  Lock, 
-  Search, 
-  CheckCircle, 
-  ExternalLink, 
-  Calendar, 
-  ShieldCheck, 
-  Phone, 
-  Mail, 
-  BookOpen 
+import {
+  X,
+  Send,
+  User,
+  Lock,
+  Search,
+  CheckCircle,
+  ExternalLink,
+  Calendar,
+  ShieldCheck,
+  Phone,
+  Mail,
+  BookOpen
 } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
 
@@ -31,10 +31,10 @@ export const ContactModal = ({ isOpen, onClose, defaultCourse = '' }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Destinatario oficial WhatsApp PrevySeg
     const targetWhatsAppNumber = '56978691869'; // +56 9 7869 1869
-    
+
     const whatsappMessage = `👋 *¡Hola PrevySeg! Nueva Consulta Web:*
 
 👤 *Nombre Completo:* ${formData.nombre.trim()}
@@ -49,10 +49,10 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
 
     const encodedUrl = `https://api.whatsapp.com/send?phone=${targetWhatsAppNumber}&text=${encodeURIComponent(whatsappMessage)}`;
     setWhatsappLink(encodedUrl);
-    
+
     // Abrir WhatsApp automáticamente en una pestaña nueva
     window.open(encodedUrl, '_blank', 'noopener,noreferrer');
-    
+
     setIsSubmitted(true);
   };
 
@@ -70,7 +70,7 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-[#18191c] border border-gray-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 relative">
-        
+
         {/* Close button */}
         <button
           onClick={onClose}
@@ -84,7 +84,7 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
             <div className="w-16 h-16 bg-emerald-500/20 text-[#22c55e] rounded-full flex items-center justify-center mx-auto animate-bounce">
               <CheckCircle size={36} />
             </div>
-            
+
             <div className="space-y-2">
               <h3 className="text-2xl font-black text-white">¡Mensaje Preparado con Éxito!</h3>
               <p className="text-gray-300 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
@@ -182,17 +182,12 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
                   onChange={(e) => setFormData({ ...formData, curso: e.target.value })}
                   className="w-full bg-[#121315] border border-gray-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#00c2b2] transition-colors"
                 >
-                  <option value="_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles">_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles</option>
-                  <option value="1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles">1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles</option>
-                  <option value="(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.">(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.</option>
-                  <option value="Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964">Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964</option>
-                  <option value="Curso de formación Guardia de Seguridad online">Curso de formación Guardia de Seguridad online</option>
-                  <option value="Formación de Supervisor de Seguridad Privada">Formación de Supervisor de Seguridad Privada</option>
-                  <option value="Curso de Supervisor de Seguridad Marítimo Portuario">Curso de Supervisor de Seguridad Marítimo Portuario</option>
-                  <option value="TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS">TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS</option>
+                  <option value="_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725">_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725</option>
+                  <option value="Operador de Central de Cámaras de Televigilancia. C.C.T.V.">Operador de Central de Cámaras de Televigilancia. C.C.T.V.</option>
+                  <option value="Curso de formación Guardia de Seguridad">Curso de formación Guardia de Seguridad</option>
+                  <option value="Formación de Supervisor de Seguridad Privada *ONLINE*">Formación de Supervisor de Seguridad Privada *ONLINE*</option>
                   <option value="Capacitación ITIC">Capacitación ITIC</option>
-                  <option value="_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273">_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273</option>
-                  <option value="Original - Resolución de Conflictos y Manejo de Situaciones Difíciles">Original - Resolución de Conflictos y Manejo de Situaciones Difíciles</option>
+                  <option value="Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273">Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273</option>
                   <option value="Otro">Otro requerimiento o capacitación para empresas</option>
                 </select>
               </div>
@@ -239,8 +234,8 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
     {
       user: '15692858-5',
       pass: '15692858',
-      nombre: 'Ashley Adaros Guzmán',
-      email: 'ashley.adaros@prevyseg.cl',
+      nombre: 'Administracion',
+      email: 'admin@prevyseg.cl',
       rol: 'ADMIN',
       cargo: 'Administrador / Instructor SENCE',
     },
@@ -269,14 +264,14 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
     setTimeout(() => {
       setLoading(false);
-      
+
       // Normalizar entrada de RUT (quitar puntos o espacios)
       const cleanInputUser = rut.trim().replace(/\./g, '');
       const cleanPassword = password.trim();
 
       // Para el estudiante 21778425-6 permitir cualquier contraseña o 21778425
       let matched = validUsers.find((u) => u.user === cleanInputUser && u.pass === cleanPassword);
-      
+
       if (!matched && cleanInputUser === '21778425-6') {
         matched = validUsers.find((u) => u.user === '21778425-6');
       }
@@ -427,23 +422,18 @@ export const SearchModal = ({ isOpen, onClose, onSelectCourse }) => {
   const [query, setQuery] = useState('');
 
   const coursesList = [
-    { name: '_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725', category: 'Seguridad Privada', price: '$85.000 CLP' },
-    { name: '1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725', category: 'Seguridad Privada', price: '$85.000 CLP' },
-    { name: '(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.', category: 'Seguridad Privada', price: '$140.000 CLP' },
-    { name: 'Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964', category: 'Seguridad Privada', price: '$130.000 CLP' },
-    { name: 'Curso de formación Guardia de Seguridad online', category: 'Seguridad Privada', price: '$120.000 CLP' },
-    { name: 'Formación de Supervisor de Seguridad Privada', category: 'Seguridad Privada', price: '$180.000 CLP' },
-    { name: 'Curso de Supervisor de Seguridad Marítimo Portuario', category: 'Seguridad Privada', price: '$195.000 CLP' },
-    { name: 'TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS', category: 'Agricola', price: '$95.000 CLP' },
+    { name: '_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725', category: 'Seguridad Privada', price: '$85.000 CLP' },
+    { name: 'Operador de Central de Cámaras de Televigilancia. C.C.T.V.', category: 'Seguridad Privada', price: '$140.000 CLP' },
+    { name: 'Curso de formación Guardia de Seguridad', category: 'Seguridad Privada', price: '$120.000 CLP' },
+    { name: 'Formación de Supervisor de Seguridad Privada *ONLINE*', category: 'Seguridad Privada', price: '$180.000 CLP' },
     { name: 'Capacitación ITIC', category: 'Sistemas internos', price: '$75.000 CLP' },
-    { name: '_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273', category: 'Asistencias', price: '$60.000 CLP' },
-    { name: 'Original - Resolución de Conflictos y Manejo de Situaciones Difíciles', category: 'Originales', price: '$85.000 CLP' },
+    { name: 'Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273', category: 'Asistencias', price: '$60.000 CLP' },
   ];
 
   if (!isOpen) return null;
 
-  const filtered = coursesList.filter((c) => 
-    c.name.toLowerCase().includes(query.toLowerCase()) || 
+  const filtered = coursesList.filter((c) =>
+    c.name.toLowerCase().includes(query.toLowerCase()) ||
     c.category.toLowerCase().includes(query.toLowerCase())
   );
 

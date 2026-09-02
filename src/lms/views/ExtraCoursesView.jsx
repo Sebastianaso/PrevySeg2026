@@ -157,7 +157,7 @@ const ExtraCourseCover = ({ item }) => {
 export const EXTRA_COURSES_DATA = [
   {
     id: 'extra-01',
-    title: '_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725 - Registro Único Sence: 6750652',
+    title: '_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725',
     category: 'Seguridad Privada',
     coverType: 'pattern-grey',
     price: '$85.000 CLP',
@@ -174,24 +174,7 @@ export const EXTRA_COURSES_DATA = [
   },
   {
     id: 'extra-02',
-    title: '1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725 - Código Curso: 6745745',
-    category: 'Seguridad Privada',
-    coverType: 'pattern-blue-circles',
-    price: '$85.000 CLP',
-    priceNumber: 85000,
-    priceDetail: 'o Franquicia SENCE 100%',
-    days: 'Martes y Jueves',
-    hours: '18:30 a 21:30 hrs',
-    startDate: '22 Septiembre, 2026',
-    endDate: '22 Octubre, 2026',
-    totalHours: '24 Horas Sincrónicas',
-    senceCode: 'Cod. SENCE: 1238088725',
-    highlight: 'Edición 2025',
-    status: 'Disponible'
-  },
-  {
-    id: 'extra-03',
-    title: '(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.',
+    title: 'Operador de Central de Cámaras de Televigilancia. C.C.T.V.',
     category: 'Seguridad Privada',
     image: cctvOperatorImg,
     price: '$140.000 CLP',
@@ -207,25 +190,8 @@ export const EXTRA_COURSES_DATA = [
     status: 'Disponible'
   },
   {
-    id: 'extra-04',
-    title: 'Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964',
-    category: 'Seguridad Privada',
-    image: blogCctvImg,
-    price: '$130.000 CLP',
-    priceNumber: 130000,
-    priceDetail: 'Código SENCE Disponible',
-    days: 'Lunes a Jueves',
-    hours: '19:00 a 21:30 hrs',
-    startDate: '01 Octubre, 2026',
-    endDate: '29 Octubre, 2026',
-    totalHours: '40 Horas',
-    senceCode: 'Cod. SENCE: 1238087964',
-    highlight: 'CCTV & Alarmas',
-    status: 'Disponible'
-  },
-  {
-    id: 'extra-05',
-    title: 'Curso de formación Guardia de Seguridad online',
+    id: 'extra-03',
+    title: 'Curso de formación Guardia de Seguridad',
     category: 'Seguridad Privada',
     image: securityGuardsImg,
     price: '$120.000 CLP',
@@ -241,8 +207,8 @@ export const EXTRA_COURSES_DATA = [
     status: 'Disponible'
   },
   {
-    id: 'extra-06',
-    title: 'Formación de Supervisor de Seguridad Privada',
+    id: 'extra-04',
+    title: 'Formación de Supervisor de Seguridad Privada *ONLINE*',
     category: 'Seguridad Privada',
     image: securitySupervisorImg,
     price: '$180.000 CLP',
@@ -258,41 +224,7 @@ export const EXTRA_COURSES_DATA = [
     status: 'Disponible'
   },
   {
-    id: 'extra-07',
-    title: 'Curso de Supervisor de Seguridad Marítimo Portuario',
-    category: 'Seguridad Privada',
-    image: blogPortImg,
-    price: '$195.000 CLP',
-    priceNumber: 195000,
-    priceDetail: 'Normativa Directemar / Puerto Arica',
-    days: 'Lunes, Miércoles y Viernes',
-    hours: '18:30 a 21:30 hrs',
-    startDate: '15 Octubre, 2026',
-    endDate: '25 Noviembre, 2026',
-    totalHours: '60 Horas',
-    senceCode: 'Directemar PBIP',
-    highlight: 'Puerto de Arica',
-    status: 'Disponible'
-  },
-  {
-    id: 'extra-08',
-    title: 'TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS',
-    category: 'Agricola',
-    coverType: 'pattern-blue-hex',
-    price: '$95.000 CLP',
-    priceNumber: 95000,
-    priceDetail: 'Especialización Agropecuaria',
-    days: 'Sábados',
-    hours: '09:00 a 14:00 hrs',
-    startDate: '08 Noviembre, 2026',
-    endDate: '06 Diciembre, 2026',
-    totalHours: '32 Horas',
-    senceCode: 'Capacitación Agro',
-    highlight: 'Agropecuario',
-    status: 'Disponible'
-  },
-  {
-    id: 'extra-09',
+    id: 'extra-05',
     title: 'Capacitación ITIC',
     category: 'Sistemas internos',
     coverType: 'pattern-pink',
@@ -309,8 +241,8 @@ export const EXTRA_COURSES_DATA = [
     status: 'Disponible'
   },
   {
-    id: 'extra-10',
-    title: '_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273',
+    id: 'extra-06',
+    title: 'Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273',
     category: 'Asistencias',
     coverType: 'pattern-light-grey',
     price: '$60.000 CLP',
@@ -324,23 +256,6 @@ export const EXTRA_COURSES_DATA = [
     senceCode: 'ID Acción: 6731273',
     highlight: 'Asistencia SENCE',
     status: 'Disponible'
-  },
-  {
-    id: 'extra-11',
-    title: 'Original - Resolución de Conflictos y Manejo de Situaciones Difíciles',
-    category: 'Originales',
-    coverType: 'pattern-green-hex',
-    price: '$85.000 CLP',
-    priceNumber: 85000,
-    priceDetail: 'Programa Matriz Oficial',
-    days: 'Lunes y Miércoles',
-    hours: '19:00 a 22:00 hrs',
-    startDate: '01 Diciembre, 2026',
-    endDate: '22 Diciembre, 2026',
-    totalHours: '24 Horas',
-    senceCode: 'Programa Matriz',
-    highlight: 'Matriz Oficial',
-    status: 'Disponible'
   }
 ];
 
@@ -352,7 +267,7 @@ const ExtraCoursesView = ({ currentUser }) => {
   const [selectedCourseForModal, setSelectedCourseForModal] = useState(null);
   const [enrollSuccess, setEnrollSuccess] = useState(false);
 
-  const categories = ['Todos', 'Seguridad Privada', 'Agricola', 'Sistemas internos', 'Asistencias', 'Originales'];
+  const categories = ['Todos', 'Seguridad Privada', 'Sistemas internos', 'Asistencias'];
 
   useEffect(() => {
     // Simulando carga desde endpoint / Base de datos

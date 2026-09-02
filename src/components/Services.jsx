@@ -134,7 +134,7 @@ const CourseCover = ({ item }) => {
 export const COURSES_DATA = [
   {
     id: 1,
-    title: '_2_66_2026 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725 - Registro Único Sence: 6750652',
+    title: '_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725',
     category: 'Seguridad Privada',
     coverType: 'pattern-grey',
     price: '$85.000 CLP',
@@ -142,62 +142,30 @@ export const COURSES_DATA = [
   },
   {
     id: 2,
-    title: '1_65_2025 - Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725 - Código Curso: 6745745',
-    category: 'Seguridad Privada',
-    coverType: 'pattern-blue-circles',
-    price: '$85.000 CLP',
-    priceDetail: 'o Franquicia SENCE 100%'
-  },
-  {
-    id: 3,
-    title: '(código 1-56) Operador de Central de Cámaras de Televigilancia. C.C.T.V.',
+    title: 'Operador de Central de Cámaras de Televigilancia. C.C.T.V.',
     category: 'Seguridad Privada',
     image: cctvOperatorImg,
     price: '$140.000 CLP',
     priceDetail: 'Certificación Oficial OS-10'
   },
   {
-    id: 4,
-    title: 'Técnicas De Operación De Circuitos Cerrados De Televisión - Código SENCE : 1238087964',
-    category: 'Seguridad Privada',
-    image: blogCctvImg,
-    price: '$130.000 CLP',
-    priceDetail: 'Código SENCE Disponible'
-  },
-  {
-    id: 5,
-    title: 'Curso de formación Guardia de Seguridad online',
+    id: 3,
+    title: 'Curso de formación Guardia de Seguridad',
     category: 'Seguridad Privada',
     image: securityGuardsImg,
     price: '$120.000 CLP',
     priceDetail: 'Acreditado OS-10 de Carabineros'
   },
   {
-    id: 6,
-    title: 'Formación de Supervisor de Seguridad Privada',
+    id: 4,
+    title: 'Formación de Supervisor de Seguridad Privada *ONLINE*',
     category: 'Seguridad Privada',
     image: securitySupervisorImg,
     price: '$180.000 CLP',
     priceDetail: 'Nivel Superior y Gestión OS-10'
   },
   {
-    id: 7,
-    title: 'Curso de Supervisor de Seguridad Marítimo Portuario',
-    category: 'Seguridad Privada',
-    image: blogPortImg,
-    price: '$195.000 CLP',
-    priceDetail: 'Normativa Directemar / Puerto Arica'
-  },
-  {
-    id: 8,
-    title: 'TECNICAS DEL MANEJO DEL GANADO DE CAMÉLIDOS SUDAMERICANOS',
-    category: 'Agricola',
-    coverType: 'pattern-blue-hex',
-    price: '$95.000 CLP',
-    priceDetail: 'Especialización Agropecuaria'
-  },
-  {
-    id: 9,
+    id: 5,
     title: 'Capacitación ITIC',
     category: 'Sistemas internos',
     coverType: 'pattern-pink',
@@ -205,27 +173,19 @@ export const COURSES_DATA = [
     priceDetail: 'Tecnologías de Información'
   },
   {
-    id: 10,
-    title: '_1 Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273',
+    id: 6,
+    title: 'Asistencia Curso - Código Sence: 1238087964 ID Acción: 6731273',
     category: 'Asistencias',
     coverType: 'pattern-light-grey',
     price: '$60.000 CLP',
     priceDetail: 'Módulo de Registro y Control'
-  },
-  {
-    id: 11,
-    title: 'Original - Resolución de Conflictos y Manejo de Situaciones Difíciles',
-    category: 'Originales',
-    coverType: 'pattern-green-hex',
-    price: '$85.000 CLP',
-    priceDetail: 'Programa Matriz Oficial'
   }
 ];
 
 const Services = ({ onSelectCourse }) => {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  const categories = ['Todos', 'Seguridad Privada', 'Agricola', 'Sistemas internos', 'Asistencias', 'Originales'];
+  const categories = ['Todos', 'Seguridad Privada', 'Sistemas internos', 'Asistencias'];
 
   const filteredCourses = selectedCategory === 'Todos'
     ? COURSES_DATA

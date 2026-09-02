@@ -108,15 +108,15 @@ async function createRequirementsDoc() {
     {
       code: "RF-01",
       name: "Catálogo Oficial de Cursos y Especializaciones",
-      desc: "El sistema debe desplegar la oferta académica compuesta por los 11 programas oficiales autorizados por SENCE y OS-10 de Carabineros, presentando tarjetas visuales con portadas geométricas/fotográficas, categoría, títulos oficiales sin descripciones extensas y arancel al pie.",
+      desc: "El sistema debe desplegar la oferta académica compuesta por los 6 programas oficiales activos autorizados por SENCE y OS-10 de Carabineros, presentando tarjetas visuales con portadas geométricas/fotográficas, categoría, títulos oficiales sin descripciones extensas y arancel al pie.",
       priority: "Alta",
       actor: "Público General / Empresas",
-      acceptance: "Renderizado responsivo en grilla de los 11 cursos con datos de precio y categoría."
+      acceptance: "Renderizado responsivo en grilla de los 6 cursos con datos de precio y categoría."
     },
     {
       code: "RF-02",
       name: "Filtrado Dinámico de Cursos por Categoría",
-      desc: "El usuario podrá filtrar el catálogo según las categorías: Seguridad Privada, Agrícola, Sistemas Internos, Asistencias y Originales, actualizando la vista de inmediato sin recargar la página.",
+      desc: "El usuario podrá filtrar el catálogo según las categorías activas: Seguridad Privada, Sistemas Internos y Asistencias, actualizando la vista de inmediato sin recargar la página.",
       priority: "Media",
       actor: "Público General / Empresas",
       acceptance: "Filtrado instantáneo en cliente (React) al hacer clic en las píldoras de categoría."

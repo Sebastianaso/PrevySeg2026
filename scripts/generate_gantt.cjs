@@ -1105,6 +1105,16 @@ async function generateGanttChart() {
       status: 'Implementado'
     },
     {
+      ver: 'v1.9.4',
+      date: '02/09/2026',
+      file: 'src/components/Services.jsx, Modals.jsx, lms/views/ExtraCoursesView.jsx',
+      type: 'Catálogo & Oferta Académica',
+      desc: 'Depuración y actualización de la oferta académica a los 6 cursos activos autorizados (Resolución de Conflictos, Operador CCTV, Guardia de Seguridad, Supervisor ONLINE, Capacitación ITIC y Asistencia Curso), eliminando programas descartados.',
+      reason: 'Mantener la plataforma alineada exclusivamente con los programas vigentes y activos de PrevySeg.',
+      impact: 'Catálogo 100% conciso, filtros optimizados y consistencia en buscador y modals.',
+      status: 'Implementado'
+    },
+    {
       ver: 'v2.0.0 (Futuro)',
       date: '05/10/2026',
       file: 'Backend API / Base de Datos / Webpay',
