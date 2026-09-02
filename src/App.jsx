@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
@@ -17,7 +18,7 @@ import {
   ArticleModal 
 } from './components/Modals';
 
-function App() {
+function AppContent() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -55,12 +56,12 @@ function App() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white">
+    <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white transition-colors duration-300">
       
       {/* Dynamic Network Node Canvas Background */}
       <NetworkBackground />
 
-      {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll) */}
+      {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll + Theme Switcher) */}
       <Header 
         onOpenPlatform={() => setIsPlatformOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
@@ -131,6 +132,14 @@ function App() {
       />
 
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

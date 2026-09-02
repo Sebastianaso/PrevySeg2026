@@ -41,6 +41,7 @@ import ExtraCoursesView from './views/ExtraCoursesView';
 import JobBoardView from './views/JobBoardView';
 import CourseClassroomView from './views/CourseClassroomView';
 import CertificateApprovalView from './views/CertificateApprovalView';
+import { ThemeToggleBtn } from '../context/ThemeContext';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
   // Verificación estricta de Roles (RBAC)
@@ -238,6 +239,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome }) => {
                 </button>
               </div>
             )}
+
+            {/* Accessible Theme Toggle Button */}
+            <ThemeToggleBtn />
 
             {/* Notifications Bell */}
             <div className="relative">

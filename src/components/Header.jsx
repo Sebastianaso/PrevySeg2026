@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggleBtn } from '../context/ThemeContext';
 import { 
   Phone, 
   Mail, 
@@ -164,6 +165,9 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               <Search size={15} />
             </motion.button>
 
+            {/* Accessible Theme Toggle Button (Dark / Light High Contrast) */}
+            <ThemeToggleBtn />
+
             {/* Plataforma Virtual Button */}
             <motion.button
               whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
@@ -176,8 +180,9 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
             </motion.button>
           </div>
 
-          {/* Mobile Hamburger Button */}
+          {/* Mobile Hamburger & Controls Button */}
           <div className="flex items-center gap-2 lg:hidden">
+            <ThemeToggleBtn />
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onOpenSearch}
