@@ -23,14 +23,26 @@ export const ThemeProvider = ({ children }) => {
     } catch (e) {}
 
     const root = document.documentElement;
+    const body = document.body;
+
     if (theme === 'light') {
       root.classList.add('light');
       root.classList.remove('dark');
       root.setAttribute('data-theme', 'light');
+      if (body) {
+        body.classList.add('light');
+        body.classList.remove('dark');
+        body.setAttribute('data-theme', 'light');
+      }
     } else {
       root.classList.add('dark');
       root.classList.remove('light');
       root.setAttribute('data-theme', 'dark');
+      if (body) {
+        body.classList.add('dark');
+        body.classList.remove('light');
+        body.setAttribute('data-theme', 'dark');
+      }
     }
   }, [theme]);
 
@@ -40,7 +52,9 @@ export const ThemeProvider = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
-      {children}
+      <div className={theme === 'light' ? 'light' : 'dark'} data-theme={theme}>
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 };
@@ -65,11 +79,15 @@ export const ThemeToggleBtn = ({ className = '', showLabel = false }) => {
     <motion.button
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.92 }}
-      onClick={toggleTheme}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleTheme();
+      }}
       type="button"
       className={`relative inline-flex items-center gap-2 p-2 rounded-xl transition-all cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[#00c2b2]/50 ${
         isDark
-          ? 'bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-white/10 shadow-inner'
+          ? 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-white/10 shadow-inner'
           : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 shadow-sm'
       } ${className}`}
       title={isDark ? 'Cambiar a Fondo Blanco (Modo Claro de Alto Contraste)' : 'Cambiar a Fondo Oscuro (Modo Nocturno)'}

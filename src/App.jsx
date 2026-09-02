@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
@@ -19,6 +19,7 @@ import {
 } from './components/Modals';
 
 function AppContent() {
+  const { isDark, theme } = useTheme();
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -56,7 +57,10 @@ function AppContent() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white transition-colors duration-300">
+    <div 
+      className={`relative min-h-screen ${isDark ? 'bg-[#18191c] text-white' : 'bg-[#f8fafc] text-slate-900 light'} flex flex-col selection:bg-[#00c2b2] selection:text-white transition-colors duration-300`}
+      data-theme={theme}
+    >
       
       {/* Dynamic Network Node Canvas Background */}
       <NetworkBackground />
