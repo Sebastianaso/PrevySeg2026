@@ -71,60 +71,65 @@ export const useTheme = () => {
   return context;
 };
 
-// Reusable animated Theme Toggle Button
+// Reusable sliding Theme Switch Button with smooth spring animation
 export const ThemeToggleBtn = ({ className = '', showLabel = false }) => {
   const { theme, toggleTheme, isDark } = useTheme();
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.08 }}
-      whileTap={{ scale: 0.92 }}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleTheme();
-      }}
-      type="button"
-      className={`relative inline-flex items-center gap-2 p-2 rounded-xl transition-all cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[#00c2b2]/50 ${
-        isDark
-          ? 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-white/10 shadow-inner'
-          : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 shadow-sm'
-      } ${className}`}
-      title={isDark ? 'Cambiar a Fondo Blanco (Modo Claro de Alto Contraste)' : 'Cambiar a Fondo Oscuro (Modo Nocturno)'}
-      aria-label="Alternar modo de alto contraste claro u oscuro"
-    >
-      <AnimatePresence mode="wait" initial={false}>
-        {isDark ? (
-          <motion.div
-            key="moon"
-            initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center"
-          >
-            <Moon size={18} className="text-cyan-300" />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="sun"
-            initial={{ opacity: 0, rotate: 90, scale: 0.8 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: -90, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center"
-          >
-            <Sun size={18} className="text-amber-500" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className={`inline-flex items-center gap-2 ${className}`}>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleTheme();
+        }}
+        type="button"
+        role="switch"
+        aria-checked={!isDark}
+        className={`w-16 h-8 rounded-full p-1 flex items-center cursor-pointer transition-colors duration-300 relative select-none focus:outline-none focus:ring-2 focus:ring-[#00c2b2]/60 ${
+          isDark
+            ? 'bg-slate-900/90 border border-cyan-500/40 shadow-inner justify-end'
+            : 'bg-amber-100 border border-amber-300 shadow-inner justify-start'
+        }`}
+        title={isDark ? 'Tema actual: Oscuro. Haz clic para deslizar a Modo Claro (Fondo Blanco)' : 'Tema actual: Claro. Haz clic para deslizar a Modo Oscuro'}
+        aria-label="Interruptor deslizable de modo claro u oscuro"
+      >
+        {/* Background indicator icons on both sides */}
+        <div className="absolute inset-0 px-2 flex items-center justify-between pointer-events-none text-xs">
+          <Sun 
+            size={13} 
+            className={`transition-opacity duration-300 ${isDark ? 'text-slate-600 opacity-40' : 'text-amber-500 opacity-90'}`} 
+          />
+          <Moon 
+            size={13} 
+            className={`transition-opacity duration-300 ${isDark ? 'text-cyan-300 opacity-90' : 'text-slate-400 opacity-40'}`} 
+          />
+        </div>
+
+        {/* Sliding Thumb Knob */}
+        <motion.div
+          layout
+          transition={{ type: "spring", stiffness: 600, damping: 32 }}
+          className={`w-6 h-6 rounded-full flex items-center justify-center z-10 shadow-md ${
+            isDark
+              ? 'bg-gradient-to-tr from-cyan-400 to-teal-300 text-slate-950 shadow-cyan-500/50'
+              : 'bg-gradient-to-tr from-amber-400 to-yellow-300 text-slate-950 shadow-amber-500/50'
+          }`}
+        >
+          {isDark ? (
+            <Moon size={13} className="text-slate-950 fill-slate-950" />
+          ) : (
+            <Sun size={13} className="text-slate-950 fill-slate-950" />
+          )}
+        </motion.div>
+      </button>
 
       {showLabel && (
-        <span className="text-xs font-bold">
+        <span className="text-xs font-bold select-none">
           {isDark ? 'Modo Oscuro' : 'Modo Claro'}
         </span>
       )}
-    </motion.button>
+    </div>
   );
 };
 
