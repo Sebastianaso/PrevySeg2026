@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { FacebookIcon, TwitterIcon, InstagramIcon, YoutubeIcon } from './SocialIcons';
 
-const Header = ({ onOpenPlatform, onOpenSearch }) => {
+const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -28,10 +28,11 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
   const navItems = [
     { name: 'INICIO', to: 'inicio' },
     { name: 'QUIÉNES SOMOS', to: 'quienes-somos' },
-    { name: 'SERVICIOS', to: 'servicios' },
-    { name: 'EXPERIENCIAS', to: 'experiencias' },
+    { name: 'ESCUELAS & CURSOS', to: 'servicios' },
+    { name: 'FICHA DE ADMISIÓN (50%)', to: 'admision', highlight: true },
     { name: 'CONTACTO', to: 'contacto' },
   ];
+
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
@@ -40,10 +41,10 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
       <div className="bg-[#0f1012] text-white py-1.5 px-4 sm:px-8 border-b border-white/10 text-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
           
-          {/* Social Icons & SENCE Tag */}
+          {/* Social Icons & SENCE / SPD Tag */}
           <div className="flex items-center space-x-3 text-slate-300">
             <span className="bg-[#00c2b2]/20 text-[#00c2b2] text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border border-[#00c2b2]/40 tracking-wider">
-              Acreditación SENCE & OS-10
+              Acreditación SPD (Subsecretaría de Prevención del Delito) & SENCE
             </span>
             <div className="h-3 w-px bg-white/10 hidden sm:block"></div>
             <motion.a 

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Award, Sparkles, CheckCircle2 } from 'lucide-react';
 import heroImg from '../assets/images/hero_graduation.jpg';
 
-const Hero = ({ onOpenContact }) => {
+const Hero = ({ onOpenContact, onOpenEnrollment }) => {
   return (
     <section 
       id="inicio" 
@@ -32,7 +32,7 @@ const Hero = ({ onOpenContact }) => {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-950/80 border border-sky-400/40 text-sky-300 text-xs font-semibold w-fit backdrop-blur-md shadow-lg shadow-sky-950/40"
           >
             <Award size={14} className="text-[#00c2b2] animate-pulse" />
-            <span>Acreditación Oficial SENCE & OS-10 de Carabineros</span>
+            <span>Acreditación Oficial SPD (Prevención del Delito) & SENCE NCh 2728</span>
           </motion.div>
 
           {/* Main Hero Title */}
@@ -42,9 +42,9 @@ const Hero = ({ onOpenContact }) => {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-white leading-tight tracking-tight"
           >
-            Organismo Técnico De Capacitación{' '}
+            Escuela de Seguridad Privada &{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0284c7] via-sky-400 to-[#00c2b2] font-black">
-              Prevyseg
+              Escuela de Oficios
             </span>
           </motion.h1>
 
@@ -55,8 +55,7 @@ const Hero = ({ onOpenContact }) => {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl font-normal"
           >
-            <strong className="font-bold text-white">PREVYSEG CAPACITACIONES</strong>, autorizada por{' '}
-            <span className="text-[#00c2b2] font-semibold">SENCE</span> y acreditada ante la Autoridad Fiscalizadora OS-10. Más de 15 años en la ciudad de Arica formando a los mejores profesionales en seguridad privada.
+            <strong className="font-bold text-white">PREVYSEG CAPACITACIONES</strong>, líder en formación acelerada y empleabilidad en la Macro Zona Norte. Capacitación 100% online y semipresencial para <span className="text-[#00c2b2] font-semibold">Arica, Iquique, Antofagasta y Calama</span> con credencial oficial SPD y oficios industriales de rápida colocación.
           </motion.p>
 
           {/* Call to Actions */}
@@ -67,6 +66,25 @@ const Hero = ({ onOpenContact }) => {
             className="flex flex-wrap items-center gap-4 pt-2"
           >
             <ScrollLink
+              to="admision"
+              spy={true}
+              smooth={true}
+              offset={-85}
+              duration={500}
+              className="group"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(0, 194, 178, 0.5)' }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-[#00c2b2] to-teal-400 hover:from-teal-400 hover:to-teal-500 text-gray-950 font-black text-sm px-7 py-3.5 rounded-xl shadow-xl shadow-teal-950/60 border border-teal-300 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+              >
+                <Sparkles size={16} />
+                <span>Llenar Ficha (Abono 50%)</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+            </ScrollLink>
+
+            <ScrollLink
               to="servicios"
               spy={true}
               smooth={true}
@@ -75,25 +93,32 @@ const Hero = ({ onOpenContact }) => {
               className="group"
             >
               <motion.button
-                whileHover={{ scale: 1.04, boxShadow: '0 0 25px rgba(2, 132, 199, 0.4)' }}
+                whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
                 whileTap={{ scale: 0.96 }}
-                className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white font-bold text-sm px-7 py-3.5 rounded-lg shadow-xl shadow-sky-950/60 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-xl shadow-sky-950/60 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
               >
-                <span>Ver Programas</span>
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <span>Explorar Cursos</span>
               </motion.button>
             </ScrollLink>
 
-            <motion.button
-              whileHover={{ scale: 1.04, borderColor: 'rgba(0, 194, 178, 0.5)' }}
-              whileTap={{ scale: 0.96 }}
-              onClick={onOpenContact}
-              className="bg-[#121315]/80 hover:bg-[#1a1b1f] border border-white/10 hover:border-cyan-500/40 text-slate-200 font-semibold text-sm px-6 py-3.5 rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-2 backdrop-blur-md shadow-lg"
+            <ScrollLink
+              to="contacto"
+              spy={true}
+              smooth={true}
+              offset={-85}
+              duration={500}
             >
-              <ShieldCheck size={16} className="text-[#00c2b2]" />
-              <span>Solicitar Información</span>
-            </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.04, borderColor: 'rgba(0, 194, 178, 0.5)' }}
+                whileTap={{ scale: 0.96 }}
+                className="bg-[#121315]/80 hover:bg-[#1a1b1f] border border-white/10 hover:border-cyan-500/40 text-slate-200 font-semibold text-sm px-5 py-3.5 rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-2 backdrop-blur-md shadow-lg"
+              >
+                <ShieldCheck size={16} className="text-[#00c2b2]" />
+                <span>Contacto</span>
+              </motion.button>
+            </ScrollLink>
           </motion.div>
+
 
           {/* Trust badges */}
           <motion.div 
@@ -104,15 +129,15 @@ const Hero = ({ onOpenContact }) => {
           >
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#00c2b2] shadow-sm shadow-teal-400 animate-ping" />
-              <span className="text-slate-300">Matrículas Abiertas 2026</span>
+              <span className="text-slate-300">Credencial SPD Oficial</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 size={14} className="text-[#0284c7]" />
-              <span className="text-slate-300">Arica y Región Norte</span>
+              <span className="text-slate-300">Arica • Iquique • Antofagasta</span>
             </div>
             <div className="flex items-center gap-2">
               <Sparkles size={14} className="text-amber-400" />
-              <span className="text-slate-300">Franquicia Tributaria 100%</span>
+              <span className="text-slate-300">Declaración Jurada en 1 Hoja</span>
             </div>
           </motion.div>
         </motion.div>

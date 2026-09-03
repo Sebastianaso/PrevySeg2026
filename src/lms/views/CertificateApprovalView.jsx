@@ -32,13 +32,13 @@ export const INITIAL_STUDENT_APPROVALS = [
     studentEmail: 'matias.silva.alumno@prevyseg.cl', // ///CORREO DE RECEPCION///
     course: 'Curso de formación Guardia de Seguridad',
     senceCode: '1238087964',
-    category: 'Seguridad Privada OS-10',
+    category: 'Seguridad Privada SPD (Subsecretaría de Prevención del Delito)',
     hours: '90 Horas Cronológicas',
     completionDate: '01 Septiembre, 2026',
     attendance: '100% Asistencia Registrada',
     requirementsStatus: 'Documentación Legal Completa (4to Medio, Antecedentes, Médico)',
     status: 'APROBADO', // 'PENDIENTE' | 'APROBADO'
-    certificateCode: 'PREVY-2026-OS10-0987',
+    certificateCode: 'PREVY-2026-SPD-0987',
     approvedBy: 'Ashley Adaros (Director Académico)',
     approvalDate: '02 Septiembre, 2026',
     emailDispatched: true,
@@ -77,7 +77,7 @@ export const INITIAL_STUDENT_APPROVALS = [
     requirementsStatus: 'Documentación Legal Completa',
     status: 'APROBADO',
     certificateCode: 'PREVY-2026-SUP-0331',
-    approvedBy: 'Sebastián Araya (Coordinador OS-10)',
+    approvedBy: 'Sebastián Araya (Coordinador SPD)',
     approvalDate: '29 Agosto, 2026',
     emailDispatched: true,
     emailDispatchedAt: '29/08/2026 16:40 hrs'
@@ -473,7 +473,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
                   </p>
 
                   <p className="text-xs text-slate-300 pt-2 leading-relaxed">
-                    Ha completado satisfactoriamente la totalidad de las horas de instrucción, contenidos teóricos y prácticos exigidos conforme al <strong>Decreto Ley N° 3.607</strong> y normativa de Carabineros de Chile OS-10, acreditando que <strong>se encuentra debidamente capacitado(a) para desempeñarse en el área de:</strong>
+                    Ha completado satisfactoriamente la totalidad de las horas de instrucción, contenidos teóricos y prácticos exigidos conforme al <strong>Decreto Ley N° 3.607</strong> y normativa de la <strong>SPD (Subsecretaría de Prevención del Delito)</strong>, acreditando que <strong>se encuentra debidamente capacitado(a) para desempeñarse en el área de:</strong>
                   </p>
 
                   <div className="p-4 bg-black/40 rounded-2xl border border-white/10">
@@ -529,7 +529,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
                       <div className="w-32 border-b border-slate-600 pb-1 font-serif italic text-teal-300 text-xs">
                         Sebastián Araya O.
                       </div>
-                      <span className="block text-[10px] font-bold text-slate-300">Coordinador OS-10</span>
+                      <span className="block text-[10px] font-bold text-slate-300">Coordinador SPD (Subsecretaría de Prevención del Delito)</span>
                       <span className="block text-[9px] text-slate-500">Instructor Acreditado</span>
                     </div>
                   </div>

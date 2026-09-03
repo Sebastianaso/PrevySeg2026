@@ -28,7 +28,7 @@ const ContentBankView = () => {
     },
     {
       id: 'cnt-02',
-      title: 'Manual de Procedimientos y Normativa OS-10 Carabineros de Chile',
+      title: 'Manual de Procedimientos y Normativa SPD (Subsecretaría de Prevención del Delito)',
       type: 'Documento PDF Oficial',
       size: '4.8 MB',
       updated: '20 Agosto, 2026',

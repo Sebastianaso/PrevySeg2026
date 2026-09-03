@@ -27,8 +27,8 @@ const PersonalAreaView = ({ onSelectCourse }) => {
   // Cursos accedidos recientemente
   const recentCourses = [
     {
-      id: 'crs-os10-formacion',
-      title: 'Curso de Formación de Guardias de Seguridad - OS10',
+      id: 'crs-spd-formacion',
+      title: 'Curso de Formación de Guardias de Seguridad - SPD (Subsecretaría de Prevención del Delito)',
       category: 'Seguridad Privada',
       code: 'SENCE: 123800456',
       progress: 85,
@@ -45,8 +45,8 @@ const PersonalAreaView = ({ onSelectCourse }) => {
       image: blogCctv,
     },
     {
-      id: 'crs-os10-perfeccionamiento',
-      title: 'Perfeccionamiento de Guardias de Seguridad - OS10',
+      id: 'crs-spd-perfeccionamiento',
+      title: 'Perfeccionamiento de Guardias de Seguridad - SPD (Subsecretaría de Prevención del Delito)',
       category: 'Perfeccionamiento',
       code: 'SENCE: 123800789',
       progress: 100,
@@ -93,10 +93,10 @@ const PersonalAreaView = ({ onSelectCourse }) => {
               <span>Certificado Oficial Emitido por Dirección Académica</span>
             </div>
             <h3 className="text-base sm:text-lg font-bold text-white">
-              Curso de formación Guardia de Seguridad online (OS-10)
+              Curso de formación Guardia de Seguridad online (SPD - Subsecretaría de Prevención del Delito)
             </h3>
             <p className="text-xs text-slate-400">
-              Acreditación oficial conforme al Decreto Ley N° 3.607. Tu copia digital está lista para descarga.
+              Acreditación oficial conforme al Decreto Ley N° 3.607 y normativa SPD. Tu copia digital está lista para descarga.
             </p>
           </div>
         </div>

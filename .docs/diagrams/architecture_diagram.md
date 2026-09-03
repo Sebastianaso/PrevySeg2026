@@ -11,7 +11,7 @@ flowchart TB
     subgraph AppCore["⚛️ Capa de Aplicación React (Vite)"]
         Main["main.jsx"]
         App["App.jsx (Estado Global de Modales)"]
-        
+      
         subgraph Components["🧩 Componentes Modulares"]
             HeaderComp["Header.jsx (TopBar + Navbar)"]
             HeroComp["Hero.jsx (#inicio)"]

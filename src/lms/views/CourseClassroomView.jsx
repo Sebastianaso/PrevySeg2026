@@ -25,6 +25,10 @@ import {
 } from 'lucide-react';
 
 export const CourseClassroomView = ({ courseTitle, onBack }) => {
+  const displayTitle = typeof courseTitle === 'object' 
+    ? (courseTitle?.title || 'Curso de Formación Guardia de Seguridad online') 
+    : (courseTitle || 'Curso de Formación Guardia de Seguridad online');
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeTab, setActiveTab] = useState('contenido');
   const [activeLessonId, setActiveLessonId] = useState('2-3');
@@ -41,8 +45,8 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
       progress: 100,
       lessons: [
         { id: '1-1', title: '1.1 Decreto Ley 3.607 y Ley 19.303', duration: '25 min', completed: true },
-        { id: '1-2', title: '1.2 Derechos y Deberes del Guardia OS-10', duration: '30 min', completed: true },
-        { id: '1-3', title: '1.3 Quiz de Evaluación Normativa OS-10', duration: '15 min', completed: true },
+        { id: '1-2', title: '1.2 Derechos y Deberes del Guardia SPD (Subsecretaría de Prevención del Delito)', duration: '30 min', completed: true },
+        { id: '1-3', title: '1.3 Quiz de Evaluación Normativa SPD (Subsecretaría de Prevención del Delito)', duration: '15 min', completed: true },
       ]
     },
     {
@@ -70,11 +74,11 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
     },
     {
       id: 4,
-      title: 'Módulo 4: Evaluación Final y Certificación OS-10',
+      title: 'Módulo 4: Evaluación Final y Certificación SPD (Subsecretaría de Prevención del Delito)',
       duration: '24 Horas',
       progress: 0,
       lessons: [
-        { id: '4-1', title: '4.1 Repaso General y Banco de Preguntas OS-10', duration: '60 min', completed: false },
+        { id: '4-1', title: '4.1 Repaso General y Banco de Preguntas SPD (Subsecretaría de Prevención del Delito)', duration: '60 min', completed: false },
         { id: '4-2', title: '4.2 Examen Teórico Final de Certificación', duration: '45 min', completed: false },
       ]
     }
@@ -107,7 +111,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
     },
     {
       id: 'q3',
-      question: '¿Cuál es la vigencia oficial de la credencial de Guardia de Seguridad emitida por Carabineros OS-10?',
+      question: '¿Cuál es la vigencia oficial de la credencial de Guardia de Seguridad emitida por la SPD (Subsecretaría de Prevención del Delito)?',
       options: [
         '1 año.',
         '2 años.',
@@ -115,7 +119,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
         'Indefinida.'
       ],
       correct: 2,
-      explanation: 'La acreditación de OS-10 tiene una vigencia legal de 3 años, tras los cuales se debe realizar el curso de Perfeccionamiento.'
+      explanation: 'La acreditación de SPD (Subsecretaría de Prevención del Delito) tiene una vigencia legal de 3 años, tras los cuales se debe realizar el curso de Perfeccionamiento.'
     },
     {
       id: 'q4',
@@ -181,7 +185,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
               Aula Virtual Oficial SENCE
             </span>
             <h1 className="text-sm sm:text-base font-bold text-white line-clamp-1">
-              {courseTitle || 'Curso de formación Guardia de Seguridad online'}
+              {displayTitle}
             </h1>
           </div>
         </div>
@@ -224,7 +228,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 </h3>
               </div>
               <span className="text-[10px] bg-sky-500/20 text-[#38bdf8] font-mono px-2.5 py-0.5 rounded-full border border-sky-500/40">
-                HD 1080p • OS-10
+                HD 1080p • SPD (Subsecretaría de Prevención del Delito)
               </span>
             </div>
 
@@ -265,7 +269,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
             {[
               { id: 'contenido', label: 'Contenido de la Clase', icon: BookOpen },
               { id: 'material', label: 'Material & Guías PDF', icon: FileText },
-              { id: 'examen', label: 'Simulador Examen OS-10', icon: HelpCircle },
+              { id: 'examen', label: 'Simulador Examen SPD (Subsecretaría de Prevención del Delito)', icon: HelpCircle },
               { id: 'certificado', label: 'Certificación Digital', icon: Award },
             ].map(tab => {
               const IconComp = tab.icon;
@@ -335,7 +339,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 
                 <div className="space-y-3">
                   {[
-                    { name: 'Manual Oficial Guardia de Seguridad OS-10 (Edición 2026).pdf', size: '4.8 MB', date: 'Actualizado Agosto 2026' },
+                    { name: 'Manual Oficial Guardia de Seguridad SPD (Subsecretaría de Prevención del Delito) (Edición 2026).pdf', size: '4.8 MB', date: 'Actualizado Agosto 2026' },
                     { name: 'Guía Práctica de Resolución de Conflictos y Crisis.pdf', size: '2.1 MB', date: 'PrevySeg OTEC' },
                     { name: 'Protocolo de Emergencias y Evacuación Arica.pdf', size: '1.5 MB', date: 'Normativa Regional' },
                   ].map((doc, idx) => (
@@ -365,7 +369,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
               </motion.div>
             )}
 
-            {/* Tab 3: Simulador de Examen OS-10 */}
+            {/* Tab 3: Simulador de Examen SPD */}
             {activeTab === 'examen' && (
               <motion.div 
                 key="examen"
@@ -377,10 +381,10 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-white/10">
                   <div>
                     <h3 className="text-base sm:text-lg font-black text-white">
-                      Simulador de Examen Teórico OS-10
+                      Simulador de Examen Teórico SPD (Subsecretaría de Prevención del Delito)
                     </h3>
                     <p className="text-xs text-slate-400">
-                      Preguntas de selección múltiple con formato oficial de Carabineros de Chile.
+                      Preguntas de selección múltiple con formato oficial de la Subsecretaría de Prevención del Delito (SPD).
                     </p>
                   </div>
                   <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 text-xs text-sky-400 font-mono">
@@ -405,7 +409,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                       </div>
                       <p className="text-xs sm:text-sm font-medium">
                         {quizScore >= 3 
-                          ? '¡Felicitaciones! Has superado el puntaje mínimo de aprobación OS-10 (Exigencia 75%).'
+                          ? '¡Felicitaciones! Has superado el puntaje mínimo de aprobación SPD (Subsecretaría de Prevención del Delito) (Exigencia 75%).'
                           : 'Puntaje insuficiente. Te recomendamos repasar los módulos teóricos y volver a intentar.'}
                       </p>
                       <button
@@ -516,7 +520,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                       <span className="text-[10px] text-slate-400">OTEC Acreditado SENCE N° 1238088725</span>
                     </div>
                     <div className="text-right font-mono text-[10px] text-sky-400">
-                      ID: PREVY-2026-OS10-0987
+                      ID: PREVY-2026-SPD-0987
                     </div>
                   </div>
 
@@ -525,7 +529,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                     <div className="text-xl font-black text-[#00c2b2]">Matías Silva Lagos</div>
                     <div className="text-xs text-slate-300 font-mono">RUT: 21.778.425-6</div>
                     <p className="text-xs text-slate-300 pt-1 leading-relaxed">
-                      Por cuanto ha cumplido satisfactoriamente con la totalidad de los módulos teóricos y prácticos conforme al <strong>Decreto Ley N° 3.607</strong> y normativa OS-10 de Carabineros de Chile, acreditando que <strong>se encuentra debidamente capacitado(a) para desempeñarse en el área de {courseTitle || 'Seguridad Privada'}</strong>.
+                      Por cuanto ha cumplido satisfactoriamente con la totalidad de los módulos teóricos y prácticos conforme al <strong>Decreto Ley N° 3.607</strong> y normativa de la <strong>SPD (Subsecretaría de Prevención del Delito)</strong>, acreditando que <strong>se encuentra debidamente capacitado(a) para desempeñarse en el área de {displayTitle || 'Seguridad Privada'}</strong>.
                     </p>
                   </div>
 
@@ -540,7 +544,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                     </div>
                     <div>
                       <span className="text-slate-500 block text-[9px] uppercase font-bold">Vigencia Legal</span>
-                      <span className="text-white font-semibold">3 Años OS-10</span>
+                      <span className="text-white font-semibold">3 Años SPD (Subsecretaría de Prevención del Delito)</span>
                     </div>
                   </div>
 

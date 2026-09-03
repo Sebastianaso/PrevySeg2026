@@ -25,7 +25,7 @@ const StatsSection = () => {
     {
       number: '100%',
       label: 'Acreditación Oficial',
-      detail: 'Cursos aprobados por SENCE y OS-10',
+      detail: 'Cursos aprobados por SENCE y SPD (Subsecretaría de Prevención del Delito)',
       icon: ShieldCheck,
       color: 'text-[#22c55e]',
       border: 'border-emerald-500/30',

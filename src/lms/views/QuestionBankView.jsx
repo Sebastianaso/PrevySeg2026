@@ -25,12 +25,12 @@ const QuestionBankView = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Preguntas de demostración para seguridad OS-10
+  // Preguntas de demostración para seguridad SPD (Subsecretaría de Prevención del Delito)
   const questions = [
     {
       id: 'q-01',
       title: 'Marco legal: Facultades del Guardia de Seguridad Privada',
-      category: 'Legislación OS-10',
+      category: 'Legislación SPD (Subsecretaría de Prevención del Delito)',
       type: 'Opción múltiple',
       points: 2,
       lastModified: '25 Agosto, 2026',
@@ -39,7 +39,7 @@ const QuestionBankView = () => {
     {
       id: 'q-02',
       title: 'Uso legítimo de la fuerza y legítima defensa en recintos privados',
-      category: 'Legislación OS-10',
+      category: 'Legislación SPD (Subsecretaría de Prevención del Delito)',
       type: 'Verdadero / Falso',
       points: 1,
       lastModified: '22 Agosto, 2026',
@@ -104,7 +104,7 @@ const QuestionBankView = () => {
         <div>
           <h2 className="text-xl font-bold text-white tracking-wide">Banco de Preguntas y Reactivos SENCE</h2>
           <p className="text-xs text-gray-400 mt-1">
-            Crea, importa y organiza reactivos para exámenes oficiales de certificación OS-10.
+            Crea, importa y organiza reactivos para exámenes oficiales de certificación SPD (Subsecretaría de Prevención del Delito).
           </p>
         </div>
 
@@ -154,7 +154,7 @@ const QuestionBankView = () => {
               className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
             >
               <option value="todas">Todas las categorías</option>
-              <option value="Legislación OS-10">Legislación OS-10</option>
+              <option value="Legislación SPD (Subsecretaría de Prevención del Delito)">Legislación SPD (Subsecretaría de Prevención del Delito)</option>
               <option value="Tecnología CCTV">Tecnología CCTV</option>
               <option value="Criminalística Básica">Criminalística Básica</option>
               <option value="Primeros Auxilios">Primeros Auxilios</option>

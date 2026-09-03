@@ -16,53 +16,53 @@ flowchart TD
     classDef decision fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff;
 
     INICIO(["1. La persona entra a la página web de PrevySeg"]):::inicio
-    
+  
     INICIO --> ELECCION{"¿Qué desea hacer?"}:::decision
-    
+  
     %% OPCION A: CONSULTAR
     ELECCION -->|"Conocer cursos o cotizar"| WEB_PUBLICA["Revisa los 6 Cursos de Seguridad y los descuentos SENCE"]:::inicio
     WEB_PUBLICA --> CONSULTA["Presiona 'Envíanos un Mensaje' y chatea directamente al WhatsApp de PrevySeg (+56 9 7869 1869)"]:::inicio
-    
+  
     %% OPCION B: INGRESAR AL AULA
     ELECCION -->|"Entrar a estudiar o administrar"| LOGIN["Presiona 'Plataforma Virtual' e ingresa su RUT y contraseña"]:::inicio
-    
+  
     LOGIN --> TIPO_USUARIO{"¿Quién está ingresando?"}:::decision
-    
+  
     %% FLUJO DEL ESTUDIANTE
     TIPO_USUARIO -->|"Es un Alumno"| PANEL_ALUMNO["Entra a su 'Área Personal' donde ve sus materias inscritas"]:::alumno
-    
+  
     PANEL_ALUMNO --> CLASES["Apreta su curso y entra al Aula Virtual:
     • Mira los videos de las clases en HD
     • Descarga los manuales y guías en PDF"]:::alumno
-    
+  
     CLASES --> EXAMEN["Rinde el Simulador de Examen de Guardia OS-10"]:::alumno
-    
+  
     EXAMEN --> NOTA{"¿Aprobó el examen?"}:::decision
-    
+  
     NOTA -->|"Menos del 75% (Reprobado)"| REINTENTO["El sistema le explica en qué se equivocó y le permite volver a repasar los módulos"]:::alumno
     REINTENTO --> EXAMEN
-    
+  
     NOTA -->|"75% o más (Aprobado)"| AVISO_ADMIN["¡Felicitaciones! El sistema avisa a la Dirección que el alumno completó el curso"]:::exito
-    
+  
     %% FLUJO DEL ADMINISTRADOR / DIRECTOR
     TIPO_USUARIO -->|"Es el Director / Administrador"| PANEL_ADMIN["Entra al Panel de Dirección y Gestión del Campus"]:::admin
-    
+  
     AVISO_ADMIN --> REVISION["El Director Académico revisa que el alumno completó todas las materias"]:::admin
     PANEL_ADMIN --> REVISION
-    
+  
     REVISION --> VISTO_BUENO["El Director presiona el botón:
     'Dar Visto Bueno y Aprobar'"]:::admin
-    
+  
     %% ENTREGA DEL DIPLOMA
     VISTO_BUENO --> ENVIO_CORREO["El sistema envía automáticamente un correo al estudiante con su diploma digital adjunto"]:::exito
-    
+  
     ENVIO_CORREO --> DESCARGA_DIPLOMA["El estudiante descarga su Diploma Oficial en PDF:
     • Certifica que está 100% capacitado para trabajar
     • Acreditado ante Carabineros OS-10 (Vigencia 3 años)
     • Resguarda sus notas personales de forma confidencial"]:::exito
-    
+  
     DESCARGA_DIPLOMA --> BOLSA_TRABAJO["El alumno puede postular a ofertas laborales en la Bolsa de Empleo de Arica"]:::exito
-    
+  
     BOLSA_TRABAJO --> FIN(["¡Proceso Terminado con Éxito!"]):::exito
 ```
 
@@ -82,15 +82,15 @@ sequenceDiagram
     Alumno->>Web: Rinde el examen de prueba de Guardia OS-10 (Obtiene 75% o más)
     Web-->>Alumno: Mensaje: "¡Curso Finalizado! Esperando Visto Bueno del Director"
     Web->>Director: Alerta en su panel: "El alumno Matías Silva completó el curso"
-    
+  
     Director->>Web: Revisa el cumplimiento y presiona "Dar Visto Bueno"
-    
+  
     critical Envío Automático
         Web->>Web: Genera el Diploma Oficial en PDF con firmas y timbres legales
         Web->>Correo: Despacha el Diploma al correo personal del alumno
         Correo-->>Alumno: Recibe notificación: "Tu Diploma PrevySeg está listo"
     end
-    
+  
     Alumno->>Web: Presiona "Descargar Copia Oficial (PDF)" para guardarlo o imprimirlo
 ```
 

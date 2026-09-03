@@ -61,7 +61,7 @@ const ParticipantsView = ({ isEditMode }) => {
             email: 'carlos.alvarez@prevyseg.cl',
             rut: '17.432.890-K',
             rol: 'Estudiante',
-            grupos: ['Cohorte Agosto 2026 - Grupo A', 'OS-10 Diurno'],
+            grupos: ['Cohorte Agosto 2026 - Grupo A', 'SPD Diurno'],
             ultimoAcceso: 'Hace 8 minutos',
             estado: 'Activo',
             progreso: 85,
@@ -109,7 +109,7 @@ const ParticipantsView = ({ isEditMode }) => {
             email: 'e.espinoza.arica@gmail.com',
             rut: '16.890.112-3',
             rol: 'Estudiante',
-            grupos: ['OS-10 Marítimo Portuario'],
+            grupos: ['SPD Marítimo Portuario'],
             ultimoAcceso: 'Ayer a las 18:40',
             estado: 'Activo',
             progreso: 48,
@@ -145,7 +145,7 @@ const ParticipantsView = ({ isEditMode }) => {
             email: 'sebastian.araya@prevyseg.cl',
             rut: '21.778.425-5',
             rol: 'Profesor / Supervisor',
-            grupos: ['Comisión Evaluadora OS-10'],
+            grupos: ['Comisión Evaluadora SPD'],
             ultimoAcceso: 'En línea ahora',
             estado: 'Activo',
             progreso: 100,
@@ -281,7 +281,7 @@ const ParticipantsView = ({ isEditMode }) => {
             )}
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            Curso: <strong className="text-gray-200">Formación de Guardias de Seguridad OS-10 (SENCE: 123800456)</strong>
+            Curso: <strong className="text-gray-200">Formación de Guardias de Seguridad - SPD (Subsecretaría de Prevención del Delito) (SENCE: 123800456)</strong>
           </p>
         </div>
 
@@ -345,7 +345,7 @@ const ParticipantsView = ({ isEditMode }) => {
               <option value="TODOS">Todos los Grupos</option>
               <option value="Grupo A">Grupo A - Diurno</option>
               <option value="Grupo B">Grupo B - Vespertino</option>
-              <option value="Portuario">OS-10 Portuario</option>
+              <option value="Portuario">SPD Portuario</option>
               <option value="CCTV">CCTV SENCE</option>
             </select>
           </div>
@@ -630,7 +630,7 @@ const ParticipantsView = ({ isEditMode }) => {
                   >
                     <option value="Cohorte Agosto 2026 - Grupo A">Grupo A - Diurno</option>
                     <option value="Cohorte Agosto 2026 - Grupo B">Grupo B - Vespertino</option>
-                    <option value="OS-10 Marítimo Portuario">OS-10 Marítimo Portuario</option>
+                    <option value="SPD Marítimo Portuario">SPD Marítimo Portuario</option>
                     <option value="CCTV Operadores SENCE">CCTV SENCE</option>
                   </select>
                 </div>

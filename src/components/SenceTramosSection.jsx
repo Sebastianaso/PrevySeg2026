@@ -105,7 +105,7 @@ export const SenceTramosSection = () => {
       {/* Footer Info Note */}
       <div className="flex items-center gap-2 text-xs text-slate-400 pt-1">
         <CheckCircle2 size={15} className="text-emerald-400 flex-shrink-0" />
-        <span>Todos los cursos de PrevySeg cuentan con código SENCE activo y registro validado ante Carabineros de Chile OS-10.</span>
+        <span>Todos los cursos de PrevySeg cuentan con código SENCE activo y registro validado ante la Subsecretaría de Prevención del Delito (SPD).</span>
       </div>
 
     </motion.div>

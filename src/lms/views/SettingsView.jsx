@@ -21,9 +21,9 @@ import {
 
 const SettingsView = () => {
   const [formData, setFormData] = useState({
-    nombreCompleto: 'Curso de Formación de Guardias de Seguridad - OS10',
-    nombreCorto: 'OS10-2026-AR-G1',
-    categoria: 'Seguridad Privada / Cursos OS-10',
+    nombreCompleto: 'Curso de Formación de Guardias de Seguridad - SPD (Subsecretaría de Prevención del Delito)',
+    nombreCorto: 'SPD-2026-AR-G1',
+    categoria: 'Seguridad Privada / Cursos SPD (Subsecretaría de Prevención del Delito)',
     visibilidad: 'Mostrar',
     fechaInicio: '2026-08-01',
     fechaFin: '2026-09-30',
@@ -32,7 +32,7 @@ const SettingsView = () => {
     formatoCurso: 'Temas por Unidades Didácticas',
     numeroSecciones: '6',
     limiteSubida: '64MB',
-    resumen: 'Programa oficial de formación integral para guardias de seguridad acreditado por el Departamento OS-10 de Carabineros de Chile y codificado por SENCE. Incluye módulos de Legislación en Seguridad Privada, Prevención de Riesgos, Primeros Auxilios, Manejo de Crisis y Defensa Personal.',
+    resumen: 'Programa oficial de formación integral para guardias de seguridad acreditado por la Subsecretaría de Prevención del Delito (SPD) y codificado por SENCE. Incluye módulos de Legislación en Seguridad Privada, Prevención de Riesgos, Primeros Auxilios, Manejo de Crisis y Defensa Personal.',
   });
 
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -149,7 +149,7 @@ const SettingsView = () => {
                   onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
                   className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-gray-200 focus:outline-none focus:border-[#0284c7]"
                 >
-                  <option value="Seguridad Privada / Cursos OS-10">Seguridad Privada / Cursos OS-10</option>
+                  <option value="Seguridad Privada / Cursos SPD (Subsecretaría de Prevención del Delito)">Seguridad Privada / Cursos SPD (Subsecretaría de Prevención del Delito)</option>
                   <option value="Perfeccionamiento de Guardias">Perfeccionamiento de Guardias</option>
                   <option value="Tecnología CCTV y Alarmas">Tecnología CCTV y Alarmas</option>
                   <option value="Seguridad Marítimo Portuaria">Seguridad Marítimo Portuaria</option>

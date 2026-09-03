@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   PieChart, 
@@ -8,6 +8,9 @@ import {
 } from 'lucide-react';
 
 const AboutUs = () => {
+  const scrollRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const cards = [
     {
       title: 'Misión',
@@ -38,13 +41,34 @@ const AboutUs = () => {
     },
   ];
 
+  // Manejo de scroll para actualizar indicador de paginación en móviles
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const cardWidth = scrollRef.current.offsetWidth * 0.85;
+      const index = Math.round(scrollLeft / cardWidth);
+      setActiveIndex(Math.min(Math.max(index, 0), cards.length - 1));
+    }
+  };
+
+  const scrollToCard = (index) => {
+    if (scrollRef.current) {
+      const cardWidth = scrollRef.current.offsetWidth * 0.85;
+      scrollRef.current.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth'
+      });
+      setActiveIndex(index);
+    }
+  };
+
   return (
     <section id="quienes-somos" className="relative py-24 px-4 sm:px-8 bg-gradient-to-b from-[#18191c] via-[#141518] to-[#18191c] border-t border-white/10 overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Section Header */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
@@ -58,7 +82,7 @@ const AboutUs = () => {
           </h2>
         </motion.div>
 
-        {/* Top Horizontal Bar with 3 Colored Stars */}
+        {/* Top Horizontal Bar with 3 Colored Stars (Desktop) */}
         <div className="relative mb-16 hidden md:block">
           <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-y-1/2"></div>
           <div className="relative flex justify-around items-center max-w-5xl mx-auto">
@@ -77,23 +101,33 @@ const AboutUs = () => {
           </div>
         </div>
 
-        {/* 3 Circular Pillars Grid with Framer Motion */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+        {/* 
+          Contenedor Principal:
+          - En móviles (<md): Flex con desplazamiento horizontal fluido, scroll snap nativo y scrollbar oculta.
+          - En pantallas medianas/grandes (md: o lg:): Grid estático de 3 columnas.
+        */}
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex md:grid md:grid-cols-3 flex-nowrap md:flex-wrap overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth gap-6 lg:gap-10 pb-6 md:pb-0 px-4 md:px-0 -mx-4 md:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        >
           {cards.map((card, index) => {
             const IconComp = card.icon;
             return (
               <motion.div 
                 key={card.title}
-                initial={{ opacity: 0, y: 25 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
                 whileHover={{ y: -6, scale: 1.02 }}
-                className={`flex flex-col items-center text-center p-8 rounded-3xl bg-[#151619]/90 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 group shadow-xl ${card.shadowHover}`}
+                className={`w-[85vw] sm:w-[70vw] md:w-auto flex-shrink-0 md:flex-shrink snap-center flex flex-col items-center text-center p-8 rounded-3xl bg-[#151619]/90 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 group shadow-xl ${card.shadowHover}`}
               >
-                {/* Mobile star indicator */}
+                {/* Mobile Star Header Indicator */}
                 <div className="md:hidden mb-4">
-                  <Star size={20} className={`${card.starColor}`} />
+                  <div className="bg-[#18191c] p-2 rounded-full border border-white/15 shadow-md inline-block">
+                    <Star size={18} className={`${card.starColor}`} />
+                  </div>
                 </div>
 
                 {/* Circular Icon Container */}
@@ -113,6 +147,22 @@ const AboutUs = () => {
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Indicadores de Paginación para Móviles (Dots) */}
+        <div className="flex md:hidden justify-center items-center gap-2 pt-4">
+          {cards.map((card, idx) => (
+            <button
+              key={idx}
+              onClick={() => scrollToCard(idx)}
+              aria-label={`Ir al pilar ${card.title}`}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                activeIndex === idx 
+                  ? 'w-6 bg-[#00c2b2]' 
+                  : 'w-2 bg-white/20 hover:bg-white/40'
+              }`}
+            />
+          ))}
         </div>
 
       </div>

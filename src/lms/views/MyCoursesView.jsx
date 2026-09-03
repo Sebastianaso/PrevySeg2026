@@ -49,8 +49,8 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
 
   const courses = [
     {
-      id: 'crs-os10-01',
-      title: 'Curso de Formación de Guardias de Seguridad - OS10 (SENCE: 123800456)',
+      id: 'crs-spd-01',
+      title: 'Curso de Formación de Guardias de Seguridad - SPD (Subsecretaría de Prevención del Delito) (SENCE: 123800456)',
       category: 'Seguridad Privada',
       senceCode: '123800456',
       progress: 85,
@@ -60,8 +60,8 @@ const MyCoursesView = ({ onSelectCourse, isEditMode }) => {
       image: heroGrad,
     },
     {
-      id: 'crs-os10-02',
-      title: 'Perfeccionamiento de Guardias de Seguridad - OS10 (SENCE: 123800789)',
+      id: 'crs-spd-02',
+      title: 'Perfeccionamiento de Guardias de Seguridad - SPD (Subsecretaría de Prevención del Delito) (SENCE: 123800789)',
       category: 'Seguridad Privada',
       senceCode: '123800789',
       progress: 100,

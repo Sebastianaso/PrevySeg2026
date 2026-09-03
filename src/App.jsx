@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
 import Services from './components/Services';
+import AdmissionSection from './components/AdmissionSection';
 import ExecutionSection from './components/ExecutionSection';
 import StatsSection from './components/StatsSection';
 import ExperiencesSection from './components/ExperiencesSection';
@@ -14,22 +15,36 @@ import {
   ContactModal, 
   PlatformModal, 
   SearchModal, 
-  ArticleModal 
+  ArticleModal,
+  EnrollmentModal 
 } from './components/Modals';
 
 function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
+  const [platformModalMode, setPlatformModalMode] = useState('login');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState('');
   
-  // Estado de usuario autenticado en LMS
+  // Estado de usuario autenticado en LMS y pestaña inicial
   const [currentLMSUser, setCurrentLMSUser] = useState(null);
+  const [lmsInitialTab, setLmsInitialTab] = useState('area-personal');
 
   const handleOpenContactWithCourse = (courseName) => {
     setSelectedCourse(courseName || '');
     setIsContactOpen(true);
+  };
+
+  const handleOpenEnrollmentWithCourse = (courseName) => {
+    setSelectedCourse(courseName || '');
+    setIsEnrollmentOpen(true);
+  };
+
+  const handleOpenPlatform = (mode = 'login') => {
+    setPlatformModalMode(mode);
+    setIsPlatformOpen(true);
   };
 
   const handleLearnMore = () => {
@@ -39,8 +54,9 @@ function App() {
     }
   };
 
-  const handleLoginSuccess = (userData) => {
+  const handleLoginSuccess = (userData, targetTab = 'area-personal') => {
     setCurrentLMSUser(userData);
+    setLmsInitialTab(targetTab || 'area-personal');
   };
 
   // Si el usuario está autenticado en la plataforma virtual, mostramos el LMS Layout completo
@@ -48,6 +64,7 @@ function App() {
     return (
       <LMSLayout
         currentUser={currentLMSUser}
+        initialTab={lmsInitialTab}
         onLogout={() => setCurrentLMSUser(null)}
         onReturnHome={() => setCurrentLMSUser(null)}
       />
@@ -62,8 +79,9 @@ function App() {
 
       {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll) */}
       <Header 
-        onOpenPlatform={() => setIsPlatformOpen(true)}
+        onOpenPlatform={() => handleOpenPlatform('login')}
         onOpenSearch={() => setIsSearchOpen(true)}
+        onOpenEnrollment={() => handleOpenEnrollmentWithCourse('')}
       />
 
       {/* Main Page Layout */}
@@ -72,6 +90,7 @@ function App() {
         {/* Section #inicio (Hero) */}
         <Hero 
           onOpenContact={() => handleOpenContactWithCourse('')}
+          onOpenEnrollment={() => handleOpenEnrollmentWithCourse('')}
         />
 
         {/* Section #quienes-somos (About Us: Misión, Visión, Valores) */}
@@ -79,7 +98,13 @@ function App() {
 
         {/* Section #servicios (Programas de Formación, Cursos & Tramos Franquicia SENCE) */}
         <Services 
-          onSelectCourse={(course) => handleOpenContactWithCourse(course)}
+          onSelectCourse={(course) => handleOpenEnrollmentWithCourse(course)}
+        />
+
+        {/* Section #admision (Ficha de Inscripción Digital Oficial con Abono 50% y Validación WhatsApp) */}
+        <AdmissionSection 
+          defaultSelectedCourse={selectedCourse}
+          onOpenPlatform={() => handleOpenPlatform('login')}
         />
 
         {/* Execution Section (Cyan Checkmarks, Action, and Promo Image) */}
@@ -100,12 +125,19 @@ function App() {
       {/* Section #contacto & Footer */}
       <ContactFooter 
         onOpenContactModal={() => handleOpenContactWithCourse('')}
+        onOpenEnrollmentModal={() => handleOpenEnrollmentWithCourse('')}
       />
 
       {/* Floating Scroll To Top Button */}
       <ScrollToTop />
 
       {/* Interactive Modals */}
+      <EnrollmentModal
+        isOpen={isEnrollmentOpen}
+        onClose={() => setIsEnrollmentOpen(false)}
+        defaultCourse={selectedCourse}
+      />
+
       <ContactModal 
         isOpen={isContactOpen} 
         onClose={() => setIsContactOpen(false)}
@@ -114,6 +146,7 @@ function App() {
 
       <PlatformModal 
         isOpen={isPlatformOpen} 
+        initialMode={platformModalMode}
         onClose={() => setIsPlatformOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
@@ -121,13 +154,13 @@ function App() {
       <SearchModal 
         isOpen={isSearchOpen} 
         onClose={() => setIsSearchOpen(false)}
-        onSelectCourse={(course) => handleOpenContactWithCourse(course)}
+        onSelectCourse={(course) => handleOpenEnrollmentWithCourse(course)}
       />
 
       <ArticleModal 
         article={selectedArticle} 
         onClose={() => setSelectedArticle(null)}
-        onOpenContact={() => handleOpenContactWithCourse(selectedArticle?.category || '')}
+        onOpenContact={() => handleOpenEnrollmentWithCourse(selectedArticle?.category || '')}
       />
 
     </div>
@@ -135,3 +168,4 @@ function App() {
 }
 
 export default App;
+

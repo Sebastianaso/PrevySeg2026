@@ -20,8 +20,8 @@ const AdminGeneralView = ({ onNavigateSubtab }) => {
 
   const adminStats = [
     { label: 'Total Alumnos SENCE', value: '5,240', detail: '+120 este mes', icon: Users, color: 'text-[#0284c7]', bg: 'bg-sky-950/60' },
-    { label: 'Cursos Activos OS-10', value: '18', detail: '6 en fiscalización', icon: BookOpen, color: 'text-[#00c2b2]', bg: 'bg-teal-950/60' },
-    { label: 'Tasa de Aprobación', value: '98.4%', detail: 'Estándar Directemar / OS-10', icon: Award, color: 'text-emerald-400', bg: 'bg-emerald-950/60' },
+    { label: 'Cursos Activos SPD', value: '18', detail: '6 en fiscalización', icon: BookOpen, color: 'text-[#00c2b2]', bg: 'bg-teal-950/60' },
+    { label: 'Tasa de Aprobación', value: '98.4%', detail: 'Estándar Directemar / SPD (Subsecretaría de Prevención del Delito)', icon: Award, color: 'text-emerald-400', bg: 'bg-emerald-950/60' },
     { label: 'Estado del Servidor LMS', value: 'Operativo', detail: 'Latencia 18ms', icon: Activity, color: 'text-amber-400', bg: 'bg-amber-950/60' },
   ];
 
@@ -29,7 +29,7 @@ const AdminGeneralView = ({ onNavigateSubtab }) => {
     {
       id: 'usuarios',
       title: 'Gestión de Usuarios y Matrículas SENCE',
-      description: 'Crear, suspender o editar perfiles de alumnos, docentes y fiscalizadores OS-10.',
+      description: 'Crear, suspender o editar perfiles de alumnos, docentes y fiscalizadores SPD (Subsecretaría de Prevención del Delito).',
       actionLabel: 'Ver Participantes',
       targetTab: 'participantes',
     },

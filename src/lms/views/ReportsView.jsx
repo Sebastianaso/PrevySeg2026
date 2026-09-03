@@ -27,7 +27,7 @@ const ReportsView = () => {
     },
     {
       id: 'rep-03',
-      title: 'Libro de calificaciones del curso y ponderaciones OS-10',
+      title: 'Libro de calificaciones del curso y ponderaciones SPD (Subsecretaría de Prevención del Delito)',
       description: 'Planilla detallada con notas teóricas, exámenes prácticos y promedio final de la cohorte.',
       icon: Award,
     },
@@ -45,8 +45,8 @@ const ReportsView = () => {
     },
     {
       id: 'rep-06',
-      title: 'Informe de auditoría técnica y supervisión SENCE',
-      description: 'Reporte estandarizado para fiscalizadores de Carabineros de Chile y OTEC.',
+      title: 'Informe de auditoría técnica y supervisión SENCE & SPD',
+      description: 'Reporte estandarizado para fiscalizadores de la Subsecretaría de Prevención del Delito (SPD) y OTEC.',
       icon: ShieldCheck,
     },
   ];

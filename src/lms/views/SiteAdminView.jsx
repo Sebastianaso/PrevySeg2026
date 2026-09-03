@@ -95,7 +95,7 @@ const SiteAdminView = ({ currentUser }) => {
       icon: Award,
       items: [
         { name: 'Configuración de las competencias', desc: 'Parámetros del marco de competencias laborales ChileValora.' },
-        { name: 'Migrar marcos', desc: 'Traslado de competencias entre cursos y cohortes OS-10.' },
+        { name: 'Migrar marcos', desc: 'Traslado de competencias entre cursos y cohortes SPD (Subsecretaría de Prevención del Delito).' },
         { name: 'Importar marco de competencias', desc: 'Carga de estándares en formato CSV o JSON.' },
         { name: 'Exportar marco de competencias', desc: 'Descarga de rúbricas oficiales de evaluación.' },
         { name: 'Marcos de competencias', desc: 'Árbol de destrezas para Guardias y Vigilantes Privados.' },
@@ -489,7 +489,7 @@ const SiteAdminView = ({ currentUser }) => {
                     </label>
                     <input
                       type="text"
-                      placeholder="Ej. Parámetro verificado según estándar OS-10"
+                      placeholder="Ej. Parámetro verificado según estándar SPD"
                       className="w-full bg-[#18191c] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
                     />
                   </div>

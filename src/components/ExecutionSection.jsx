@@ -7,7 +7,7 @@ const ExecutionSection = ({ onLearnMore }) => {
   const checkmarks = [
     'Instructores certificados con amplia trayectoria en Fuerzas de Orden y Seguridad',
     'Infraestructura moderna con salas equipadas y simuladores de CCTV en tiempo real',
-    'Acreditación oficial válida ante OS-10 de Carabineros de Chile y Autoridad Marítima (Directemar)',
+    'Acreditación oficial válida ante la SPD (Subsecretaría de Prevención del Delito) y Autoridad Marítima (Directemar)',
     'Metodología teórico-práctica con enfoque en resolución de conflictos y emergencias',
     'Bolsa de trabajo activa con alta tasa de empleabilidad en empresas de Arica',
     'Asesoría integral en la tramitación y renovación de credenciales profesionales',
