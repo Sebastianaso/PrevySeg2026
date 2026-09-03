@@ -133,15 +133,15 @@ async function generateGanttChart() {
   wsGantt.getRow(8).height = 24;
 
   const metadataHeaders = [
-    { col: 'A', title: 'WBS', width: 7 },
-    { col: 'B', title: 'Fase / Módulo', width: 20 },
-    { col: 'C', title: 'Actividad / Entregable / Hito', width: 44 },
-    { col: 'D', title: 'Responsable', width: 16 },
-    { col: 'E', title: 'F. Inicio', width: 11 },
-    { col: 'F', title: 'F. Fin', width: 11 },
-    { col: 'G', title: 'Días', width: 6 },
-    { col: 'H', title: '% Avance', width: 10 },
-    { col: 'I', title: 'Estado', width: 13 }
+    { col: 'A', title: 'WBS', width: 9 },
+    { col: 'B', title: 'Fase / Módulo', width: 22 },
+    { col: 'C', title: 'Actividad / Entregable / Hito', width: 48 },
+    { col: 'D', title: 'Responsable', width: 18 },
+    { col: 'E', title: 'F. Inicio', width: 13 },
+    { col: 'F', title: 'F. Fin', width: 13 },
+    { col: 'G', title: 'Días', width: 11 },
+    { col: 'H', title: '% Avance', width: 12 },
+    { col: 'I', title: 'Estado', width: 15 }
   ];
 
   metadataHeaders.forEach(h => {
@@ -516,8 +516,12 @@ async function generateGanttChart() {
     row.getCell('E').numFmt = 'dd/mm/yyyy';
     row.getCell('F').value = dEnd;
     row.getCell('F').numFmt = 'dd/mm/yyyy';
-    row.getCell('G').value = item.endDay - item.startDay + 1;
-    row.getCell('H').value = item.progress;
+    
+    const durationDays = item.isMilestone ? 1 : (item.endDay - item.startDay + 1);
+    row.getCell('G').value = Number(durationDays);
+    row.getCell('G').numFmt = '#,##0';
+    
+    row.getCell('H').value = Number(item.progress);
     row.getCell('H').numFmt = '0%';
     row.getCell('I').value = item.status;
 
@@ -583,6 +587,47 @@ async function generateGanttChart() {
 
     currentRow++;
   });
+
+  // Fila Resumen de Totales al pie de la Carta Gantt
+  const totalRow = wsGantt.getRow(currentRow);
+  totalRow.height = 25;
+  wsGantt.mergeCells(`A${currentRow}:F${currentRow}`);
+  const totalLabelCell = wsGantt.getCell(`A${currentRow}`);
+  totalLabelCell.value = 'PLAZO TOTAL EJECUTADO Y CRONOGRAMA CONTINUO (4 SEMANAS):';
+  totalLabelCell.font = { name: 'Segoe UI', size: 9.5, bold: true, color: { argb: 'FFFFFF' } };
+  totalLabelCell.alignment = { vertical: 'middle', horizontal: 'right' };
+  totalLabelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY_HEADER } };
+  totalLabelCell.border = headerBorder;
+
+  const totalDaysCell = totalRow.getCell('G');
+  totalDaysCell.value = 30;
+  totalDaysCell.numFmt = '#,##0';
+  totalDaysCell.font = { name: 'Segoe UI', size: 10.5, bold: true, color: { argb: 'FFFFFF' } };
+  totalDaysCell.alignment = { vertical: 'middle', horizontal: 'center' };
+  totalDaysCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_SLATE } };
+  totalDaysCell.border = headerBorder;
+
+  const totalProgCell = totalRow.getCell('H');
+  totalProgCell.value = 1.0;
+  totalProgCell.numFmt = '0%';
+  totalProgCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FFFFFF' } };
+  totalProgCell.alignment = { vertical: 'middle', horizontal: 'center' };
+  totalProgCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_GREEN } };
+  totalProgCell.border = headerBorder;
+
+  const totalStatusCell = totalRow.getCell('I');
+  totalStatusCell.value = '100% COMPLETADO';
+  totalStatusCell.font = { name: 'Segoe UI', size: 9, bold: true, color: { argb: '166534' } };
+  totalStatusCell.alignment = { vertical: 'middle', horizontal: 'center' };
+  totalStatusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: SUCCESS_LIGHT } };
+  totalStatusCell.border = headerBorder;
+
+  for (let day = 1; day <= 30; day++) {
+    const colL = getColLetter(9 + day);
+    const cell = totalRow.getCell(colL);
+    cell.border = thinBorder;
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '6EE7B7' } };
+  }
 
 
   /* ==========================================================================
