@@ -1,9 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { useTheme } from '../context/ThemeContext';
 
 const NetworkBackground = () => {
   const canvasRef = useRef(null);
-  const { isDark } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -41,9 +39,8 @@ const NetworkBackground = () => {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Node and connection colors adapted per theme
-      const nodeColor = isDark ? 'rgba(0, 194, 178, ' : 'rgba(13, 148, 136, ';
-      const lineColor = isDark ? 'rgba(0, 160, 220, ' : 'rgba(2, 132, 199, ';
+      const nodeColor = 'rgba(0, 194, 178, ';
+      const lineColor = 'rgba(0, 160, 220, ';
 
       // Update and draw particles
       for (let i = 0; i < particles.length; i++) {
@@ -57,7 +54,7 @@ const NetworkBackground = () => {
         // Draw particle node
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `${nodeColor}${p.opacity * (isDark ? 0.8 : 0.4)})`;
+        ctx.fillStyle = `${nodeColor}${p.opacity * 0.8})`;
         ctx.fill();
 
         // Connect lines to nearby nodes
@@ -68,7 +65,7 @@ const NetworkBackground = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < maxDistance) {
-            const alpha = (1 - dist / maxDistance) * (isDark ? 0.16 : 0.08);
+            const alpha = (1 - dist / maxDistance) * 0.16;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -88,14 +85,12 @@ const NetworkBackground = () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isDark]);
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 pointer-events-none z-0 transition-opacity duration-500 ${
-        isDark ? 'opacity-45' : 'opacity-25'
-      }`}
+      className="fixed inset-0 pointer-events-none z-0 opacity-45"
       aria-hidden="true"
     />
   );

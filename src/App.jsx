@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
@@ -18,8 +17,7 @@ import {
   ArticleModal 
 } from './components/Modals';
 
-function AppContent() {
-  const { isDark, theme } = useTheme();
+function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -57,15 +55,12 @@ function AppContent() {
   }
 
   return (
-    <div 
-      className={`relative min-h-screen ${isDark ? 'bg-[#18191c] text-white' : 'bg-[#f8fafc] text-slate-900 light'} flex flex-col selection:bg-[#00c2b2] selection:text-white transition-colors duration-300`}
-      data-theme={theme}
-    >
+    <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white">
       
       {/* Dynamic Network Node Canvas Background */}
       <NetworkBackground />
 
-      {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll + Theme Switcher) */}
+      {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll) */}
       <Header 
         onOpenPlatform={() => setIsPlatformOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
@@ -136,14 +131,6 @@ function AppContent() {
       />
 
     </div>
-  );
-}
-
-function App() {
-  return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
   );
 }
 

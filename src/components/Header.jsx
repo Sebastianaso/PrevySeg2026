@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThemeToggleBtn } from '../context/ThemeContext';
 import { 
   Phone, 
   Mail, 
@@ -28,21 +27,27 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
 
   const navItems = [
     { name: 'INICIO', to: 'inicio' },
-    { name: 'QUIENES SOMOS', to: 'quienes-somos' },
+    { name: 'QUIÉNES SOMOS', to: 'quienes-somos' },
     { name: 'SERVICIOS', to: 'servicios' },
+    { name: 'EXPERIENCIAS', to: 'experiencias' },
     { name: 'CONTACTO', to: 'contacto' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 shadow-2xl">
-      {/* 1. Top Bar */}
-      <div className="bg-gradient-to-r from-[#0284c7] via-[#0369a1] to-[#0284c7] text-white text-xs py-1.5 px-4 sm:px-8 border-b border-sky-400/30">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300">
+      
+      {/* 1. Top Informational Bar (Chile Security & SENCE Accreditation Banner) */}
+      <div className="bg-[#0f1012] text-white py-1.5 px-4 sm:px-8 border-b border-white/10 text-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-          {/* Social Icons */}
-          <div className="flex items-center space-x-4">
+          
+          {/* Social Icons & SENCE Tag */}
+          <div className="flex items-center space-x-3 text-slate-300">
+            <span className="bg-[#00c2b2]/20 text-[#00c2b2] text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border border-[#00c2b2]/40 tracking-wider">
+              Acreditación SENCE & OS-10
+            </span>
+            <div className="h-3 w-px bg-white/10 hidden sm:block"></div>
             <motion.a 
-              whileHover={{ scale: 1.2, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.15, color: '#38bdf8' }}
               href="https://facebook.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -52,8 +57,7 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               <FacebookIcon size={14} />
             </motion.a>
             <motion.a 
-              whileHover={{ scale: 1.2, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.15, color: '#38bdf8' }}
               href="https://twitter.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -63,8 +67,7 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               <TwitterIcon size={14} />
             </motion.a>
             <motion.a 
-              whileHover={{ scale: 1.2, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.15, color: '#38bdf8' }}
               href="https://instagram.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -74,8 +77,7 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               <InstagramIcon size={14} />
             </motion.a>
             <motion.a 
-              whileHover={{ scale: 1.2, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.15, color: '#38bdf8' }}
               href="https://youtube.com" 
               target="_blank" 
               rel="noreferrer" 
@@ -165,9 +167,6 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
               <Search size={15} />
             </motion.button>
 
-            {/* Accessible Theme Toggle Button (Dark / Light High Contrast) */}
-            <ThemeToggleBtn />
-
             {/* Plataforma Virtual Button */}
             <motion.button
               whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
@@ -182,7 +181,6 @@ const Header = ({ onOpenPlatform, onOpenSearch }) => {
 
           {/* Mobile Hamburger & Controls Button */}
           <div className="flex items-center gap-2 lg:hidden">
-            <ThemeToggleBtn />
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onOpenSearch}
