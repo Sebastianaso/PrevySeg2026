@@ -116,8 +116,8 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
       </div>
 
       {/* 2. Main Navigation Bar with Glassmorphism */}
-      <nav className={`bg-[#18191c]/85 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ${
-        isScrolled ? 'py-2.5 shadow-xl shadow-black/40' : 'py-3.5'
+      <nav className={`bg-white/90 backdrop-blur-xl border-b border-slate-200 transition-all duration-300 ${
+        isScrolled ? 'py-2.5 shadow-md shadow-slate-900/5' : 'py-3.5'
       } px-4 sm:px-8`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
@@ -130,10 +130,10 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
             className="cursor-pointer group flex flex-col items-start select-none"
           >
             <div className="flex items-baseline text-2xl sm:text-3xl font-black tracking-tight">
-              <span className="text-[#0284c7] group-hover:text-sky-400 transition-colors">Prevy</span>
-              <span className="text-[#00c2b2] group-hover:text-teal-300 transition-colors">Seg</span>
+              <span className="text-[#0284c7] group-hover:text-sky-600 transition-colors">Prevy</span>
+              <span className="text-[#00c2b2] group-hover:text-teal-600 transition-colors">Seg</span>
             </div>
-            <span className="text-[9px] tracking-wider uppercase text-slate-400 font-semibold -mt-1 group-hover:text-slate-300 transition-colors">
+            <span className="text-[9px] tracking-wider uppercase text-slate-500 font-semibold -mt-1 group-hover:text-slate-700 transition-colors">
               Organismo Técnico De Capacitación
             </span>
           </ScrollLink>
@@ -148,20 +148,20 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
                 smooth={true}
                 offset={-85}
                 duration={500}
-                activeClass="text-[#00c2b2] border-b-2 border-[#00c2b2] pb-0.5"
-                className="text-slate-300 hover:text-[#00c2b2] cursor-pointer py-1 transition-all duration-200 tracking-widest relative group"
+                activeClass="text-[#0284c7] border-b-2 border-[#0284c7] pb-0.5"
+                className="text-slate-600 hover:text-[#0284c7] cursor-pointer py-1 transition-all duration-200 tracking-widest relative group"
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00c2b2] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0284c7] transition-all duration-300 group-hover:w-full" />
               </ScrollLink>
             ))}
 
             {/* Search Icon Button */}
             <motion.button
-              whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
+              whileHover={{ scale: 1.1, backgroundColor: 'rgba(2, 132, 199, 0.08)' }}
               whileTap={{ scale: 0.92 }}
               onClick={onOpenSearch}
-              className="text-slate-300 hover:text-[#00c2b2] p-2 rounded-full border border-white/10 hover:border-cyan-500/40 transition-colors cursor-pointer"
+              className="text-slate-600 hover:text-[#0284c7] p-2 rounded-full border border-slate-200 hover:border-sky-400 bg-slate-50 hover:bg-white transition-colors cursor-pointer"
               aria-label="Buscar cursos"
               title="Buscar cursos (Ctrl+K)"
             >
@@ -170,12 +170,12 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
 
             {/* Plataforma Virtual Button */}
             <motion.button
-              whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.4)' }}
+              whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.3)' }}
               whileTap={{ scale: 0.96 }}
               onClick={onOpenPlatform}
-              className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-5 rounded-lg shadow-lg shadow-sky-950/50 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+              className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-5 rounded-lg shadow-md shadow-sky-600/20 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
             >
-              <Sparkles size={13} className="text-cyan-300 animate-pulse" />
+              <Sparkles size={13} className="text-cyan-200 animate-pulse" />
               <span>PLATAFORMA VIRTUAL</span>
             </motion.button>
           </div>
@@ -185,7 +185,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onOpenSearch}
-              className="text-slate-300 hover:text-[#00c2b2] p-2 rounded-lg border border-white/10"
+              className="text-slate-600 hover:text-[#0284c7] p-2 rounded-lg border border-slate-200 bg-slate-50"
               aria-label="Buscar"
             >
               <Search size={18} />
@@ -193,7 +193,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-slate-200 hover:text-white p-2 rounded-lg border border-white/10 focus:outline-none"
+              className="text-slate-700 hover:text-slate-900 p-2 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none"
               aria-label="Abrir menú"
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -209,7 +209,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25 }}
-              className="lg:hidden mt-3 pt-3 border-t border-white/10 flex flex-col space-y-2 pb-3 overflow-hidden"
+              className="lg:hidden mt-3 pt-3 border-t border-slate-200 flex flex-col space-y-2 pb-3 overflow-hidden bg-white/95 rounded-2xl p-3 shadow-lg"
             >
               {navItems.map((item) => (
                 <ScrollLink
@@ -220,8 +220,8 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
                   offset={-85}
                   duration={500}
                   onClick={() => setMobileMenuOpen(false)}
-                  activeClass="text-[#00c2b2] font-extrabold bg-white/5"
-                  className="text-slate-200 hover:text-[#00c2b2] text-sm font-semibold tracking-wider px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                  activeClass="text-[#0284c7] font-extrabold bg-sky-50"
+                  className="text-slate-700 hover:text-[#0284c7] text-sm font-semibold tracking-wider px-3 py-2 rounded-lg transition-colors cursor-pointer hover:bg-slate-50"
                 >
                   {item.name}
                 </ScrollLink>
@@ -234,7 +234,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
                     setMobileMenuOpen(false);
                     onOpenPlatform();
                   }}
-                  className="w-full bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-lg shadow-lg text-center flex items-center justify-center gap-2 cursor-pointer border border-sky-400/30"
+                  className="w-full bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-lg shadow-md text-center flex items-center justify-center gap-2 cursor-pointer border border-sky-400/30"
                 >
                   <span>PLATAFORMA VIRTUAL</span>
                   <ExternalLink size={14} />

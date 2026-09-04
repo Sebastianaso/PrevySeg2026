@@ -63,7 +63,7 @@ const AboutUs = () => {
   };
 
   return (
-    <section id="quienes-somos" className="relative py-24 px-4 sm:px-8 bg-gradient-to-b from-[#18191c] via-[#141518] to-[#18191c] border-t border-white/10 overflow-hidden">
+    <section id="quienes-somos" className="relative py-24 px-4 sm:px-8 bg-slate-50 border-t border-slate-200 overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Section Header */}
@@ -74,17 +74,17 @@ const AboutUs = () => {
           transition={{ duration: 0.5 }}
           className="text-center max-w-2xl mx-auto mb-16 space-y-3"
         >
-          <span className="text-[#00c2b2] text-xs font-bold tracking-widest uppercase">
+          <span className="text-[#0284c7] text-xs font-bold tracking-widest uppercase">
             Nuestra Identidad Institucional
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Pilares de <span className="text-[#0284c7]">PrevySeg</span>
           </h2>
         </motion.div>
 
         {/* Top Horizontal Bar with 3 Colored Stars (Desktop) */}
         <div className="relative mb-16 hidden md:block">
-          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-slate-300 to-transparent -translate-y-1/2"></div>
           <div className="relative flex justify-around items-center max-w-5xl mx-auto">
             {cards.map((card, idx) => (
               <motion.div 
@@ -93,7 +93,7 @@ const AboutUs = () => {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.15, duration: 0.4 }}
-                className="bg-[#18191c] p-2.5 rounded-full border border-white/15 shadow-xl shadow-black/60 backdrop-blur-md"
+                className="bg-white p-2.5 rounded-full border border-slate-200 shadow-lg shadow-slate-200"
               >
                 <Star size={20} className={`${card.starColor}`} />
               </motion.div>
@@ -121,27 +121,27 @@ const AboutUs = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.15 }}
                 whileHover={{ y: -6, scale: 1.02 }}
-                className={`w-[85vw] sm:w-[70vw] md:w-auto flex-shrink-0 md:flex-shrink snap-center flex flex-col items-center text-center p-8 rounded-3xl bg-[#151619]/90 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 group shadow-xl ${card.shadowHover}`}
+                className={`w-[85vw] sm:w-[70vw] md:w-auto flex-shrink-0 md:flex-shrink snap-center flex flex-col items-center text-center p-8 rounded-3xl bg-white border border-slate-200 hover:border-slate-300 transition-all duration-300 group shadow-xl shadow-slate-200/70 ${card.shadowHover}`}
               >
                 {/* Mobile Star Header Indicator */}
                 <div className="md:hidden mb-4">
-                  <div className="bg-[#18191c] p-2 rounded-full border border-white/15 shadow-md inline-block">
+                  <div className="bg-slate-50 p-2 rounded-full border border-slate-200 shadow-sm inline-block">
                     <Star size={18} className={`${card.starColor}`} />
                   </div>
                 </div>
 
                 {/* Circular Icon Container */}
-                <div className={`w-24 h-24 rounded-2xl flex items-center justify-center mb-6 ${card.circleBg} group-hover:scale-110 transition-transform duration-300 shadow-xl`}>
+                <div className={`w-24 h-24 rounded-2xl flex items-center justify-center mb-6 ${card.circleBg} group-hover:scale-110 transition-transform duration-300 shadow-md`}>
                   <IconComp size={40} className={card.iconColor} />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold text-white mb-4 tracking-wide group-hover:text-white transition-colors">
+                <h3 className="text-2xl font-bold text-slate-900 mb-4 tracking-wide group-hover:text-[#0284c7] transition-colors">
                   {card.title}
                 </h3>
 
                 {/* Text */}
-                <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xs font-normal">
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xs font-normal">
                   {card.text}
                 </p>
               </motion.div>
@@ -158,8 +158,8 @@ const AboutUs = () => {
               aria-label={`Ir al pilar ${card.title}`}
               className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                 activeIndex === idx 
-                  ? 'w-6 bg-[#00c2b2]' 
-                  : 'w-2 bg-white/20 hover:bg-white/40'
+                  ? 'w-6 bg-[#0284c7]' 
+                  : 'w-2 bg-slate-300 hover:bg-slate-400'
               }`}
             />
           ))}

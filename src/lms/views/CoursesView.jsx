@@ -10,16 +10,16 @@ const CoursesView = ({ onSelectCourse, isEditMode }) => {
   return (
     <div className="space-y-8">
       {/* Banner / Header */}
-      <div className="bg-gradient-to-r from-blue-950/80 via-slate-900 to-gray-900 p-6 sm:p-8 rounded-3xl border border-blue-800/40 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="bg-gradient-to-r from-sky-50 via-teal-50 to-white p-6 sm:p-8 rounded-3xl border border-sky-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-[#38bdf8] text-xs font-bold border border-sky-500/30">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 text-[#0284c7] text-xs font-bold border border-sky-200">
             <Award size={14} />
             <span>Organismo Técnico de Capacitación (OTEC)</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
             Catálogo Oficial de Cursos SENCE
           </h2>
-          <p className="text-sm text-gray-300 max-w-2xl">
+          <p className="text-sm text-slate-600 max-w-2xl">
             Bienvenido al entorno virtual de formación. Selecciona un curso para gestionar participantes, revisar configuraciones del aula o consultar informes de avance.
           </p>
         </div>
@@ -27,7 +27,7 @@ const CoursesView = ({ onSelectCourse, isEditMode }) => {
         {isEditMode && (
           <button 
             onClick={() => alert("Crear nueva cohorte o curso SENCE")}
-            className="bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 cursor-pointer flex-shrink-0"
+            className="bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold px-5 py-3 rounded-xl shadow-md flex items-center gap-2 cursor-pointer flex-shrink-0"
           >
             <Edit3 size={15} />
             <span>Crear Nuevo Curso</span>
@@ -41,33 +41,33 @@ const CoursesView = ({ onSelectCourse, isEditMode }) => {
           <div
             key={course.id}
             onClick={() => onSelectCourse(course.title)}
-            className="bg-[#121316] border border-gray-800 hover:border-gray-700 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+            className="bg-white border border-slate-200 hover:border-sky-400 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 cursor-pointer flex flex-col justify-between group hover:-translate-y-1 hover:shadow-md"
           >
             <div>
               {/* Category Badge Header */}
-              <div className="bg-gray-900 p-3.5 border-b border-gray-800 flex justify-between items-center">
-                <span className="text-[11px] font-bold bg-[#0f2942] text-white px-2.5 py-0.5 rounded border border-white/10">
+              <div className="bg-slate-50 p-3.5 border-b border-slate-200 flex justify-between items-center">
+                <span className="text-[11px] font-bold bg-sky-50 text-sky-700 px-2.5 py-0.5 rounded border border-sky-200">
                   {course.category}
                 </span>
-                <span className="text-xs font-bold text-[#00c2b2]">
+                <span className="text-xs font-bold text-teal-700">
                   {course.price}
                 </span>
               </div>
 
               {/* Title Only */}
               <div className="p-5">
-                <h3 className="text-sm font-semibold text-white leading-snug group-hover:text-[#00c2b2] transition-colors line-clamp-3">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-[#0284c7] transition-colors line-clamp-3">
                   {course.title}
                 </h3>
               </div>
             </div>
 
             {/* Bottom Row */}
-            <div className="p-4 pt-3 border-t border-gray-800 bg-gray-950/40 flex items-center justify-between">
-              <span className="text-xs text-emerald-400 font-medium">
+            <div className="p-4 pt-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <span className="text-xs text-emerald-700 font-medium">
                 {course.priceDetail}
               </span>
-              <span className="text-xs font-bold text-[#0284c7] group-hover:text-sky-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span className="text-xs font-bold text-[#0284c7] group-hover:text-sky-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                 Ver Curso <ArrowRight size={13} />
               </span>
             </div>

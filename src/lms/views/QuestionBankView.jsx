@@ -100,10 +100,10 @@ const QuestionBankView = () => {
     <div className="space-y-8">
       
       {/* 1. Header */}
-      <div className="bg-gray-900/60 p-5 rounded-2xl border border-gray-800 backdrop-blur-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-wide">Banco de Preguntas y Reactivos SENCE</h2>
-          <p className="text-xs text-gray-400 mt-1">
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">Banco de Preguntas y Reactivos SENCE</h2>
+          <p className="text-xs text-slate-600 mt-1">
             Crea, importa y organiza reactivos para exámenes oficiales de certificación SPD (Subsecretaría de Prevención del Delito).
           </p>
         </div>
@@ -111,7 +111,7 @@ const QuestionBankView = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-[#0284c7] hover:bg-[#0369a1] active:scale-95 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transition-all cursor-pointer"
+            className="bg-sky-600 hover:bg-sky-700 active:scale-95 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all cursor-pointer"
           >
             <Plus size={15} />
             <span>Crear Nueva Pregunta</span>
@@ -120,9 +120,9 @@ const QuestionBankView = () => {
       </div>
 
       {/* 2. Advanced Search & Conditional Filters */}
-      <div className="bg-[#121316] rounded-2xl border border-gray-800 p-6 space-y-6 shadow-xl">
-        <h3 className="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-          <Filter size={15} className="text-[#00c2b2]" />
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6 shadow-sm">
+        <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <Filter size={15} className="text-teal-600" />
           <span>Filtros Avanzados de Reactivos</span>
         </h3>
 
@@ -130,13 +130,13 @@ const QuestionBankView = () => {
           
           {/* Match Condition Selector ("Coincidir Cualquiera" / "Todas") */}
           <div className="sm:col-span-3">
-            <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase">
+            <label className="block text-[11px] font-bold text-slate-600 mb-1.5 uppercase">
               Criterio de Coincidencia
             </label>
             <select
               value={matchCondition}
               onChange={(e) => setMatchCondition(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 font-medium"
             >
               <option value="any">Coincidir Cualquiera (OR)</option>
               <option value="all">Coincidir Todas las Condiciones (AND)</option>
@@ -145,13 +145,13 @@ const QuestionBankView = () => {
 
           {/* Categoría Selector */}
           <div className="sm:col-span-3">
-            <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase">
+            <label className="block text-[11px] font-bold text-slate-600 mb-1.5 uppercase">
               Categoría
             </label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 font-medium"
             >
               <option value="todas">Todas las categorías</option>
               <option value="Legislación SPD (Subsecretaría de Prevención del Delito)">Legislación SPD (Subsecretaría de Prevención del Delito)</option>
@@ -163,13 +163,13 @@ const QuestionBankView = () => {
 
           {/* Tipo de Pregunta */}
           <div className="sm:col-span-3">
-            <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase">
+            <label className="block text-[11px] font-bold text-slate-600 mb-1.5 uppercase">
               Tipo de Reactivo
             </label>
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 font-medium"
             >
               <option value="todas">Todos los tipos</option>
               <option value="Opción múltiple">Opción múltiple</option>
@@ -181,7 +181,7 @@ const QuestionBankView = () => {
 
           {/* Buscador de texto */}
           <div className="sm:col-span-3">
-            <label className="block text-[11px] font-semibold text-gray-400 mb-1.5 uppercase">
+            <label className="block text-[11px] font-bold text-slate-600 mb-1.5 uppercase">
               Buscar en enunciado
             </label>
             <div className="relative">
@@ -190,18 +190,18 @@ const QuestionBankView = () => {
                 placeholder="Ej. fuerza, perimetral..."
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
-                className="w-full bg-[#18191c] border border-gray-700/80 rounded-xl pl-8 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#0284c7]"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-8 pr-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 font-medium"
               />
-              <Search size={14} className="absolute left-2.5 top-3 text-gray-400" />
+              <Search size={14} className="absolute left-2.5 top-3 text-slate-400" />
             </div>
           </div>
 
         </div>
 
         {/* Filter Action Buttons */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-800">
-          <div className="text-xs text-gray-400">
-            Mostrando <strong className="text-white">{filteredQuestions.length}</strong> preguntas disponibles
+        <div className="flex items-center justify-between pt-3 border-t border-slate-200">
+          <div className="text-xs text-slate-600">
+            Mostrando <strong className="text-slate-900 font-bold">{filteredQuestions.length}</strong> preguntas disponibles
           </div>
 
           <div className="flex gap-2">
@@ -212,13 +212,13 @@ const QuestionBankView = () => {
                 setSelectedType('todas');
                 setSearchFilter('');
               }}
-              className="px-3.5 py-1.5 rounded-lg border border-gray-700 text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
+              className="px-3.5 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-colors"
             >
               Limpiar Filtros
             </button>
             <button
               onClick={() => alert("Filtros aplicados correctamente.")}
-              className="px-4 py-1.5 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] text-xs font-bold text-white shadow cursor-pointer"
+              className="px-4 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-bold text-white shadow-sm cursor-pointer transition-colors"
             >
               Aplicar Filtros
             </button>
@@ -227,11 +227,11 @@ const QuestionBankView = () => {
       </div>
 
       {/* 3. Questions Table */}
-      <div className="bg-[#121316] rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-[#18191c] border-b border-gray-800 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+              <tr className="bg-slate-100/80 border-b border-slate-200 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                 <th className="py-3.5 px-4">Pregunta / Enunciado</th>
                 <th className="py-3.5 px-4">Categoría</th>
                 <th className="py-3.5 px-4">Tipo</th>
@@ -240,42 +240,42 @@ const QuestionBankView = () => {
                 <th className="py-3.5 px-4 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800/60">
+            <tbody className="divide-y divide-slate-100">
               {filteredQuestions.map((q) => (
-                <tr key={q.id} className="hover:bg-gray-800/40 transition-colors">
-                  <td className="py-3.5 px-4 font-semibold text-gray-100 max-w-sm">
+                <tr key={q.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="py-3.5 px-4 font-bold text-slate-900 max-w-sm">
                     <div className="flex items-center gap-2">
-                      <HelpCircle size={15} className="text-[#0284c7] flex-shrink-0" />
-                      <span className="hover:text-[#00c2b2] cursor-pointer">{q.title}</span>
+                      <HelpCircle size={15} className="text-sky-600 flex-shrink-0" />
+                      <span className="hover:text-sky-700 cursor-pointer">{q.title}</span>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 text-gray-300">
-                    <span className="bg-gray-800 px-2 py-0.5 rounded text-[10px] text-gray-300">
+                  <td className="py-3.5 px-4 text-slate-700">
+                    <span className="bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-[10px] text-slate-700 font-medium">
                       {q.category}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-gray-300">
+                  <td className="py-3.5 px-4 text-slate-700 font-medium">
                     {q.type}
                   </td>
-                  <td className="py-3.5 px-4 text-center font-mono font-bold text-[#00c2b2]">
+                  <td className="py-3.5 px-4 text-center font-mono font-bold text-teal-700">
                     {q.points} pts
                   </td>
-                  <td className="py-3.5 px-4 text-gray-400 text-[11px]">
-                    <div>{q.lastModified}</div>
-                    <div className="text-gray-600 font-mono text-[10px]">Por: {q.author}</div>
+                  <td className="py-3.5 px-4 text-slate-600 text-[11px]">
+                    <div className="font-medium text-slate-800">{q.lastModified}</div>
+                    <div className="text-slate-400 font-mono text-[10px]">Por: {q.author}</div>
                   </td>
                   <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2 text-gray-400">
-                      <button className="p-1 hover:text-sky-300 rounded cursor-pointer" title="Vista Previa">
+                    <div className="flex items-center justify-end gap-2 text-slate-500">
+                      <button className="p-1 hover:text-sky-700 rounded cursor-pointer transition-colors" title="Vista Previa">
                         <Eye size={14} />
                       </button>
-                      <button className="p-1 hover:text-amber-300 rounded cursor-pointer" title="Editar">
+                      <button className="p-1 hover:text-amber-600 rounded cursor-pointer transition-colors" title="Editar">
                         <Edit3 size={14} />
                       </button>
-                      <button className="p-1 hover:text-emerald-300 rounded cursor-pointer" title="Duplicar">
+                      <button className="p-1 hover:text-teal-600 rounded cursor-pointer transition-colors" title="Duplicar">
                         <Copy size={14} />
                       </button>
-                      <button className="p-1 hover:text-red-400 rounded cursor-pointer" title="Eliminar">
+                      <button className="p-1 hover:text-rose-600 rounded cursor-pointer transition-colors" title="Eliminar">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -288,12 +288,12 @@ const QuestionBankView = () => {
       </div>
 
       {/* 4. Drag & Drop File Upload Box (SCORM, AIKEN, XML) */}
-      <div className="bg-[#121316] rounded-2xl border border-gray-800 p-6 sm:p-8 space-y-4 shadow-xl">
-        <h3 className="text-sm font-bold text-white tracking-wide flex items-center gap-2">
-          <UploadCloud size={18} className="text-[#0284c7]" />
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-4 shadow-sm">
+        <h3 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <UploadCloud size={18} className="text-sky-600" />
           <span>Importar Banco de Preguntas y Contenido Multimedia (SCORM / Aiken / XML)</span>
         </h3>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-slate-600">
           Arrastra y suelta aquí archivos en formato Aiken (.txt), Moodle XML o paquetes interactivos SCORM 1.2 / 2004 para importar reactivos masivamente.
         </p>
 
@@ -304,8 +304,8 @@ const QuestionBankView = () => {
           onDrop={handleDrop}
           className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${
             isDragOver 
-              ? 'border-[#00c2b2] bg-teal-950/20 scale-101' 
-              : 'border-gray-700/80 bg-[#18191c]/50 hover:border-gray-600'
+              ? 'border-teal-500 bg-teal-50 scale-[1.01]' 
+              : 'border-slate-300 bg-slate-50 hover:bg-sky-50/40 hover:border-sky-400'
           }`}
           onClick={() => {
             const input = document.createElement('input');
@@ -319,27 +319,27 @@ const QuestionBankView = () => {
             input.click();
           }}
         >
-          <div className="w-12 h-12 rounded-full bg-sky-950/70 text-[#38bdf8] flex items-center justify-center mx-auto mb-3 border border-sky-600/30">
+          <div className="w-12 h-12 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center mx-auto mb-3 border border-sky-200 shadow-xs">
             <UploadCloud size={24} />
           </div>
-          <p className="text-xs sm:text-sm font-bold text-gray-200">
-            Arrastra tus archivos aquí o <span className="text-[#38bdf8] underline">haz clic para examinar</span>
+          <p className="text-xs sm:text-sm font-bold text-slate-800">
+            Arrastra tus archivos aquí o <span className="text-sky-600 underline">haz clic para examinar</span>
           </p>
-          <p className="text-[11px] text-gray-500 mt-1">
+          <p className="text-[11px] text-slate-500 mt-1">
             Formatos compatibles: .xml, .txt (Aiken), .zip (SCORM / H5P) hasta 64MB
           </p>
         </div>
 
         {uploadedFiles.length > 0 && (
           <div className="space-y-2 pt-2">
-            <span className="text-[11px] font-bold text-gray-400 uppercase">Archivos Cargados Recientemente:</span>
+            <span className="text-[11px] font-bold text-slate-600 uppercase">Archivos Cargados Recientemente:</span>
             {uploadedFiles.map((file, idx) => (
-              <div key={idx} className="p-2.5 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-between text-xs text-gray-300">
-                <span className="flex items-center gap-2">
-                  <FileText size={14} className="text-[#00c2b2]" />
+              <div key={idx} className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs text-slate-700">
+                <span className="flex items-center gap-2 font-medium">
+                  <FileText size={14} className="text-teal-600" />
                   {file}
                 </span>
-                <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                   <CheckCircle size={12} /> Listo para procesar
                 </span>
               </div>

@@ -23,9 +23,9 @@ import {
   ChevronDown,
   Info,
   Award,
-  Clock,
   QrCode
 } from 'lucide-react';
+import { formatRut } from '../../config/supabase';
 
 export const COURSES_LIST = [
   {
@@ -179,7 +179,11 @@ const AdmissionPortalView = ({ currentUser }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'rut') {
+      setFormData(prev => ({ ...prev, rut: formatRut(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handlePayAbono = (e) => {
@@ -220,22 +224,22 @@ const AdmissionPortalView = ({ currentUser }) => {
     <div className="space-y-8 animate-in fade-in duration-200 print:bg-white print:text-black print:p-0">
       
       {/* ================= HEADER INSTITUCIONAL (COPIA FIEL DE LA FICHA EN PAPEL) ================= */}
-      <div className="bg-[#121316] rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 backdrop-blur-xl space-y-6">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
         
         {/* Banner superior de Ficha */}
-        <div className="bg-[#18191c] p-4 rounded-2xl border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+        <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#00c2b2] to-teal-400 flex items-center justify-center text-gray-950 font-black text-2xl shadow-xl shadow-teal-950/40">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-600 via-teal-500 to-emerald-400 flex items-center justify-center text-white font-black text-2xl shadow-md">
               PS
             </div>
             <div>
-              <span className="text-[11px] font-black uppercase text-[#00c2b2] tracking-widest block">
+              <span className="text-[11px] font-black uppercase text-teal-700 tracking-widest block">
                 FICHA DE INSCRIPCIÓN OFICIAL
               </span>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 PrevySeg
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600">
                 Organismo Técnico de Capacitación • Acreditado SENCE N° 1238088725
               </p>
             </div>
@@ -244,9 +248,9 @@ const AdmissionPortalView = ({ currentUser }) => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handlePrintForm}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-white/10 flex items-center gap-2 transition-all cursor-pointer shadow hover:border-cyan-400/40"
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 text-xs font-bold border border-slate-300 flex items-center gap-2 transition-all cursor-pointer shadow-xs"
             >
-              <Printer size={15} className="text-cyan-400" />
+              <Printer size={15} className="text-sky-600" />
               <span>Imprimir / Guardar Ficha PDF</span>
             </button>
 
@@ -254,7 +258,7 @@ const AdmissionPortalView = ({ currentUser }) => {
               href={whatsappUrl}
               target="_blank"
               rel="noreferrer"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-950/50 transition-all cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
             >
               <Phone size={15} />
               <span>Enviar por WhatsApp</span>
@@ -263,31 +267,31 @@ const AdmissionPortalView = ({ currentUser }) => {
         </div>
 
         {/* Info de contacto oficial extraída de la ficha */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-black/40 p-4 rounded-2xl border border-white/5 text-slate-300">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200 text-slate-700">
           <div className="flex items-center gap-2">
-            <MapPin size={15} className="text-[#00c2b2] flex-shrink-0" />
+            <MapPin size={15} className="text-teal-600 flex-shrink-0" />
             <span><strong>Dir:</strong> Blanco Encalada N°666, 2do Piso, Arica</span>
           </div>
           <div className="flex items-center gap-2">
-            <Phone size={15} className="text-sky-400 flex-shrink-0" />
+            <Phone size={15} className="text-sky-600 flex-shrink-0" />
             <span><strong>Tel / Cel:</strong> 222166822 • 982312128 • 991625422</span>
           </div>
           <div className="flex items-center gap-2">
-            <Mail size={15} className="text-amber-400 flex-shrink-0" />
+            <Mail size={15} className="text-amber-600 flex-shrink-0" />
             <span><strong>Mail:</strong> prevyseg.capacitaciones@gmail.com</span>
           </div>
         </div>
 
         {/* ================= 1.- SECCIÓN CURSO ================= */}
         <div className="space-y-4 pt-2">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-[#00c2b2]/20 text-[#00c2b2] flex items-center justify-center text-xs font-black">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-black">
                 1
               </span>
               <span>SELECCIÓN DEL CURSO</span>
             </h2>
-            <span className="text-xs text-slate-400 font-mono">Seleccione el programa a cursar</span>
+            <span className="text-xs text-slate-500 font-mono">Seleccione el programa a cursar</span>
           </div>
 
           {/* Grid de 8 Cursos de la Ficha física */}
@@ -302,34 +306,34 @@ const AdmissionPortalView = ({ currentUser }) => {
                   onClick={() => setSelectedCourseId(c.id)}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 relative ${
                     isSelected
-                      ? 'bg-gradient-to-b from-[#0e2c38] to-[#121a22] border-[#00c2b2] shadow-lg shadow-teal-950/60 ring-1 ring-[#00c2b2]'
-                      : 'bg-[#18191c] border-white/10 hover:border-slate-600 hover:bg-slate-900/60'
+                      ? 'bg-sky-50/80 border-sky-500 shadow-sm ring-2 ring-sky-500'
+                      : 'bg-white border-slate-200 hover:border-sky-300 hover:bg-slate-50'
                   }`}
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-start justify-between gap-2">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                        c.type === 'spd' ? 'bg-sky-500/20 text-sky-300' : 'bg-amber-500/20 text-amber-300'
+                        c.type === 'spd' ? 'bg-sky-100 text-sky-800' : 'bg-amber-100 text-amber-800'
                       }`}>
                         {c.category}
                       </span>
                       {isSelected && (
-                        <div className="w-5 h-5 rounded-full bg-[#00c2b2] text-gray-950 flex items-center justify-center flex-shrink-0">
+                        <div className="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
                           <Check size={12} className="stroke-[3]" />
                         </div>
                       )}
                     </div>
-                    <h3 className="text-xs font-black text-white leading-snug">
+                    <h3 className="text-xs font-black text-slate-900 leading-snug">
                       {c.name}
                     </h3>
-                    <p className="text-[11px] text-slate-400 leading-tight">
+                    <p className="text-[11px] text-slate-600 leading-tight">
                       {c.modality} • {c.hours}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-white/10 flex justify-between items-center text-xs">
-                    <span className="text-slate-400 text-[10px]">Arancel Total:</span>
-                    <span className="font-bold text-[#00c2b2] font-mono">${c.price.toLocaleString('es-CL')}</span>
+                  <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+                    <span className="text-slate-500 text-[10px]">Arancel Total:</span>
+                    <span className="font-bold text-teal-700 font-mono">${c.price.toLocaleString('es-CL')}</span>
                   </div>
                 </motion.div>
               );
@@ -341,15 +345,15 @@ const AdmissionPortalView = ({ currentUser }) => {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/40 space-y-2 text-xs"
+              className="p-4 rounded-2xl bg-amber-50 border border-amber-300 space-y-2 text-xs"
             >
-              <label className="font-bold text-amber-300 block">
+              <label className="font-bold text-amber-900 block">
                 Especifique el Programa Técnico de la Escuela de Oficios:
               </label>
               <select
                 value={selectedOficioName}
                 onChange={(e) => setSelectedOficioName(e.target.value)}
-                className="w-full bg-[#121315] border border-amber-500/40 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full bg-white border border-amber-300 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
               >
                 <option value="Técnicas de Soldadura Industrial SMAW / MIG">Técnicas de Soldadura Industrial SMAW / MIG</option>
                 <option value="Operación y Manejo Seguro de Grúa Horquilla">Operación y Manejo Seguro de Grúa Horquilla</option>
@@ -368,18 +372,18 @@ const AdmissionPortalView = ({ currentUser }) => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                className="p-5 rounded-2xl bg-gradient-to-r from-sky-950/80 via-slate-900 to-[#121316] border-2 border-sky-500/60 shadow-xl space-y-2.5"
+                className="p-5 rounded-2xl bg-sky-50/90 border-2 border-sky-300 shadow-sm space-y-2.5"
               >
-                <div className="flex items-center gap-2.5 text-sky-400 font-extrabold text-xs sm:text-sm">
-                  <ShieldCheck size={20} className="text-[#38bdf8] flex-shrink-0" />
+                <div className="flex items-center gap-2.5 text-sky-800 font-extrabold text-xs sm:text-sm">
+                  <ShieldCheck size={20} className="text-sky-600 flex-shrink-0" />
                   <span>AVISO NORMATIVO DE CAPACITACIÓN — SEGURIDAD PRIVADA SPD</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-                  En <strong className="text-white">PrevySeg</strong> entregamos la <strong>preparación y capacitación teórico-práctica completa</strong> exigida por la normativa vigente para desempeñarse como Guardia de Seguridad.
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                  En <strong className="text-slate-900 font-bold">PrevySeg</strong> entregamos la <strong>preparación y capacitación teórico-práctica completa</strong> exigida por la normativa vigente para desempeñarse como Guardia de Seguridad.
                   <br />
-                  <strong className="text-amber-300">IMPORTANTE:</strong> PrevySeg <u>NO otorga de manera directa la credencial ni el certificado final de habilitación</u>. La credencial y acreditación oficial es emitida y otorgada exclusivamente por la <strong>Subsecretaría de Prevención del Delito (SPD)</strong> tras la rendición y aprobación de un examen evaluativo externo presencial ante la autoridad. En PrevySeg te preparamos al 100% para rendir dicho examen con éxito.
+                  <strong className="text-amber-700">IMPORTANTE:</strong> PrevySeg <u>NO otorga de manera directa la credencial ni el certificado final de habilitación</u>. La credencial y acreditación oficial es emitida y otorgada exclusivamente por la <strong>Subsecretaría de Prevención del Delito (SPD)</strong> tras la rendición y aprobación de un examen evaluativo externo presencial ante la autoridad. En PrevySeg te preparamos al 100% para rendir dicho examen con éxito.
                 </p>
-                <div className="flex items-center gap-2 text-[11px] text-sky-300 font-mono pt-1">
+                <div className="flex items-center gap-2 text-[11px] text-sky-800 font-medium pt-1">
                   <span>✓ Programa registrado y codificado bajo estándares SENCE y SPD</span>
                 </div>
               </motion.div>
@@ -389,16 +393,16 @@ const AdmissionPortalView = ({ currentUser }) => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-[#121316] border-2 border-emerald-500/60 shadow-xl space-y-2.5"
+                className="p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 shadow-sm space-y-2.5"
               >
-                <div className="flex items-center gap-2.5 text-emerald-400 font-extrabold text-xs sm:text-sm">
-                  <Award size={20} className="text-emerald-400 flex-shrink-0" />
+                <div className="flex items-center gap-2.5 text-emerald-800 font-extrabold text-xs sm:text-sm">
+                  <Award size={20} className="text-emerald-600 flex-shrink-0" />
                   <span>CERTIFICACIÓN DIRECTA OTEC PREVYSEG & SENCE</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-                  Este curso de la <strong className="text-white">Escuela de Oficios</strong> otorga <strong>Diploma y Certificado de Acreditación Oficial emitido directamente por PrevySeg OTEC</strong>, válido curricularmente para desempeñarse en empresas e industrias de todo el país, con registro oficial SENCE y código de validación digital.
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                  Este curso de la <strong className="text-slate-900 font-bold">Escuela de Oficios</strong> otorga <strong>Diploma y Certificado de Acreditación Oficial emitido directamente por PrevySeg OTEC</strong>, válido curricularmente para desempeñarse en empresas e industrias de todo el país, con registro oficial SENCE y código de validación digital.
                 </p>
-                <div className="flex items-center gap-2 text-[11px] text-emerald-300 font-mono pt-1">
+                <div className="flex items-center gap-2 text-[11px] text-emerald-800 font-medium pt-1">
                   <span>✓ Certificado y Diploma emitidos formalmente al completar las horas del curso</span>
                 </div>
               </motion.div>
@@ -408,23 +412,23 @@ const AdmissionPortalView = ({ currentUser }) => {
         </div>
 
         {/* ================= 2.- SECCIÓN ALUMNO DEPENDIENTE ================= */}
-        <div className="space-y-4 pt-4 border-t border-white/10">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-[#00c2b2]/20 text-[#00c2b2] flex items-center justify-center text-xs font-black">
+        <div className="space-y-4 pt-4 border-t border-slate-200">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-black">
                 2
               </span>
               <span>DATOS DEL ALUMNO / POSTULANTE</span>
             </h2>
-            <span className="text-xs text-slate-400 font-mono">2.- ALUMNO DEPENDIENTE</span>
+            <span className="text-xs text-slate-500 font-mono">2.- ALUMNO DEPENDIENTE</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
             
             {/* Nombre Completo */}
             <div className="space-y-1.5 sm:col-span-2">
-              <label className="font-bold text-slate-300 flex items-center gap-1.5">
-                <User size={13} className="text-[#00c2b2]" />
+              <label className="font-bold text-slate-700 flex items-center gap-1.5">
+                <User size={13} className="text-teal-600" />
                 <span>NOMBRE COMPLETO *</span>
               </label>
               <input
@@ -434,13 +438,13 @@ const AdmissionPortalView = ({ currentUser }) => {
                 placeholder="Ej. MARCO FRANCISCO NAHUELQUEO AILLAPÁN"
                 value={formData.nombre}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#00c2b2]"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
               />
             </div>
 
             {/* RUT / Documento */}
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300 flex items-center gap-1.5">
+              <label className="font-bold text-slate-700 flex items-center gap-1.5">
                 <span>RUT / DOCUMENTO *</span>
               </label>
               <input
@@ -450,14 +454,14 @@ const AdmissionPortalView = ({ currentUser }) => {
                 placeholder="Ej. 18.643.817-5"
                 value={formData.rut}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-[#00c2b2]"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
               />
             </div>
 
             {/* Fecha de Nacimiento */}
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300 flex items-center gap-1.5">
-                <Calendar size={13} className="text-sky-400" />
+              <label className="font-bold text-slate-700 flex items-center gap-1.5">
+                <Calendar size={13} className="text-sky-600" />
                 <span>FECHA DE NACIMIENTO *</span>
               </label>
               <input
@@ -466,27 +470,27 @@ const AdmissionPortalView = ({ currentUser }) => {
                 name="fechaNacimiento"
                 value={formData.fechaNacimiento}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
               />
             </div>
 
             {/* País */}
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300">PAÍS DE NACIMIENTO *</label>
+              <label className="font-bold text-slate-700">PAÍS DE NACIMIENTO *</label>
               <input
                 type="text"
                 name="pais"
                 placeholder="Chile / Perú / Bolivia / Colombia"
                 value={formData.pais}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
               />
             </div>
 
             {/* Teléfono */}
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300 flex items-center gap-1.5">
-                <Phone size={13} className="text-emerald-400" />
+              <label className="font-bold text-slate-700 flex items-center gap-1.5">
+                <Phone size={13} className="text-emerald-600" />
                 <span>TELÉFONO / WHATSAPP *</span>
               </label>
               <input
@@ -496,14 +500,14 @@ const AdmissionPortalView = ({ currentUser }) => {
                 placeholder="Ej. +56 9 9064 0464"
                 value={formData.telefono}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
               />
             </div>
 
             {/* Domicilio */}
             <div className="space-y-1.5 sm:col-span-2">
-              <label className="font-bold text-slate-300 flex items-center gap-1.5">
-                <MapPin size={13} className="text-rose-400" />
+              <label className="font-bold text-slate-700 flex items-center gap-1.5">
+                <MapPin size={13} className="text-rose-600" />
                 <span>DOMICILIO COMPLETO *</span>
               </label>
               <input
@@ -513,14 +517,14 @@ const AdmissionPortalView = ({ currentUser }) => {
                 placeholder="Ej. Av. Robinson Rojas #4616, Arica"
                 value={formData.domicilio}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-rose-400"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium"
               />
             </div>
 
             {/* Correo Electrónico */}
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300 flex items-center gap-1.5">
-                <Mail size={13} className="text-amber-400" />
+              <label className="font-bold text-slate-700 flex items-center gap-1.5">
+                <Mail size={13} className="text-amber-600" />
                 <span>CORREO ELECTRÓNICO *</span>
               </label>
               <input
@@ -530,15 +534,15 @@ const AdmissionPortalView = ({ currentUser }) => {
                 placeholder="ejemplo@gmail.com"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
               />
             </div>
 
             {/* Condición / Lugar de Trabajo */}
-            <div className="space-y-1.5 sm:col-span-3 bg-black/30 p-3.5 rounded-xl border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-1.5 sm:col-span-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-4">
-                <span className="font-bold text-slate-200">LUGAR DE TRABAJO / CONDICIÓN:</span>
-                <label className="flex items-center gap-1.5 text-slate-300 cursor-pointer">
+                <span className="font-bold text-slate-800">LUGAR DE TRABAJO / CONDICIÓN:</span>
+                <label className="flex items-center gap-1.5 text-slate-700 cursor-pointer font-medium">
                   <input
                     type="radio"
                     name="condicionLaboral"
@@ -548,7 +552,7 @@ const AdmissionPortalView = ({ currentUser }) => {
                   />
                   <span>Particular</span>
                 </label>
-                <label className="flex items-center gap-1.5 text-slate-300 cursor-pointer">
+                <label className="flex items-center gap-1.5 text-slate-700 cursor-pointer font-medium">
                   <input
                     type="radio"
                     name="condicionLaboral"
@@ -566,7 +570,7 @@ const AdmissionPortalView = ({ currentUser }) => {
                   placeholder="Nombre de la empresa empleadora..."
                   value={formData.empresaNombre}
                   onChange={(e) => setFormData(prev => ({ ...prev, empresaNombre: e.target.value }))}
-                  className="bg-[#18191c] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white w-full sm:w-64"
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
                 />
               )}
             </div>
@@ -575,15 +579,15 @@ const AdmissionPortalView = ({ currentUser }) => {
         </div>
 
         {/* ================= 3.- SECCIÓN ABONOS & PASARELA DE PAGOS ================= */}
-        <div className="space-y-5 pt-4 border-t border-white/10">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-[#00c2b2]/20 text-[#00c2b2] flex items-center justify-center text-xs font-black">
+        <div className="space-y-5 pt-4 border-t border-slate-200">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-black">
                 3
               </span>
               <span>ABONOS Y MEDIOS DE PAGO</span>
             </h2>
-            <span className="text-xs text-slate-400 font-mono">3.- ABONOS</span>
+            <span className="text-xs text-slate-500 font-mono">3.- ABONOS</span>
           </div>
 
           {/* Tabla de Cuotas según la Ficha */}
@@ -594,22 +598,22 @@ const AdmissionPortalView = ({ currentUser }) => {
               onClick={() => setPaymentOption('cuota1')}
               className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                 paymentOption === 'cuota1'
-                  ? 'bg-sky-950/60 border-sky-400 ring-1 ring-sky-400'
-                  : 'bg-[#18191c] border-white/10'
+                  ? 'bg-sky-50 border-sky-400 ring-2 ring-sky-400 shadow-sm'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               <div>
-                <span className="text-[10px] text-sky-400 font-bold uppercase tracking-wider block">
+                <span className="text-[10px] text-sky-700 font-bold uppercase tracking-wider block">
                   Cuota N°1 • Reserva de Cupo
                 </span>
-                <h4 className="text-sm font-bold text-white">ENTREGA DE DOCUMENTACIÓN</h4>
-                <p className="text-[11px] text-slate-400">Abono inicial para validación y reserva SENCE</p>
+                <h4 className="text-sm font-bold text-slate-900">ENTREGA DE DOCUMENTACIÓN</h4>
+                <p className="text-[11px] text-slate-500">Abono inicial para validación y reserva SENCE</p>
               </div>
               <div className="text-right">
-                <span className="text-xl font-black text-sky-300 font-mono">
+                <span className="text-xl font-black text-sky-700 font-mono">
                   ${selectedCourse.cuota1.toLocaleString('es-CL')}
                 </span>
-                <span className="text-[10px] text-slate-400 block">CLP</span>
+                <span className="text-[10px] text-slate-400 block font-bold">CLP</span>
               </div>
             </div>
 
@@ -618,31 +622,31 @@ const AdmissionPortalView = ({ currentUser }) => {
               onClick={() => setPaymentOption('total')}
               className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                 paymentOption === 'total'
-                  ? 'bg-teal-950/60 border-teal-400 ring-1 ring-teal-400'
-                  : 'bg-[#18191c] border-white/10'
+                  ? 'bg-teal-50 border-teal-400 ring-2 ring-teal-400 shadow-sm'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               <div>
-                <span className="text-[10px] text-teal-400 font-bold uppercase tracking-wider block">
+                <span className="text-[10px] text-teal-700 font-bold uppercase tracking-wider block">
                   Pago Total del Curso
                 </span>
-                <h4 className="text-sm font-bold text-white">CUOTA N°1 + CUOTA N°2 (INICIO)</h4>
-                <p className="text-[11px] text-slate-400">Pago íntegro sin cuotas pendientes</p>
+                <h4 className="text-sm font-bold text-slate-900">CUOTA N°1 + CUOTA N°2 (INICIO)</h4>
+                <p className="text-[11px] text-slate-500">Pago íntegro sin cuotas pendientes</p>
               </div>
               <div className="text-right">
-                <span className="text-xl font-black text-[#00c2b2] font-mono">
+                <span className="text-xl font-black text-teal-700 font-mono">
                   ${selectedCourse.price.toLocaleString('es-CL')}
                 </span>
-                <span className="text-[10px] text-slate-400 block">CLP</span>
+                <span className="text-[10px] text-slate-400 block font-bold">CLP</span>
               </div>
             </div>
 
           </div>
 
           {/* Espacio para Medios de Pago (Integración Pasarela / Tarjetas / Transferencia) */}
-          <div className="bg-[#16171a] p-6 rounded-2xl border border-white/10 space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
-              <span className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                 Seleccione el Medio de Pago para el Abono:
               </span>
               <div className="flex gap-2">
@@ -657,8 +661,8 @@ const AdmissionPortalView = ({ currentUser }) => {
                     onClick={() => setPaymentMethod(m.id)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
                       paymentMethod === m.id
-                        ? 'bg-[#0284c7] text-white border-sky-400 shadow-md'
-                        : 'bg-black/30 text-slate-400 border-white/10 hover:text-white'
+                        ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                        : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
                     }`}
                   >
                     {m.label}
@@ -670,51 +674,51 @@ const AdmissionPortalView = ({ currentUser }) => {
             {/* Opción 1: Tarjetas Webpay Plus */}
             {paymentMethod === 'tarjeta' && (
               <form onSubmit={handlePayAbono} className="space-y-4">
-                <div className="p-4 bg-sky-950/30 rounded-xl border border-sky-500/30 flex items-center justify-between">
+                <div className="p-4 bg-sky-50 rounded-xl border border-sky-200 flex items-center justify-between">
                   <div>
-                    <span className="text-xs text-slate-400 block">Monto a pagar con Tarjeta:</span>
-                    <span className="text-2xl font-black text-[#00c2b2] font-mono">
+                    <span className="text-xs text-slate-600 block font-medium">Monto a pagar con Tarjeta:</span>
+                    <span className="text-2xl font-black text-teal-700 font-mono">
                       ${currentAbonoAmount.toLocaleString('es-CL')} CLP
                     </span>
                   </div>
-                  <div className="text-right text-xs text-sky-300 font-mono">
+                  <div className="text-right text-xs text-sky-800 font-bold font-mono">
                     Pasarela Segura Webpay Plus • Transbank
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                   <div className="sm:col-span-2">
-                    <label className="font-semibold text-slate-300 block mb-1">Número de Tarjeta</label>
+                    <label className="font-semibold text-slate-700 block mb-1">Número de Tarjeta</label>
                     <input
                       type="text"
                       value={cardData.cardNumber}
                       onChange={(e) => setCardData({ ...cardData, cardNumber: e.target.value })}
-                      className="w-full bg-[#121315] border border-white/10 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-[#00c2b2]"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
                   <div>
-                    <label className="font-semibold text-slate-300 block mb-1">Vencimiento</label>
+                    <label className="font-semibold text-slate-700 block mb-1">Vencimiento</label>
                     <input
                       type="text"
                       value={cardData.cardExpiry}
                       onChange={(e) => setCardData({ ...cardData, cardExpiry: e.target.value })}
-                      className="w-full bg-[#121315] border border-white/10 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-[#00c2b2]"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
                   <div>
-                    <label className="font-semibold text-slate-300 block mb-1">CVV / CVC</label>
+                    <label className="font-semibold text-slate-700 block mb-1">CVV / CVC</label>
                     <input
                       type="text"
                       value={cardData.cardCvv}
                       onChange={(e) => setCardData({ ...cardData, cardCvv: e.target.value })}
-                      className="w-full bg-[#121315] border border-white/10 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-[#00c2b2]"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center pt-2">
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
-                    <Lock size={14} className="text-emerald-400" />
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
+                  <div className="flex items-center gap-2 text-xs text-slate-600">
+                    <Lock size={14} className="text-emerald-600" />
                     <span>Transacción protegida por encriptación bancaria SSL 256 bits</span>
                   </div>
 
@@ -723,10 +727,10 @@ const AdmissionPortalView = ({ currentUser }) => {
                     whileTap={{ scale: 0.97 }}
                     type="submit"
                     disabled={isProcessingPayment || paymentSuccess}
-                    className={`px-6 py-3 rounded-xl font-black text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-lg transition-all ${
+                    className={`px-6 py-3 rounded-xl font-black text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-sm transition-all ${
                       paymentSuccess
                         ? 'bg-emerald-600 text-white'
-                        : 'bg-gradient-to-r from-[#00c2b2] to-teal-400 text-gray-950 hover:from-teal-400 hover:to-teal-500 shadow-teal-950/50'
+                        : 'bg-teal-600 text-white hover:bg-teal-700'
                     }`}
                   >
                     {isProcessingPayment ? (
@@ -749,9 +753,9 @@ const AdmissionPortalView = ({ currentUser }) => {
 
             {/* Opción 2: Transferencia Bancaria */}
             {paymentMethod === 'transferencia' && (
-              <div className="p-4 bg-slate-900/80 rounded-xl border border-white/10 space-y-3 text-xs">
-                <h4 className="font-bold text-white text-sm">Datos para Transferencia Bancaria Oficial:</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300 bg-black/40 p-3 rounded-lg border border-white/5 font-mono">
+              <div className="p-4 bg-white rounded-xl border border-slate-200 space-y-3 text-xs">
+                <h4 className="font-bold text-slate-900 text-sm">Datos para Transferencia Bancaria Oficial:</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200 font-mono">
                   <div><strong>Banco:</strong> Banco Santander / Banco Estado</div>
                   <div><strong>Tipo de Cuenta:</strong> Cuenta Corriente</div>
                   <div><strong>N° Cuenta:</strong> 74-88921-01</div>
@@ -759,7 +763,7 @@ const AdmissionPortalView = ({ currentUser }) => {
                   <div><strong>Nombre Titular:</strong> OTEC PREVYSEG SPA</div>
                   <div><strong>Correo Comprobante:</strong> prevyseg.capacitaciones@gmail.com</div>
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500">
                   * Indique en el asunto de la transferencia su nombre y RUT. Luego envíe el comprobante al WhatsApp de Admisión.
                 </p>
               </div>
@@ -767,12 +771,12 @@ const AdmissionPortalView = ({ currentUser }) => {
 
             {/* Opción 3: Efectivo en Sede */}
             {paymentMethod === 'efectivo' && (
-              <div className="p-4 bg-amber-950/30 rounded-xl border border-amber-500/30 text-xs text-slate-300 space-y-2">
-                <h4 className="font-bold text-amber-300 text-sm">Pago Presencial en Sede Arica:</h4>
+              <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-slate-700 space-y-2">
+                <h4 className="font-bold text-amber-900 text-sm">Pago Presencial en Sede Arica:</h4>
                 <p>
                   Puede cancelar su abono o arancel total en efectivo o con tarjeta física en nuestras oficinas de atención:
                 </p>
-                <div className="font-bold text-white">
+                <div className="font-bold text-slate-900">
                   📍 Calle Blanco Encalada N° 666, 2do Piso, Arica (Horario de Atención: Lunes a Viernes de 09:00 a 19:00 hrs).
                 </div>
               </div>
@@ -782,28 +786,28 @@ const AdmissionPortalView = ({ currentUser }) => {
         </div>
 
         {/* ================= 4.- DOCUMENTACIÓN Y GESTIÓN POR WHATSAPP ================= */}
-        <div className="space-y-4 pt-4 border-t border-white/10">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-[#00c2b2]/20 text-[#00c2b2] flex items-center justify-center text-xs font-black">
+        <div className="space-y-4 pt-4 border-t border-slate-200">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-black">
                 4
               </span>
               <span>DOCUMENTACIÓN Y CONTACTO VÍA WHATSAPP</span>
             </h2>
-            <span className="text-xs text-slate-400 font-mono">4.- FECHA DE DOCUMENTACIÓN</span>
+            <span className="text-xs text-slate-500 font-mono">4.- FECHA DE DOCUMENTACIÓN</span>
           </div>
 
           {/* Banner WhatsApp Exclusivo */}
-          <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-teal-950/70 border-2 border-emerald-500/50 shadow-2xl space-y-4">
+          <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 border-2 border-emerald-300 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <span className="inline-block bg-emerald-900 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-400/40">
+                <span className="inline-block bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-300">
                   Atención Directa & Rápida
                 </span>
-                <h3 className="text-lg sm:text-xl font-black text-white">
+                <h3 className="text-lg sm:text-xl font-black text-slate-900">
                   Envío y Validación de Documentos vía WhatsApp
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl">
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-2xl">
                   Para agilizar tu matrícula, <strong>no necesitas subir archivos pesados en este portal</strong>. Toda tu documentación la revisaremos directamente con nuestro equipo de admisión a través de WhatsApp.
                 </p>
               </div>
@@ -814,7 +818,7 @@ const AdmissionPortalView = ({ currentUser }) => {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-gray-950 font-black text-xs sm:text-sm flex items-center gap-2.5 shadow-xl shadow-emerald-950/60 transition-all cursor-pointer flex-shrink-0"
+                className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm flex items-center gap-2.5 shadow-sm transition-all cursor-pointer flex-shrink-0"
               >
                 <Phone size={18} />
                 <span>Contactar por WhatsApp (+56 9 8231 2128)</span>
@@ -823,17 +827,17 @@ const AdmissionPortalView = ({ currentUser }) => {
             </div>
 
             {/* Checklist de Documentos solicitados en la Ficha física */}
-            <div className="pt-3 border-t border-white/10 space-y-2">
-              <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">
+            <div className="pt-3 border-t border-emerald-200/60 space-y-2">
+              <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider block">
                 Lista de documentos a enviar por WhatsApp según la Ficha de Inscripción:
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {REQUIRED_DOCUMENTS_FICHA.map((doc) => (
-                  <div key={doc.id} className="flex items-start gap-2 bg-black/30 p-2 rounded-lg border border-white/5">
-                    <CheckCircle2 size={14} className="text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div key={doc.id} className="flex items-start gap-2 bg-white/80 p-2.5 rounded-xl border border-emerald-200">
+                    <CheckCircle2 size={14} className="text-emerald-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <strong className="text-white text-[11px]">{doc.name}</strong>
-                      <p className="text-[10px] text-slate-400">{doc.detail}</p>
+                      <strong className="text-slate-900 text-[11px]">{doc.name}</strong>
+                      <p className="text-[10px] text-slate-600">{doc.detail}</p>
                     </div>
                   </div>
                 ))}
@@ -843,33 +847,33 @@ const AdmissionPortalView = ({ currentUser }) => {
         </div>
 
         {/* ================= 5.- Y 6.- OBSERVACIONES & ENVÍO FINAL ================= */}
-        <div className="space-y-4 pt-4 border-t border-white/10">
+        <div className="space-y-4 pt-4 border-t border-slate-200">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300">5.- RETIRO DEL CURSO (SI APLICA):</label>
+              <label className="font-bold text-slate-700">5.- RETIRO DEL CURSO (SI APLICA):</label>
               <input
                 type="text"
                 placeholder="Escribir motivo del retiro de documento si corresponde..."
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-300">6.- OBSERVACIONES GENERALES:</label>
+              <label className="font-bold text-slate-700">6.- OBSERVACIONES GENERALES:</label>
               <input
                 type="text"
                 name="observaciones"
                 value={formData.observaciones}
                 onChange={handleInputChange}
                 placeholder="Comentarios adicionales o solicitudes del postulante..."
-                className="w-full bg-[#18191c] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
               />
             </div>
           </div>
 
           {/* Botones de Finalización */}
-          <div className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-[#18191c] p-5 rounded-2xl border border-white/10">
-            <div className="text-xs text-slate-400 text-center sm:text-left">
+          <div className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <div className="text-xs text-slate-600 text-center sm:text-left">
               Al enviar esta ficha declaras que los datos proporcionados son fidedignos para el registro SENCE y OTEC PrevySeg.
             </div>
 
@@ -877,7 +881,7 @@ const AdmissionPortalView = ({ currentUser }) => {
               <button
                 type="button"
                 onClick={handlePrintForm}
-                className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-white/10 flex items-center gap-2 cursor-pointer transition-all"
+                className="px-5 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 text-xs font-bold border border-slate-300 flex items-center gap-2 cursor-pointer transition-all shadow-xs"
               >
                 <Printer size={15} />
                 <span>Imprimir Ficha</span>
@@ -889,7 +893,7 @@ const AdmissionPortalView = ({ currentUser }) => {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#00c2b2] to-teal-400 hover:from-teal-400 hover:to-teal-500 text-gray-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-xl shadow-teal-950/50 cursor-pointer"
+                className="px-7 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-sm cursor-pointer"
               >
                 <Send size={16} />
                 <span>Completar Inscripción y Notificar por WhatsApp</span>

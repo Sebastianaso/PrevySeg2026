@@ -55,54 +55,53 @@ const ReportsView = () => {
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="bg-gray-900/60 p-5 rounded-2xl border border-gray-800 backdrop-blur-md flex justify-between items-center">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-wide">Informes y Auditoría del Curso</h2>
-          <p className="text-xs text-gray-400 mt-1">
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">Informes y Auditoría del Curso</h2>
+          <p className="text-xs text-slate-600 mt-1">
             Consulta registros de trazabilidad, libro de notas y reportes reglamentarios SENCE.
           </p>
         </div>
 
         <button 
           onClick={() => alert("Descargando paquete consolidado de informes en ZIP...")}
-          className="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold px-4 py-2.5 rounded-lg border border-gray-700 flex items-center gap-2 transition-all cursor-pointer"
+          className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-300 flex items-center gap-2 transition-all cursor-pointer shadow-sm"
         >
-          <Download size={15} />
+          <Download size={15} className="text-sky-600" />
           <span>Descargar Todo (ZIP)</span>
         </button>
       </div>
 
-      {/* Dark Card with Vertical List of Light Blue Links */}
-      <div className="bg-[#121316] rounded-2xl border border-gray-800 p-6 sm:p-8 shadow-xl">
-        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6 pb-3 border-b border-gray-800">
+      {/* Reports Card Container */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+        <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-6 pb-3 border-b border-slate-200">
           Informes Disponibles
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {reportsList.map((report) => {
             const IconComponent = report.icon;
             return (
               <div
                 key={report.id}
                 onClick={() => alert(`Generando informe: "${report.title}" para fiscalización SENCE.`)}
-                className="p-4 rounded-xl bg-[#18191c] hover:bg-gray-800/80 border border-gray-800/80 hover:border-sky-500/40 transition-all cursor-pointer flex items-start justify-between group shadow-sm"
+                className="p-4 rounded-xl bg-slate-50 hover:bg-sky-50/60 border border-slate-200 hover:border-sky-300 transition-all cursor-pointer flex items-start justify-between group shadow-sm"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-sky-950/60 border border-sky-600/30 flex items-center justify-center text-[#38bdf8] flex-shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-700 flex-shrink-0 mt-0.5 group-hover:scale-105 transition-transform shadow-xs">
                     <IconComponent size={20} />
                   </div>
                   <div>
-                    {/* Light Blue Link Title matching prompt */}
-                    <div className="text-sm sm:text-base font-semibold text-[#38bdf8] group-hover:text-[#7dd3fc] group-hover:underline transition-colors flex items-center gap-2">
+                    <div className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-sky-700 transition-colors flex items-center gap-2">
                       <span>{report.title}</span>
                     </div>
-                    <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                       {report.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="text-gray-500 group-hover:text-sky-400 transition-colors pt-1">
+                <div className="text-slate-400 group-hover:text-sky-600 transition-colors pt-1">
                   <ExternalLink size={16} />
                 </div>
               </div>

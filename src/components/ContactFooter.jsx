@@ -11,32 +11,32 @@ import {
 
 const ContactFooter = ({ onOpenContactModal }) => {
   return (
-    <footer id="contacto" className="relative bg-[#101113] text-white overflow-hidden pt-0 border-t border-white/10">
+    <footer id="contacto" className="relative bg-slate-900 text-white overflow-hidden pt-0 border-t border-slate-200">
       
       {/* 1. Multi-layer SVG Wave Separator matching Screenshot 4 & 5 */}
       <div className="w-full overflow-hidden leading-none relative z-10 -mt-1">
         <svg 
           viewBox="0 0 1440 160" 
-          className="w-full h-16 sm:h-24 md:h-32 text-[#101113] preserve-3d"
+          className="w-full h-16 sm:h-24 md:h-32 text-slate-900 preserve-3d"
           fill="none" 
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Layer 1: Gray wave */}
+          {/* Layer 1: Slate-50 wave from section above */}
           <path 
             d="M0,64 C280,140 440,20 720,80 C1000,140 1200,40 1440,90 L1440,0 L0,0 Z" 
-            fill="#e5e7eb" 
-            opacity="0.95"
+            fill="#f8fafc" 
+            opacity="1"
           />
-          {/* Layer 2: Dark Slate wave */}
+          {/* Layer 2: Slate wave */}
           <path 
             d="M0,90 C320,160 560,40 840,110 C1120,180 1320,80 1440,110 L1440,160 L0,160 Z" 
-            fill="#374151" 
-            opacity="0.5"
+            fill="#334155" 
+            opacity="0.4"
           />
-          {/* Layer 3: Dark Charcoal base wave */}
+          {/* Layer 3: Dark Slate base wave */}
           <path 
             d="M0,110 C360,180 620,70 920,130 C1220,190 1360,110 1440,140 L1440,160 L0,160 Z" 
-            fill="#101113" 
+            fill="#0f172a" 
           />
         </svg>
       </div>

@@ -39,8 +39,8 @@ const NetworkBackground = () => {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      const nodeColor = 'rgba(0, 194, 178, ';
-      const lineColor = 'rgba(0, 160, 220, ';
+      const nodeColor = 'rgba(2, 132, 199, ';
+      const lineColor = 'rgba(14, 165, 233, ';
 
       // Update and draw particles
       for (let i = 0; i < particles.length; i++) {
@@ -54,7 +54,7 @@ const NetworkBackground = () => {
         // Draw particle node
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `${nodeColor}${p.opacity * 0.8})`;
+        ctx.fillStyle = `${nodeColor}${p.opacity * 0.9})`;
         ctx.fill();
 
         // Connect lines to nearby nodes
@@ -65,7 +65,7 @@ const NetworkBackground = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < maxDistance) {
-            const alpha = (1 - dist / maxDistance) * 0.16;
+            const alpha = (1 - dist / maxDistance) * 0.18;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -90,7 +90,7 @@ const NetworkBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-45"
+      className="fixed inset-0 pointer-events-none z-0 opacity-40"
       aria-hidden="true"
     />
   );

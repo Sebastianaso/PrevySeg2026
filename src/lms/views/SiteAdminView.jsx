@@ -276,17 +276,17 @@ const SiteAdminView = ({ currentUser }) => {
     <div className="space-y-6 animate-in fade-in duration-200">
       
       {/* 1. Header con Título "Administración del sitio" y Buscador con botón azul como en la captura */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-900/60 p-5 rounded-2xl border border-gray-800 backdrop-blur-md shadow-xl">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Administración del sitio
             </h1>
-            <span className="bg-purple-950/80 text-purple-300 text-[11px] font-bold px-3 py-0.5 rounded-full border border-purple-700/50 flex items-center gap-1">
+            <span className="bg-purple-50 text-purple-700 text-[11px] font-bold px-3 py-0.5 rounded-full border border-purple-200 flex items-center gap-1">
               <Lock size={12} /> Rol Administrador
             </span>
           </div>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Configuración global de la plataforma, políticas de seguridad, IA, analítica e integraciones.
           </p>
         </div>
@@ -299,7 +299,7 @@ const SiteAdminView = ({ currentUser }) => {
               placeholder="Buscar"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#18191c] border border-gray-700 rounded-l-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#0284c7]"
+              className="w-full bg-slate-50 border border-slate-300 rounded-l-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0284c7] focus:bg-white"
             />
           </div>
           <button
@@ -313,27 +313,27 @@ const SiteAdminView = ({ currentUser }) => {
       </div>
 
       {toastMessage && (
-        <div className="p-4 bg-emerald-950/80 border border-emerald-500/50 rounded-xl text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in">
-          <CheckCircle2 size={16} className="text-emerald-400" />
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center gap-2.5 animate-in fade-in">
+          <CheckCircle2 size={16} className="text-emerald-600" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Barra de Controles y Expansión */}
-      <div className="flex justify-between items-center text-xs text-gray-400 px-1">
+      <div className="flex justify-between items-center text-xs text-slate-500 px-1">
         <div>
-          Mostrando <strong className="text-gray-200">{filteredCategories.length}</strong> módulos de administración
+          Mostrando <strong className="text-slate-800">{filteredCategories.length}</strong> módulos de administración
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => toggleAll(true)}
-            className="text-[11px] text-gray-300 hover:text-white px-2.5 py-1 rounded bg-gray-800/60 border border-gray-700 cursor-pointer"
+            className="text-[11px] text-slate-700 hover:text-slate-900 px-2.5 py-1 rounded bg-slate-100 border border-slate-200 cursor-pointer hover:bg-slate-200"
           >
             Expandir todo
           </button>
           <button
             onClick={() => toggleAll(false)}
-            className="text-[11px] text-gray-300 hover:text-white px-2.5 py-1 rounded bg-gray-800/60 border border-gray-700 cursor-pointer"
+            className="text-[11px] text-slate-700 hover:text-slate-900 px-2.5 py-1 rounded bg-slate-100 border border-slate-200 cursor-pointer hover:bg-slate-200"
           >
             Colapsar todo
           </button>
@@ -352,44 +352,44 @@ const SiteAdminView = ({ currentUser }) => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: idx * 0.03 }}
-              className="bg-gradient-to-b from-[#151619] to-[#111214] rounded-3xl border border-white/10 overflow-hidden shadow-xl transition-all duration-200"
+              className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm transition-all duration-200"
             >
               {/* Encabezado de Categoría */}
               <button
                 type="button"
                 onClick={() => toggleSection(cat.id)}
-                className="w-full flex items-center justify-between p-5 bg-[#16171a]/80 hover:bg-white/5 transition-colors text-left cursor-pointer border-b border-white/10 select-none group"
+                className="w-full flex items-center justify-between p-5 bg-white hover:bg-slate-50 transition-colors text-left cursor-pointer border-b border-slate-200 select-none group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-center text-[#38bdf8] group-hover:scale-105 transition-transform flex-shrink-0 shadow-inner">
+                  <div className="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-[#0284c7] group-hover:scale-105 transition-transform flex-shrink-0 shadow-sm">
                     <IconComponent size={20} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-white group-hover:text-[#38bdf8] transition-colors">
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-[#0284c7] transition-colors">
                         {cat.title}
                       </h3>
                       {cat.badge && (
                         <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                           cat.badge === 'Crítico' 
-                            ? 'bg-red-950/80 text-red-300 border border-red-500/40' 
-                            : 'bg-teal-950/80 text-teal-300 border border-teal-500/40'
+                            ? 'bg-red-50 text-red-700 border border-red-200' 
+                            : 'bg-teal-50 text-teal-700 border border-teal-200'
                         }`}>
                           {cat.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-500">
                       {cat.subtitle} • {cat.items.length} opciones configurables
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-slate-400">
-                  <span className="text-xs font-semibold hidden sm:inline">
+                  <span className="text-xs font-semibold hidden sm:inline text-slate-600">
                     {isExpanded ? 'Ocultar' : 'Ver opciones'}
                   </span>
-                  <div className="p-1 rounded-full bg-slate-800/80 text-slate-300 group-hover:bg-slate-700 transition-colors">
+                  <div className="p-1 rounded-full bg-slate-100 text-slate-600 group-hover:bg-slate-200 transition-colors">
                     {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </div>
                 </div>
@@ -405,26 +405,26 @@ const SiteAdminView = ({ currentUser }) => {
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 bg-[#111214]/60">
+                    <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 bg-slate-50/70">
                       {cat.items.map((item, itemIdx) => (
                         <motion.div
                           key={itemIdx}
                           whileHover={{ scale: 1.02, x: 2 }}
                           onClick={() => handleOpenSetting(cat.title, item)}
-                          className="p-3.5 rounded-2xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/10 hover:border-cyan-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between group/item shadow-sm"
+                          className="p-3.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-sky-400 transition-all duration-200 cursor-pointer flex flex-col justify-between group/item shadow-sm"
                         >
                           <div className="space-y-1">
-                            <div className="text-xs sm:text-sm font-bold text-slate-200 group-hover/item:text-[#38bdf8] transition-colors flex items-center justify-between">
+                            <div className="text-xs sm:text-sm font-bold text-slate-800 group-hover/item:text-[#0284c7] transition-colors flex items-center justify-between">
                               <span>{item.name}</span>
-                              <ChevronRight size={13} className="text-slate-500 group-hover/item:translate-x-1 group-hover/item:text-[#38bdf8] transition-transform" />
+                              <ChevronRight size={13} className="text-slate-400 group-hover/item:translate-x-1 group-hover/item:text-[#0284c7] transition-transform" />
                             </div>
-                            <p className="text-[11px] text-slate-400 leading-snug">
+                            <p className="text-[11px] text-slate-500 leading-snug">
                               {item.desc}
                             </p>
                           </div>
-                          <div className="pt-2 mt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+                          <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400 font-semibold">
                             <span>SENCE LMS</span>
-                            <span className="text-[#00c2b2] opacity-0 group-hover/item:opacity-100 transition-opacity">Configurar →</span>
+                            <span className="text-[#00c2b2] opacity-0 group-hover/item:opacity-100 transition-opacity font-bold">Configurar →</span>
                           </div>
                         </motion.div>
                       ))}
@@ -440,57 +440,57 @@ const SiteAdminView = ({ currentUser }) => {
       {/* 3. Modal Interactivo para Ajustes de Configuración */}
       <AnimatePresence>
         {selectedSetting && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div 
               initial={{ opacity: 0, scale: 0.92, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
               transition={{ duration: 0.25 }}
-              className="bg-gradient-to-b from-[#18191c] via-[#141518] to-[#101113] border border-white/15 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative backdrop-blur-2xl"
+              className="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative"
             >
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setSelectedSetting(null)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-2 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <X size={20} />
               </motion.button>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-[#00c2b2] bg-teal-950/80 border border-teal-500/40 px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span className="text-[10px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full uppercase tracking-wider">
                     {selectedSetting.category}
                   </span>
-                  <span className="text-xs text-slate-400">• Parámetro de Administración</span>
+                  <span className="text-xs text-slate-500">• Parámetro de Administración</span>
                 </div>
 
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-slate-900">
                   {selectedSetting.name}
                 </h3>
 
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {selectedSetting.desc}
                 </p>
 
-                <div className="p-4 bg-[#121315] rounded-2xl border border-white/10 space-y-3 shadow-inner">
-                  <label className="block text-xs font-semibold text-slate-300">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                  <label className="block text-xs font-semibold text-slate-700">
                     Estado del Ajuste en el Servidor
                   </label>
-                  <select className="w-full bg-[#18191c] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all">
+                  <select className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all cursor-pointer">
                     <option>Habilitado / Activo por defecto</option>
                     <option>Deshabilitado</option>
                     <option>Solo Administradores y Fiscalizadores SENCE</option>
                   </select>
 
                   <div className="pt-2">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Comentario o Nota de Auditoría
                     </label>
                     <input
                       type="text"
                       placeholder="Ej. Parámetro verificado según estándar SPD"
-                      className="w-full bg-[#18191c] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition-all"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
                     />
                   </div>
                 </div>
@@ -499,16 +499,16 @@ const SiteAdminView = ({ currentUser }) => {
                   <button
                     type="button"
                     onClick={() => setSelectedSetting(null)}
-                    className="px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer transition-colors"
+                    className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 cursor-pointer transition-colors border border-slate-200"
                   >
                     Cancelar
                   </button>
                   <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     type="button"
                     onClick={handleSaveSetting}
-                    className="px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 rounded-xl shadow-lg shadow-sky-950/50 cursor-pointer border border-sky-400/30"
+                    className="px-5 py-2.5 text-xs font-bold text-white bg-[#0284c7] hover:bg-sky-600 rounded-xl shadow-md cursor-pointer"
                   >
                     Guardar Configuración
                   </motion.button>

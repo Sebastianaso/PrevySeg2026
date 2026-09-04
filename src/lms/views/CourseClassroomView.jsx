@@ -167,42 +167,42 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#121316]/90 p-4 sm:p-5 rounded-3xl border border-white/10 backdrop-blur-xl shadow-xl"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm"
       >
         <div className="flex items-center gap-3">
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={onBack}
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer flex items-center gap-2 text-xs font-bold border border-white/10"
+            className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer flex items-center gap-2 text-xs font-bold border border-slate-200"
           >
             <ArrowLeft size={16} />
             <span>Volver a Mis Cursos</span>
           </motion.button>
-          <div className="h-6 w-px bg-white/10 hidden sm:block"></div>
+          <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
           <div>
             <span className="text-[10px] text-[#00c2b2] font-black uppercase tracking-wider block">
               Aula Virtual Oficial SENCE
             </span>
-            <h1 className="text-sm sm:text-base font-bold text-white line-clamp-1">
+            <h1 className="text-sm sm:text-base font-bold text-slate-900 line-clamp-1">
               {displayTitle}
             </h1>
           </div>
         </div>
 
         {/* Global Progress */}
-        <div className="w-full sm:w-64 bg-slate-900/90 p-3 rounded-2xl border border-white/10 flex items-center gap-3 shadow-inner">
+        <div className="w-full sm:w-64 bg-slate-50 p-3 rounded-2xl border border-slate-200 flex items-center gap-3 shadow-inner">
           <div className="flex-1 space-y-1">
             <div className="flex justify-between text-[11px] font-bold">
-              <span className="text-slate-400">Progreso Total:</span>
+              <span className="text-slate-500">Progreso Total:</span>
               <span className="text-[#00c2b2] font-mono">68%</span>
             </div>
-            <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden p-0.5 border border-slate-300/40">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: '68%' }}
                 transition={{ duration: 0.8 }}
-                className="h-full bg-gradient-to-r from-[#0284c7] to-[#00c2b2] rounded-full shadow-sm shadow-cyan-400"
+                className="h-full bg-gradient-to-r from-[#0284c7] to-[#00c2b2] rounded-full"
               />
             </div>
           </div>
@@ -217,7 +217,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
         <div className="lg:col-span-8 space-y-6">
           
           {/* HD Virtual Video Player Frame */}
-          <div className="bg-black rounded-3xl overflow-hidden border-2 border-sky-950/80 shadow-2xl relative aspect-video flex flex-col justify-between group">
+          <div className="bg-slate-950 rounded-3xl overflow-hidden shadow-2xl relative aspect-video flex flex-col justify-between group">
             
             {/* Top Video Overlay */}
             <div className="p-4 bg-gradient-to-b from-black/80 to-transparent flex justify-between items-center text-white z-10">
@@ -265,7 +265,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
           </div>
 
           {/* Classroom Tabs Navigation */}
-          <div className="flex flex-wrap gap-2 border-b border-white/10 pb-2">
+          <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-2">
             {[
               { id: 'contenido', label: 'Contenido de la Clase', icon: BookOpen },
               { id: 'material', label: 'Material & Guías PDF', icon: FileText },
@@ -276,13 +276,13 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
               return (
                 <motion.button
                   key={tab.id}
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer border ${
                     activeTab === tab.id
-                      ? 'bg-gradient-to-r from-[#00c2b2] to-teal-400 text-gray-950 border-teal-300 shadow-lg shadow-teal-950/40'
-                      : 'bg-[#121316] text-slate-400 hover:text-white border-white/10 hover:bg-slate-800'
+                      ? 'bg-[#00c2b2] text-white border-transparent shadow-sm'
+                      : 'bg-white text-slate-600 hover:text-slate-900 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
                   <IconComp size={15} />
@@ -301,21 +301,21 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-gradient-to-b from-[#151619] to-[#111214] p-6 rounded-3xl border border-white/10 space-y-4 text-slate-300 text-xs sm:text-sm leading-relaxed shadow-xl backdrop-blur-xl"
+                className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4 text-slate-700 text-xs sm:text-sm leading-relaxed shadow-sm"
               >
-                <h3 className="text-base sm:text-lg font-black text-white">
+                <h3 className="text-base sm:text-lg font-black text-slate-900">
                   Objetivos de Aprendizaje — Lección 2.3
                 </h3>
                 <p>
                   En esta sesión aprenderás los protocolos estandarizados para intervenir en situaciones de tensión, identificar signos no verbales de hostilidad y aplicar técnicas de contención verbal sin recurrir a la fuerza física innecesaria.
                 </p>
 
-                <div className="p-4 bg-sky-950/30 rounded-2xl border border-sky-500/30 space-y-2 shadow-inner">
-                  <h4 className="font-bold text-sky-300 flex items-center gap-2">
+                <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2">
+                  <h4 className="font-bold text-sky-800 flex items-center gap-2">
                     <ShieldCheck size={16} />
                     <span>Principios Clave de la Comunicación Táctica:</span>
                   </h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-300">
+                  <ul className="list-disc pl-5 space-y-1 text-slate-700">
                     <li><strong>Distancia de Seguridad:</strong> Mantener un mínimo de 1.5 a 2 metros de distancia con el sujeto.</li>
                     <li><strong>Escucha Activa:</strong> Permitir el desahogo inicial sin interrumpir ni manifestar agresividad.</li>
                     <li><strong>Firmeza y Respeto:</strong> Explicar con claridad las normativas del recinto sin caer en provocaciones.</li>
@@ -331,9 +331,9 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-gradient-to-b from-[#151619] to-[#111214] p-6 rounded-3xl border border-white/10 space-y-4 shadow-xl backdrop-blur-xl"
+                className="bg-white p-6 rounded-3xl border border-slate-200 space-y-4 shadow-sm"
               >
-                <h3 className="text-base sm:text-lg font-black text-white">
+                <h3 className="text-base sm:text-lg font-black text-slate-900">
                   Documentación y Manuales Oficiales
                 </h3>
                 
@@ -343,22 +343,22 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                     { name: 'Guía Práctica de Resolución de Conflictos y Crisis.pdf', size: '2.1 MB', date: 'PrevySeg OTEC' },
                     { name: 'Protocolo de Emergencias y Evacuación Arica.pdf', size: '1.5 MB', date: 'Normativa Regional' },
                   ].map((doc, idx) => (
-                    <div key={idx} className="p-4 bg-[#18191c] rounded-2xl border border-white/10 flex items-center justify-between gap-3 hover:border-cyan-500/40 transition-colors">
+                    <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 hover:border-sky-300 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#0284c7]/20 text-[#38bdf8] flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-sky-100 text-[#0284c7] flex items-center justify-center flex-shrink-0">
                           <FileText size={20} />
                         </div>
                         <div>
-                          <h4 className="text-xs sm:text-sm font-bold text-white">{doc.name}</h4>
-                          <span className="text-[10px] text-slate-400">{doc.size} • {doc.date}</span>
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900">{doc.name}</h4>
+                          <span className="text-[10px] text-slate-500">{doc.size} • {doc.date}</span>
                         </div>
                       </div>
 
                       <motion.button 
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => alert(`Descargando ${doc.name}...`)}
-                        className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white cursor-pointer transition-colors border border-white/10"
+                        className="p-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 cursor-pointer transition-colors border border-slate-200 shadow-sm"
                         title="Descargar archivo"
                       >
                         <Download size={16} />
@@ -376,18 +376,18 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-gradient-to-b from-[#151619] to-[#111214] p-6 rounded-3xl border border-white/10 space-y-6 shadow-xl backdrop-blur-xl"
+                className="bg-white p-6 rounded-3xl border border-slate-200 space-y-6 shadow-sm"
               >
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-white/10">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-200">
                   <div>
-                    <h3 className="text-base sm:text-lg font-black text-white">
+                    <h3 className="text-base sm:text-lg font-black text-slate-900">
                       Simulador de Examen Teórico SPD (Subsecretaría de Prevención del Delito)
                     </h3>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-500">
                       Preguntas de selección múltiple con formato oficial de la Subsecretaría de Prevención del Delito (SPD).
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 text-xs text-sky-400 font-mono">
+                  <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-xs text-sky-700 font-mono">
                     <Clock size={14} />
                     <span>Tiempo restante: 15:00</span>
                   </div>
@@ -401,8 +401,8 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                   >
                     <div className={`p-6 rounded-3xl border text-center space-y-3 ${
                       quizScore >= 3 
-                        ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-200' 
-                        : 'bg-amber-950/60 border-amber-500/50 text-amber-200'
+                        ? 'bg-emerald-50 border-emerald-300 text-emerald-800' 
+                        : 'bg-amber-50 border-amber-300 text-amber-800'
                     }`}>
                       <div className="text-3xl font-black font-mono">
                         {quizScore} / {quizQuestions.length} Correctas ({Math.round((quizScore / quizQuestions.length) * 100)}%)
@@ -414,7 +414,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                       </p>
                       <button
                         onClick={handleResetQuiz}
-                        className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer"
                       >
                         Intentar Nuevamente
                       </button>
@@ -425,17 +425,17 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                       {quizQuestions.map((q, idx) => {
                         const isCorrect = quizAnswers[q.id] === q.correct;
                         return (
-                          <div key={q.id} className="p-4 rounded-2xl bg-[#18191c] border border-white/10 space-y-2 text-xs">
+                          <div key={q.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
                             <div className="flex items-start justify-between gap-2">
-                              <span className="font-bold text-white">Pregunta {idx + 1}: {q.question}</span>
+                              <span className="font-bold text-slate-900">Pregunta {idx + 1}: {q.question}</span>
                               <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${
-                                isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                                isCorrect ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200'
                               }`}>
                                 {isCorrect ? '✓ Correcta' : '✗ Incorrecta'}
                               </span>
                             </div>
-                            <p className="text-slate-400 text-[11px]">
-                              <strong className="text-slate-300">Explicación:</strong> {q.explanation}
+                            <p className="text-slate-600 text-[11px]">
+                              <strong className="text-slate-800">Explicación:</strong> {q.explanation}
                             </p>
                           </div>
                         );
@@ -445,8 +445,8 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 ) : (
                   <form onSubmit={handleQuizSubmit} className="space-y-6">
                     {quizQuestions.map((q, idx) => (
-                      <div key={q.id} className="p-4 bg-[#18191c] rounded-2xl border border-white/10 space-y-3">
-                        <h4 className="text-xs sm:text-sm font-bold text-white">
+                      <div key={q.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900">
                           {idx + 1}. {q.question}
                         </h4>
                         <div className="space-y-2">
@@ -457,12 +457,12 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                               onClick={() => handleSelectAnswer(q.id, optIdx)}
                               className={`w-full text-left p-3 rounded-xl text-xs transition-all flex items-center justify-between cursor-pointer ${
                                 quizAnswers[q.id] === optIdx
-                                  ? 'bg-sky-950/80 border border-[#00c2b2] text-white'
-                                  : 'bg-[#121315] border border-white/10 text-slate-300 hover:border-slate-700'
+                                  ? 'bg-sky-50 border-2 border-[#0284c7] text-sky-900 font-bold'
+                                  : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-300'
                               }`}
                             >
                               <span>{opt}</span>
-                              {quizAnswers[q.id] === optIdx && <Check size={14} className="text-[#00c2b2]" />}
+                              {quizAnswers[q.id] === optIdx && <Check size={14} className="text-[#0284c7]" />}
                             </button>
                           ))}
                         </div>
@@ -470,14 +470,14 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                     ))}
 
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                       type="submit"
                       disabled={Object.keys(quizAnswers).length < quizQuestions.length}
-                      className={`w-full py-3.5 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all ${
+                      className={`w-full py-3.5 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all ${
                         Object.keys(quizAnswers).length === quizQuestions.length
-                          ? 'bg-gradient-to-r from-[#00c2b2] to-teal-400 hover:from-teal-400 hover:to-teal-500 text-gray-950 cursor-pointer shadow-teal-950/50'
-                          : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5'
+                          ? 'bg-gradient-to-r from-[#00c2b2] to-teal-500 hover:from-teal-500 hover:to-teal-600 text-white cursor-pointer'
+                          : 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
                       }`}
                     >
                       <Send size={15} />
@@ -496,70 +496,70 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-gradient-to-b from-[#151619] to-[#111214] p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6 shadow-xl backdrop-blur-xl"
+                className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-6 shadow-sm"
               >
                 <div className="text-center space-y-2 max-w-lg mx-auto">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3 border border-emerald-500/40 shadow-lg shadow-emerald-950/50">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 border border-emerald-300 shadow-sm">
                     <Award size={36} />
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40">
-                    <CheckCircle2 size={13} />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
+                    <CheckCircle2 size={13} className="text-emerald-600" />
                     <span>Visto Bueno de Dirección Académica Otorgado</span>
                   </div>
-                  <h3 className="text-xl font-black text-white">Certificado y Diploma de Acreditación</h3>
-                  <p className="text-xs text-slate-400">
+                  <h3 className="text-xl font-black text-slate-900">Certificado y Diploma de Acreditación</h3>
+                  <p className="text-xs text-slate-600">
                     Documento oficial emitido por PrevySeg OTEC que certifica que has completado el programa formativo y te encuentras debidamente capacitado.
                   </p>
                 </div>
 
                 {/* Official Diploma Preview Frame */}
-                <div className="bg-[#18191c] border-2 border-[#0284c7]/50 rounded-2xl p-6 text-white space-y-5 text-left shadow-xl">
-                  <div className="flex justify-between items-center pb-4 border-b border-white/10 text-xs">
+                <div className="bg-slate-50 border-2 border-sky-400 rounded-2xl p-6 text-slate-900 space-y-5 text-left shadow-sm">
+                  <div className="flex justify-between items-center pb-4 border-b border-slate-200 text-xs">
                     <div>
-                      <h4 className="font-bold text-white text-sm">PREVYSEG CAPACITACIONES</h4>
-                      <span className="text-[10px] text-slate-400">OTEC Acreditado SENCE N° 1238088725</span>
+                      <h4 className="font-bold text-slate-900 text-sm">PREVYSEG CAPACITACIONES</h4>
+                      <span className="text-[10px] text-slate-500">OTEC Acreditado SENCE N° 1238088725</span>
                     </div>
-                    <div className="text-right font-mono text-[10px] text-sky-400">
+                    <div className="text-right font-mono text-[10px] text-sky-700 font-bold">
                       ID: PREVY-2026-SPD-0987
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold">Certifica a:</span>
-                    <div className="text-xl font-black text-[#00c2b2]">Matías Silva Lagos</div>
-                    <div className="text-xs text-slate-300 font-mono">RUT: 21.778.425-6</div>
-                    <p className="text-xs text-slate-300 pt-1 leading-relaxed">
+                    <span className="text-[10px] text-slate-500 uppercase font-semibold">Certifica a:</span>
+                    <div className="text-xl font-black text-[#0284c7]">Matías Silva Lagos</div>
+                    <div className="text-xs text-slate-600 font-mono">RUT: 21.778.425-6</div>
+                    <p className="text-xs text-slate-700 pt-1 leading-relaxed">
                       Por cuanto ha cumplido satisfactoriamente con la totalidad de los módulos teóricos y prácticos conforme al <strong>Decreto Ley N° 3.607</strong> y normativa de la <strong>SPD (Subsecretaría de Prevención del Delito)</strong>, acreditando que <strong>se encuentra debidamente capacitado(a) para desempeñarse en el área de {displayTitle || 'Seguridad Privada'}</strong>.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] bg-black/40 p-3 rounded-xl border border-white/10">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 text-[11px] bg-white p-3 rounded-xl border border-slate-200">
                     <div>
                       <span className="text-slate-500 block text-[9px] uppercase font-bold">Carga Horaria</span>
-                      <span className="text-white font-semibold">90 Horas Cronológicas</span>
+                      <span className="text-slate-900 font-semibold">90 Horas Cronológicas</span>
                     </div>
                     <div>
                       <span className="text-slate-500 block text-[9px] uppercase font-bold">Estado</span>
-                      <span className="text-emerald-400 font-bold">Aprobado y Capacitado ✓</span>
+                      <span className="text-emerald-700 font-bold">Aprobado y Capacitado ✓</span>
                     </div>
                     <div>
                       <span className="text-slate-500 block text-[9px] uppercase font-bold">Vigencia Legal</span>
-                      <span className="text-white font-semibold">3 Años SPD (Subsecretaría de Prevención del Delito)</span>
+                      <span className="text-slate-900 font-semibold">3 Años SPD (Subsecretaría de Prevención del Delito)</span>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-white/10 flex justify-between items-center text-[10px] text-slate-400">
+                  <div className="pt-4 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500">
                     <span>Firmado digitalmente: Ashley Adaros (Director Académico)</span>
-                    <span className="text-emerald-400 font-bold">✓ Copia Oficial del Alumno</span>
+                    <span className="text-emerald-700 font-bold">✓ Copia Oficial del Alumno</span>
                   </div>
                 </div>
 
                 <div className="flex justify-center gap-3">
                   <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => alert("Descargando copia oficial de Certificado y Diploma en PDF...")}
-                    className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white font-bold py-3 px-6 rounded-xl text-xs shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-all border border-sky-400/30"
+                    className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white font-bold py-3 px-6 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
                   >
                     <Download size={15} />
                     <span>Descargar Copia Oficial (PDF)</span>
@@ -573,36 +573,36 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
 
         {/* Right Column (4 cols): Course Syllabus & Modules Accordion */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-gradient-to-b from-[#151619] to-[#111214] p-5 rounded-3xl border border-white/10 space-y-4 shadow-xl backdrop-blur-xl">
-            <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center justify-between">
+          <div className="bg-white p-5 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
+            <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center justify-between">
               <span>Temario del Curso</span>
-              <span className="text-[10px] text-slate-400 font-normal">4 Módulos</span>
+              <span className="text-[10px] text-slate-500 font-normal">4 Módulos</span>
             </h3>
 
             {/* Modules list */}
             <div className="space-y-3">
               {modules.map((mod) => (
-                <div key={mod.id} className="rounded-2xl border border-white/10 overflow-hidden bg-[#18191c]">
+                <div key={mod.id} className="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50">
                   <button
                     onClick={() => toggleModule(mod.id)}
-                    className="w-full p-3.5 text-left flex items-center justify-between gap-2 hover:bg-white/5 transition-colors cursor-pointer"
+                    className="w-full p-3.5 text-left flex items-center justify-between gap-2 hover:bg-slate-100 transition-colors cursor-pointer"
                   >
                     <div className="space-y-0.5">
-                      <h4 className="text-xs font-bold text-white leading-snug">{mod.title}</h4>
-                      <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                      <h4 className="text-xs font-bold text-slate-900 leading-snug">{mod.title}</h4>
+                      <div className="flex items-center gap-2 text-[10px] text-slate-500">
                         <span>{mod.duration}</span>
                         <span>•</span>
-                        <span className={mod.progress === 100 ? 'text-emerald-400 font-bold' : 'text-sky-400'}>
+                        <span className={mod.progress === 100 ? 'text-emerald-700 font-bold' : 'text-sky-700'}>
                           {mod.progress}% listo
                         </span>
                       </div>
                     </div>
-                    {expandedModules[mod.id] ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+                    {expandedModules[mod.id] ? <ChevronUp size={16} className="text-slate-500" /> : <ChevronDown size={16} className="text-slate-500" />}
                   </button>
 
                   {/* Lessons list */}
                   {expandedModules[mod.id] && (
-                    <div className="p-2 pt-0 space-y-1 border-t border-white/10">
+                    <div className="p-2 pt-0 space-y-1 border-t border-slate-200 bg-white">
                       {mod.lessons.map((les) => (
                         <div
                           key={les.id}
@@ -612,21 +612,21 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                           }}
                           className={`p-2.5 rounded-xl text-xs flex items-center justify-between gap-2 cursor-pointer transition-colors ${
                             les.isCurrent
-                              ? 'bg-[#00c2b2]/20 border border-[#00c2b2] text-white font-bold'
-                              : 'hover:bg-white/5 text-slate-300'
+                              ? 'bg-teal-50 border border-[#00c2b2] text-teal-900 font-bold'
+                              : 'hover:bg-slate-50 text-slate-700'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             {les.completed ? (
-                              <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
+                              <CheckCircle2 size={14} className="text-emerald-600 flex-shrink-0" />
                             ) : les.isCurrent ? (
                               <Play size={14} className="text-[#00c2b2] flex-shrink-0" />
                             ) : (
-                              <Circle size={14} className="text-slate-600 flex-shrink-0" />
+                              <Circle size={14} className="text-slate-400 flex-shrink-0" />
                             )}
                             <span className="text-[11px] truncate">{les.title}</span>
                           </div>
-                          <span className="text-[9px] font-mono text-slate-500 flex-shrink-0">{les.duration}</span>
+                          <span className="text-[9px] font-mono text-slate-400 flex-shrink-0">{les.duration}</span>
                         </div>
                       ))}
                     </div>

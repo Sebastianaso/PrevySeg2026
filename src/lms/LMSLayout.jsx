@@ -225,35 +225,35 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
   const roleStyles = isRoleAdmin ? {
     themeName: 'admin',
     badgeText: 'Panel Administrador OTEC',
-    badgeClass: 'bg-purple-950/90 border-purple-500/40 text-purple-300',
-    activeNavClass: 'bg-gradient-to-r from-purple-900/80 to-indigo-950 text-white border-purple-500/40 shadow-xl shadow-purple-950/60',
-    activeIconBg: 'bg-purple-600 text-white shadow-md',
+    badgeClass: 'bg-purple-50 border-purple-200 text-purple-700 shadow-sm',
+    activeNavClass: 'bg-purple-50 text-purple-900 border-purple-300 shadow-sm font-bold',
+    activeIconBg: 'bg-purple-600 text-white shadow-sm',
     avatarGradient: 'bg-gradient-to-tr from-purple-600 to-indigo-600',
-    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-purple-900/60',
-    tagText: 'text-purple-300 font-mono',
-    breadcrumbColor: 'text-purple-400',
+    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-purple-200',
+    tagText: 'text-purple-700 font-mono',
+    breadcrumbColor: 'text-purple-700',
     statusTag: 'SENCE & SPD Conectado ✓'
   } : isRoleTeacher ? {
     themeName: 'teacher',
     badgeText: 'Panel Docente / Instructor',
-    badgeClass: 'bg-sky-950/90 border-sky-500/40 text-sky-300',
-    activeNavClass: 'bg-gradient-to-r from-sky-900/80 to-blue-950 text-white border-sky-500/40 shadow-xl shadow-sky-950/60',
-    activeIconBg: 'bg-sky-600 text-white shadow-md',
+    badgeClass: 'bg-sky-50 border-sky-200 text-sky-700 shadow-sm',
+    activeNavClass: 'bg-sky-50 text-sky-900 border-sky-300 shadow-sm font-bold',
+    activeIconBg: 'bg-[#0284c7] text-white shadow-sm',
     avatarGradient: 'bg-gradient-to-tr from-[#0284c7] to-sky-400',
-    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-sky-900/60',
-    tagText: 'text-sky-300 font-mono',
-    breadcrumbColor: 'text-sky-400',
+    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-sky-200',
+    tagText: 'text-sky-700 font-mono',
+    breadcrumbColor: 'text-sky-700',
     statusTag: 'Firma Digital Docente Habilitada ✓'
   } : {
     themeName: 'student',
     badgeText: 'Portal del Estudiante',
-    badgeClass: 'bg-teal-950/90 border-teal-500/40 text-teal-300',
-    activeNavClass: 'bg-gradient-to-r from-teal-900/80 to-emerald-950 text-white border-teal-500/40 shadow-xl shadow-teal-950/60',
-    activeIconBg: 'bg-teal-600 text-white shadow-md',
+    badgeClass: 'bg-teal-50 border-teal-200 text-teal-700 shadow-sm',
+    activeNavClass: 'bg-teal-50 text-teal-900 border-teal-300 shadow-sm font-bold',
+    activeIconBg: 'bg-[#00c2b2] text-white shadow-sm',
     avatarGradient: 'bg-gradient-to-tr from-[#00c2b2] to-emerald-500',
-    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-teal-900/60',
-    tagText: 'text-teal-300 font-mono',
-    breadcrumbColor: 'text-teal-400',
+    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-teal-200',
+    tagText: 'text-teal-700 font-mono',
+    breadcrumbColor: 'text-teal-700',
     statusTag: 'ClaveÚnica & SENCE Alumno Activo ✓'
   };
 
@@ -279,30 +279,30 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
   const activeItemLabel = currentMenuItems.find(i => i.id === activeNavTab)?.label || 'Panel';
 
   return (
-    <div className="min-h-screen bg-[#141518] text-white flex flex-col lg:flex-row font-['Inter',sans-serif] selection:bg-[#00c2b2] selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col lg:flex-row font-['Inter',sans-serif] selection:bg-[#00c2b2] selection:text-white">
       
       {/* ========================================================================= */}
       {/* 1. BARRA LATERAL IZQUIERDA UNIFICADA Y DESPLAZABLE (DESKTOP)             */}
       {/* ========================================================================= */}
-      <aside className={`hidden lg:flex lg:flex-col w-72 bg-[#0d0e11] border-r border-white/10 sticky top-0 h-screen z-40 overflow-y-auto scroll-smooth p-5 shadow-2xl space-y-6 [&::-webkit-scrollbar]:w-1.5 ${roleStyles.scrollbarThumb} [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent`}>
+      <aside className={`hidden lg:flex lg:flex-col w-72 bg-white border-r border-slate-200 sticky top-0 h-screen z-40 overflow-y-auto scroll-smooth p-5 shadow-sm space-y-6 [&::-webkit-scrollbar]:w-1.5 ${roleStyles.scrollbarThumb} [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent`}>
         
         {/* Header Institucional de la Barra Lateral */}
-        <div className="space-y-3 pb-4 border-b border-white/10 flex-shrink-0">
+        <div className="space-y-3 pb-4 border-b border-slate-200 flex-shrink-0">
           <div 
             onClick={onReturnHome}
             className="cursor-pointer select-none group"
             title="Volver al Sitio Web PrevySeg"
           >
             <div className="flex items-baseline text-2xl font-black tracking-tight">
-              <span className="text-[#0284c7] group-hover:text-sky-400 transition-colors">Prevy</span>
-              <span className="text-[#00c2b2] group-hover:text-teal-300 transition-colors">Seg</span>
+              <span className="text-[#0284c7] group-hover:text-sky-500 transition-colors">Prevy</span>
+              <span className="text-[#00c2b2] group-hover:text-teal-600 transition-colors">Seg</span>
             </div>
-            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
               Organismo Técnico De Capacitación
             </div>
           </div>
 
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider shadow ${roleStyles.badgeClass}`}>
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider ${roleStyles.badgeClass}`}>
             <ShieldCheck size={13} />
             <span>{roleStyles.badgeText}</span>
           </div>
@@ -326,29 +326,29 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                 className={`w-full flex items-center justify-between p-3 rounded-2xl text-xs font-bold transition-all cursor-pointer text-left group ${
                   (isActive || isAulaActive)
                     ? `${roleStyles.activeNavClass} border` 
-                    : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-xl transition-colors ${
                     (isActive || isAulaActive) 
                       ? roleStyles.activeIconBg 
-                      : 'bg-slate-900 text-slate-400 group-hover:text-white group-hover:bg-slate-800'
+                      : 'bg-slate-100 text-slate-600 group-hover:text-slate-900 group-hover:bg-slate-200'
                   }`}>
                     <IconComponent size={16} />
                   </div>
                   <div>
-                    <div className={`leading-tight ${(isActive || isAulaActive) ? 'text-white font-black' : 'text-slate-200'}`}>
+                    <div className={`leading-tight ${(isActive || isAulaActive) ? 'text-slate-900 font-black' : 'text-slate-700'}`}>
                       {item.label}
                     </div>
-                    <div className="text-[10px] text-slate-400 font-normal leading-tight">
+                    <div className="text-[10px] text-slate-500 font-normal leading-tight">
                       {item.desc}
                     </div>
                   </div>
                 </div>
 
                 {(isActive || isAulaActive) && (
-                  <ChevronRight size={14} className="opacity-80" />
+                  <ChevronRight size={14} className="opacity-80 text-slate-700" />
                 )}
               </button>
             );
@@ -356,20 +356,20 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
         </div>
 
         {/* Footer de la Barra Lateral (Modo Edición para Admin + Perfil + Salida) */}
-        <div className="pt-4 border-t border-white/10 space-y-3 flex-shrink-0">
+        <div className="pt-4 border-t border-slate-200 space-y-3 flex-shrink-0">
           
           {/* Switch Modo Edición (Solo Administrador) */}
           {isRoleAdmin && (
-            <div className="flex items-center justify-between bg-[#121316] p-2.5 rounded-2xl border border-white/10">
-              <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                <Edit3 size={13} className="text-amber-400" />
+            <div className="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+              <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                <Edit3 size={13} className="text-amber-500" />
                 <span>Modo Edición</span>
               </span>
               <button
                 type="button"
                 onClick={() => setIsEditMode(!isEditMode)}
                 className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                  isEditMode ? 'bg-purple-600' : 'bg-slate-700'
+                  isEditMode ? 'bg-purple-600' : 'bg-slate-300'
                 }`}
               >
                 <span
@@ -382,12 +382,12 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
           )}
 
           {/* Tarjeta de Perfil del Usuario */}
-          <div className="flex items-center gap-2.5 p-2 bg-[#121316] rounded-2xl border border-white/10">
+          <div className="flex items-center gap-2.5 p-2 bg-slate-50 rounded-2xl border border-slate-200">
             <div className={`w-8 h-8 rounded-full ${roleStyles.avatarGradient} text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow`}>
               {userInitials}
             </div>
             <div className="overflow-hidden text-left text-xs flex-1">
-              <div className="font-bold text-white truncate">{currentUser?.nombre || 'Usuario PrevySeg'}</div>
+              <div className="font-bold text-slate-900 truncate">{currentUser?.nombre || 'Usuario PrevySeg'}</div>
               <div className={`text-[10px] font-mono truncate ${roleStyles.tagText}`}>{currentUser?.rut || '15692858-5'}</div>
             </div>
           </div>
@@ -396,7 +396,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
           <div className="flex gap-2">
             <button
               onClick={onReturnHome}
-              className="flex-1 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white p-2.5 rounded-xl text-[11px] font-bold border border-white/10 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+              className="flex-1 bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 p-2.5 rounded-xl text-[11px] font-bold border border-slate-200 flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-sm"
               title="Volver a la Web Pública"
             >
               <Home size={13} className="text-[#00c2b2]" />
@@ -405,7 +405,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
 
             <button
               onClick={onLogout}
-              className="bg-red-950/60 hover:bg-red-900/80 text-red-300 p-2.5 rounded-xl text-[11px] font-bold border border-red-500/30 flex items-center justify-center cursor-pointer transition-colors"
+              className="bg-red-50 hover:bg-red-100 text-red-600 p-2.5 rounded-xl text-[11px] font-bold border border-red-200 flex items-center justify-center cursor-pointer transition-colors shadow-sm"
               title="Cerrar Sesión"
             >
               <LogOut size={14} />
@@ -419,15 +419,15 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
       {/* ========================================================================= */}
       {/* 2. HEADER MÓVIL (PANTALLAS PEQUEÑAS)                                      */}
       {/* ========================================================================= */}
-      <header className="lg:hidden bg-[#0d0e11] border-b border-white/10 p-4 sticky top-0 z-50 flex items-center justify-between">
+      <header className="lg:hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-50 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            className="p-2 bg-slate-800 rounded-xl text-slate-300 border border-white/10 cursor-pointer"
+            className="p-2 bg-slate-100 rounded-xl text-slate-700 border border-slate-200 cursor-pointer hover:bg-slate-200 transition-colors"
           >
             {mobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <div className="text-sm font-black text-white">
+          <div className="text-sm font-black text-slate-900">
             <span className="text-[#0284c7]">Prevy</span><span className="text-[#00c2b2]">Seg</span>
           </div>
         </div>
@@ -444,7 +444,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-[#0d0e11] border-b border-white/10 p-4 space-y-2 z-40"
+            className="lg:hidden bg-white border-b border-slate-200 p-4 space-y-2 z-40 shadow-lg"
           >
             {currentMenuItems.map((item) => {
               const IconComponent = item.icon;
@@ -454,7 +454,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                   key={item.id}
                   onClick={() => handleSidebarItemClick(item.id)}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl text-xs font-bold text-left ${
-                    isActive ? roleStyles.activeNavClass : 'text-slate-300 hover:bg-slate-800'
+                    isActive ? roleStyles.activeNavClass : 'text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <IconComponent size={16} />
@@ -462,9 +462,9 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                 </button>
               );
             })}
-            <div className="pt-2 border-t border-white/10 flex justify-between gap-2">
-              <button onClick={onReturnHome} className="flex-1 bg-slate-800 p-2.5 rounded-xl text-xs text-slate-300">Web Pública</button>
-              <button onClick={onLogout} className="bg-red-950 p-2.5 rounded-xl text-xs text-red-300">Cerrar Sesión</button>
+            <div className="pt-2 border-t border-slate-200 flex justify-between gap-2">
+              <button onClick={onReturnHome} className="flex-1 bg-slate-100 hover:bg-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-700">Web Pública</button>
+              <button onClick={onLogout} className="bg-red-50 hover:bg-red-100 p-2.5 rounded-xl text-xs font-bold text-red-600 border border-red-200">Cerrar Sesión</button>
             </div>
           </motion.div>
         )}
@@ -476,24 +476,24 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
       <div className="flex-1 flex flex-col min-w-0">
         
         {/* Top Bar Superior del Área de Trabajo */}
-        <div className="h-16 border-b border-white/10 bg-[#0f1012]/80 backdrop-blur-md px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
+        <div className="h-16 border-b border-slate-200 bg-white/90 backdrop-blur-md px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
             <span className={`font-bold uppercase tracking-wider text-[10px] ${roleStyles.breadcrumbColor}`}>
               {isRoleAdmin ? 'Administración OTEC' : isRoleTeacher ? 'Instrucción Docente' : 'Campus Virtual'}
             </span>
             <span>/</span>
-            <span className="text-white font-bold">
+            <span className="text-slate-900 font-bold">
               {activeClassroomCourse ? 'Aula Virtual Sincrónica en Vivo' : activeItemLabel}
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             {isEditMode && isRoleAdmin && (
-              <span className="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-500/40 flex items-center gap-1">
+              <span className="bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-300 flex items-center gap-1 shadow-sm">
                 <Edit3 size={11} /> Edición Activa
               </span>
             )}
-            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-500/30 hidden sm:inline-block">
+            <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 hidden sm:inline-block shadow-sm">
               {roleStyles.statusTag}
             </span>
           </div>
@@ -598,7 +598,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
         </main>
 
         {/* Footer del LMS */}
-        <footer className="bg-[#0d0e11] border-t border-white/10 text-slate-500 text-xs py-3.5 px-6 text-center">
+        <footer className="bg-white border-t border-slate-200 text-slate-500 text-xs py-3.5 px-6 text-center">
           <span>PrevySeg LMS - Integración SENCE NCh 2728 & Subsecretaría de Prevención del Delito (SPD) • © 2026</span>
         </footer>
 

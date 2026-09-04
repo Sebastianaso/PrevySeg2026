@@ -36,19 +36,19 @@ const ExperiencesSection = ({ onReadArticle }) => {
   ];
 
   return (
-    <section className="py-24 px-4 sm:px-8 bg-[#161719] relative border-t border-gray-800/50">
+    <section className="py-24 px-4 sm:px-8 bg-slate-50 relative border-t border-slate-200">
       <div className="max-w-7xl mx-auto space-y-16">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <span className="text-[#00c2b2] text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+          <span className="text-[#0284c7] text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2">
             <BookOpen size={14} />
             Actividades y Novedades
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
             Experiencias y <span className="text-[#0284c7]">Testimonios</span>
           </h2>
-          <p className="text-gray-300 text-base sm:text-lg">
+          <p className="text-slate-600 text-base sm:text-lg">
             Mantente informado con nuestras últimas actividades formativas, ceremonias y actualizaciones del sector de seguridad privada.
           </p>
         </div>
@@ -58,10 +58,10 @@ const ExperiencesSection = ({ onReadArticle }) => {
           {articles.map((item) => (
             <article
               key={item.id}
-              className="bg-[#121316] rounded-2xl overflow-hidden border border-gray-800/80 hover:border-gray-700 transition-all duration-300 shadow-xl flex flex-col group hover:-translate-y-1.5"
+              className="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-sky-300 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col group hover:-translate-y-1.5"
             >
               {/* Card Image */}
-              <div className="relative overflow-hidden aspect-[16/10] bg-gray-900">
+              <div className="relative overflow-hidden aspect-[16/10] bg-slate-100">
                 <img
                   src={item.image}
                   alt={item.title}
@@ -78,29 +78,29 @@ const ExperiencesSection = ({ onReadArticle }) => {
               <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
                   {/* Meta Date */}
-                  <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-                    <Calendar size={13} className="text-[#00c2b2]" />
+                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                    <Calendar size={13} className="text-[#0284c7]" />
                     <span>{item.date}</span>
                     <span>•</span>
                     <span>{item.readTime}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#00c2b2] transition-colors leading-snug line-clamp-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-[#0284c7] transition-colors leading-snug line-clamp-2">
                     {item.title}
                   </h3>
 
                   {/* Summary */}
-                  <p className="text-gray-400 text-xs sm:text-sm leading-relaxed line-clamp-3">
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-3">
                     {item.summary}
                   </p>
                 </div>
 
                 {/* Read more button */}
-                <div className="pt-4 border-t border-gray-800/60">
+                <div className="pt-4 border-t border-slate-100">
                   <button
                     onClick={() => onReadArticle(item)}
-                    className="text-xs uppercase tracking-wider font-bold text-[#0284c7] group-hover:text-sky-300 flex items-center gap-2 group-hover:translate-x-1 transition-all cursor-pointer"
+                    className="text-xs uppercase tracking-wider font-bold text-[#0284c7] group-hover:text-sky-700 flex items-center gap-2 group-hover:translate-x-1 transition-all cursor-pointer"
                   >
                     <span>Leer Artículo Completo</span>
                     <ArrowRight size={14} />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
@@ -11,11 +11,12 @@ import ContactFooter from './components/ContactFooter';
 import NetworkBackground from './components/NetworkBackground';
 import ScrollToTop from './components/ScrollToTop';
 import LMSLayout from './lms/LMSLayout';
+import { supabase, logoutUser } from './config/supabase';
 import { 
   ContactModal, 
   PlatformModal, 
   SearchModal, 
-  ArticleModal,
+  ArticleModal, 
   EnrollmentModal 
 } from './components/Modals';
 
@@ -31,6 +32,56 @@ function App() {
   // Estado de usuario autenticado en LMS y pestaña inicial
   const [currentLMSUser, setCurrentLMSUser] = useState(null);
   const [lmsInitialTab, setLmsInitialTab] = useState('area-personal');
+  const [authChecking, setAuthChecking] = useState(true);
+
+  // Escuchar y verificar sesión activa en Supabase Auth al cargar
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user && mounted) {
+          const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile && mounted) {
+            const enriched = {
+              ...profile,
+              user: profile.rut,
+              cargo: profile.rol === 'ADMIN' 
+                ? 'Director Ejecutivo / Administrador OTEC' 
+                : profile.rol === 'TEACHER' 
+                ? 'Docente Instructor SPD' 
+                : 'Estudiante / Alumno Regular',
+            };
+            setCurrentLMSUser(enriched);
+            setLmsInitialTab(profile.rol === 'ADMIN' ? 'ajustes-sitio' : profile.rol === 'TEACHER' ? 'docente-panel' : 'area-personal');
+          }
+        }
+      } catch (err) {
+        console.error('Error verificando sesión:', err);
+      } finally {
+        if (mounted) setAuthChecking(false);
+      }
+    }
+
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT') {
+        setCurrentLMSUser(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
+  }, []);
 
   const handleOpenContactWithCourse = (courseName) => {
     setSelectedCourse(courseName || '');
@@ -56,7 +107,12 @@ function App() {
 
   const handleLoginSuccess = (userData, targetTab = 'area-personal') => {
     setCurrentLMSUser(userData);
-    setLmsInitialTab(targetTab || 'area-personal');
+    setLmsInitialTab(targetTab || (userData.rol === 'ADMIN' ? 'ajustes-sitio' : userData.rol === 'TEACHER' ? 'docente-panel' : 'area-personal'));
+  };
+
+  const handleLogout = async () => {
+    await logoutUser();
+    setCurrentLMSUser(null);
   };
 
   // Si el usuario está autenticado en la plataforma virtual, mostramos el LMS Layout completo
@@ -65,14 +121,14 @@ function App() {
       <LMSLayout
         currentUser={currentLMSUser}
         initialTab={lmsInitialTab}
-        onLogout={() => setCurrentLMSUser(null)}
+        onLogout={handleLogout}
         onReturnHome={() => setCurrentLMSUser(null)}
       />
     );
   }
 
   return (
-    <div className="relative min-h-screen bg-[#18191c] text-white flex flex-col selection:bg-[#00c2b2] selection:text-white">
+    <div className="relative min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-[#0284c7] selection:text-white">
       
       {/* Dynamic Network Node Canvas Background */}
       <NetworkBackground />
@@ -168,4 +224,3 @@ function App() {
 }
 
 export default App;
-

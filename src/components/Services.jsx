@@ -296,7 +296,7 @@ const Services = ({ onSelectCourse }) => {
     : schoolFilteredCourses.filter(c => c.category === selectedCategory);
 
   return (
-    <section id="servicios" className="py-24 px-4 sm:px-8 bg-gradient-to-b from-[#18191c] via-[#131416] to-[#18191c] relative border-t border-white/10">
+    <section id="servicios" className="py-24 px-4 sm:px-8 bg-white relative border-t border-slate-200">
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Section Header */}
@@ -307,14 +307,14 @@ const Services = ({ onSelectCourse }) => {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto space-y-4"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-semibold backdrop-blur-md shadow-lg shadow-emerald-950/40">
-            <Shield size={14} className="text-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold shadow-sm">
+            <Shield size={14} className="text-emerald-600" />
             <span>Oferta Académica & Formación Acreditada SENCE 2026</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-            Programas y <span className="text-[#00c2b2]">Especializaciones</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
+            Programas y <span className="text-[#0284c7]">Especializaciones</span>
           </h2>
-          <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
+          <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
             Formación intensiva de rápida empleabilidad para combatir la desocupación regional en Arica y la Macro Zona Norte (Iquique, Antofagasta y Calama).
           </p>
         </motion.div>
@@ -324,7 +324,7 @@ const Services = ({ onSelectCourse }) => {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto p-2 bg-[#121316] rounded-3xl border border-white/15 shadow-2xl flex flex-col sm:flex-row gap-2"
+          className="max-w-3xl mx-auto p-2 bg-slate-100 rounded-3xl border border-slate-200 shadow-md flex flex-col sm:flex-row gap-2"
         >
           {/* Opción 1: Todos */}
           <button
@@ -334,11 +334,11 @@ const Services = ({ onSelectCourse }) => {
             }}
             className={`flex-1 py-3 px-4 rounded-2xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
               activeSchool === 'todos'
-                ? 'bg-slate-800 text-white shadow-lg border border-white/20'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-slate-900 shadow-md border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
             }`}
           >
-            <Sparkles size={15} className="text-teal-400" />
+            <Sparkles size={15} className="text-[#0284c7]" />
             <span>Todos los Cursos</span>
           </button>
 
@@ -350,13 +350,17 @@ const Services = ({ onSelectCourse }) => {
             }}
             className={`flex-[1.4] py-3.5 px-4 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 border ${
               activeSchool === 'seguridad'
-                ? 'bg-gradient-to-r from-[#0284c7] to-sky-600 text-white border-sky-300 shadow-xl shadow-sky-950/60'
-                : 'text-slate-300 hover:text-white bg-[#151619] border-white/5 hover:border-sky-500/30'
+                ? 'bg-gradient-to-r from-[#0284c7] to-sky-600 text-white border-sky-400 shadow-md shadow-sky-600/20'
+                : 'text-slate-700 hover:text-slate-900 bg-white/70 border-slate-200 hover:border-sky-300'
             }`}
           >
-            <Shield size={16} className="text-cyan-300" />
+            <Shield size={16} className={activeSchool === 'seguridad' ? 'text-white' : 'text-[#0284c7]'} />
             <span>Escuela de Seguridad Privada</span>
-            <span className="text-[10px] bg-sky-950/80 text-sky-200 px-2 py-0.5 rounded-full border border-sky-400/40">SPD</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
+              activeSchool === 'seguridad'
+                ? 'bg-sky-950/40 text-white border-sky-300/40'
+                : 'bg-sky-50 text-sky-800 border-sky-200'
+            }`}>SPD</span>
           </button>
 
           {/* Opción 3: Escuela de Oficios */}
@@ -367,13 +371,17 @@ const Services = ({ onSelectCourse }) => {
             }}
             className={`flex-[1.4] py-3.5 px-4 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 border ${
               activeSchool === 'oficios'
-                ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-gray-950 border-amber-300 shadow-xl shadow-amber-950/60'
-                : 'text-slate-300 hover:text-white bg-[#151619] border-white/5 hover:border-amber-500/30'
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-300 shadow-md shadow-amber-500/20'
+                : 'text-slate-700 hover:text-slate-900 bg-white/70 border-slate-200 hover:border-amber-300'
             }`}
           >
-            <Wrench size={16} className="text-amber-400" />
+            <Wrench size={16} className={activeSchool === 'oficios' ? 'text-white' : 'text-amber-500'} />
             <span>Escuela de Oficios</span>
-            <span className="text-[10px] bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/40">30 Días</span>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
+              activeSchool === 'oficios'
+                ? 'bg-amber-950/40 text-white border-amber-300/40'
+                : 'bg-amber-50 text-amber-800 border-amber-200'
+            }`}>30 Días</span>
           </button>
         </motion.div>
 
@@ -392,8 +400,8 @@ const Services = ({ onSelectCourse }) => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                 selectedCategory === cat
-                  ? 'bg-gradient-to-r from-[#00c2b2] to-teal-400 text-gray-950 border-teal-300 shadow-lg shadow-teal-500/25'
-                  : 'bg-[#121315]/80 text-slate-300 hover:text-white hover:bg-slate-800/80 border-white/10 hover:border-cyan-500/30'
+                  ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-md shadow-sky-600/20'
+                  : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border-slate-200'
               }`}
             >
               {cat}
@@ -413,7 +421,7 @@ const Services = ({ onSelectCourse }) => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
                 whileHover={{ y: -6, scale: 1.015 }}
-                className="rounded-3xl overflow-hidden bg-gradient-to-b from-[#16171a] to-[#111214] border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/15 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between group"
+                className="rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-lg hover:shadow-2xl hover:border-sky-300 transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   {/* 1. Cover Visual */}
@@ -422,39 +430,39 @@ const Services = ({ onSelectCourse }) => {
                   {/* 2. Course Title & Badges */}
                   <div className="p-6 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
-                        <Clock size={12} className="text-[#00c2b2]" />
+                      <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+                        <Clock size={12} className="text-[#0284c7]" />
                         <span>{course.duration}</span>
                       </span>
                       {course.highlight && (
-                        <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                           {course.highlight}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="text-sm sm:text-base font-bold text-white leading-snug group-hover:text-[#00c2b2] transition-colors line-clamp-3">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug group-hover:text-[#0284c7] transition-colors line-clamp-3">
                       {course.title}
                     </h3>
                   </div>
                 </div>
 
                 {/* 3. Price & Action Row */}
-                <div className="p-6 pt-4 border-t border-white/10 bg-black/30 flex items-center justify-between gap-3">
+                <div className="p-6 pt-4 border-t border-slate-100 bg-slate-50/70 flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                    <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
                       Arancel Oficial:
                     </div>
-                    <div className="text-lg sm:text-xl font-black text-[#00c2b2] tracking-tight">
+                    <div className="text-lg sm:text-xl font-black text-[#0284c7] tracking-tight">
                       {course.price}
                     </div>
-                    <div className="text-[11px] font-semibold text-emerald-400">
+                    <div className="text-[11px] font-semibold text-emerald-600">
                       {course.priceDetail}
                     </div>
                   </div>
 
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(2, 132, 199, 0.4)' }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(2, 132, 199, 0.3)' }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onSelectCourse(course.title)}
                     className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn border border-sky-400/30"
