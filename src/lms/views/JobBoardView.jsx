@@ -7,6 +7,7 @@ import {
   Building2, 
   ShieldCheck, 
   CheckCircle, 
+  CheckCircle2,
   Filter, 
   Search, 
   Send, 
@@ -20,7 +21,12 @@ import {
   Shield,
   HardHat,
   Loader2,
-  Plus
+  Plus,
+  Bell,
+  Mail,
+  Phone,
+  ArrowRight,
+  Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../config/supabase';
@@ -38,6 +44,7 @@ const JobBoardView = ({ currentUser }) => {
     return [];
   });
   const [showApplyModal, setShowApplyModal] = useState(false);
+  const [successApplicationModal, setSuccessApplicationModal] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filtros de barra lateral
@@ -266,7 +273,11 @@ const JobBoardView = ({ currentUser }) => {
     }
 
     setShowApplyModal(false);
-    alert(`¡Postulación enviada con éxito! La empresa empleadora "${targetJob?.company || 'Minería & Logística del Norte S.A.'}" ha recibido tu notificación en tiempo real con tu expediente académico y certificados oficiales PrevySeg.`);
+    setSuccessApplicationModal({
+      job: targetJob,
+      app: newApp,
+      timestamp: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' hrs'
+    });
   };
 
   return (
@@ -600,6 +611,146 @@ const JobBoardView = ({ currentUser }) => {
                     <span>Enviar Postulación Verificada</span>
                   </motion.button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Notificación de Éxito con Diseño Estético */}
+      <AnimatePresence>
+        {successApplicationModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md overflow-y-auto">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.45, bounce: 0.25 }}
+              className="bg-white border border-slate-200 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden relative my-6"
+            >
+              {/* Cabecera con degradado premium y glow */}
+              <div className="bg-gradient-to-r from-teal-700 via-emerald-600 to-cyan-700 p-6 sm:p-7 text-white relative">
+                <button
+                  onClick={() => setSuccessApplicationModal(null)}
+                  className="absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <CheckCircle2 size={32} className="text-white drop-shadow-md" />
+                  </div>
+                  <div className="space-y-1">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-400/30 text-emerald-100 text-[11px] font-bold tracking-wider uppercase border border-emerald-300/30">
+                      <Sparkles size={12} /> Postulación Registrada con Éxito
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+                      ¡Tu postulación ha sido enviada!
+                    </h3>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cuerpo del modal con diseño claro y tarjetas de notificación */}
+              <div className="p-6 sm:p-7 space-y-5">
+                
+                {/* 1. Resumen de la oferta postulada */}
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Vacante seleccionada</span>
+                    <h4 className="text-base font-bold text-slate-900">{successApplicationModal.job?.title}</h4>
+                    <p className="text-xs text-slate-600 font-medium flex items-center gap-1.5 mt-0.5">
+                      <Building2 size={13} className="text-[#00c2b2]" />
+                      <span>{successApplicationModal.job?.company}</span>
+                      <span>•</span>
+                      <MapPin size={13} className="text-slate-400" />
+                      <span>{successApplicationModal.job?.city}</span>
+                    </p>
+                  </div>
+                  <div className="flex sm:flex-col items-center sm:items-end gap-2">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold font-mono bg-teal-50 text-teal-800 border border-teal-200">
+                      {successApplicationModal.job?.salary}
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-medium">
+                      {successApplicationModal.timestamp}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2. Tarjeta Informativa: Empresa Notificada */}
+                <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-2">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700 flex-shrink-0 mt-0.5">
+                      <Building2 size={18} />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h5 className="text-xs sm:text-sm font-bold text-emerald-950">
+                          Empresa notificada en tiempo real
+                        </h5>
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-200/80 text-emerald-900 text-[10px] font-bold flex items-center gap-1">
+                          <Check size={11} /> Entregado
+                        </span>
+                      </div>
+                      <p className="text-xs text-emerald-900/90 leading-relaxed">
+                        El departamento de reclutamiento de <strong>{successApplicationModal.job?.company}</strong> ya cuenta con tu postulación en su bandeja de entrada con tu expediente académico verificado por <strong>OTEC PrevySeg</strong> (notas, asistencia y diplomas vigentes).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Tarjeta Informativa: Canales de Notificación al Estudiante */}
+                <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-200/80 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-xl bg-sky-100 text-sky-700 flex-shrink-0 mt-0.5">
+                      <Bell size={18} />
+                    </div>
+                    <div className="space-y-1.5 flex-1">
+                      <h5 className="text-xs sm:text-sm font-bold text-sky-950">
+                        ¿Cómo te notificaremos de las novedades?
+                      </h5>
+                      <p className="text-xs text-sky-900/90 leading-relaxed">
+                        Cualquier cambio de estado, citación a entrevista o contacto directo de la empresa te será avisado oportunamente por estos canales:
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1.5">
+                        <div className="p-2.5 rounded-xl bg-white border border-sky-200/80 flex items-center gap-2.5 shadow-2xs">
+                          <div className="w-7 h-7 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600 flex-shrink-0">
+                            <Mail size={14} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] text-slate-400 font-bold uppercase">Correo Electrónico</p>
+                            <p className="text-xs font-bold text-slate-800 truncate">{currentUser?.email || 'matias.silva@prevyseg.cl'}</p>
+                          </div>
+                        </div>
+
+                        <div className="p-2.5 rounded-xl bg-white border border-emerald-200/80 flex items-center gap-2.5 shadow-2xs">
+                          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                            <Phone size={14} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] text-slate-400 font-bold uppercase">WhatsApp / Teléfono</p>
+                            <p className="text-xs font-bold text-slate-800 truncate">{currentUser?.telefono || '+56 9 8231 2128'}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Botón de Cierre con Estilo */}
+                <div className="pt-2 flex flex-col sm:flex-row justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSuccessApplicationModal(null)}
+                    className="w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 rounded-xl shadow-lg shadow-teal-600/20 cursor-pointer flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span>Entendido, volver a las Ofertas</span>
+                    <ArrowRight size={15} />
+                  </button>
+                </div>
+
               </div>
             </motion.div>
           </div>
