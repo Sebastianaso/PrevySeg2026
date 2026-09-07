@@ -34,7 +34,9 @@ import {
   X,
   ChevronRight,
   CheckCircle2,
-  LayoutDashboard
+  LayoutDashboard,
+  Building2,
+  Search
 } from 'lucide-react';
 
 import CoursesView from './views/CoursesView';
@@ -53,9 +55,10 @@ import CourseClassroomView from './views/CourseClassroomView';
 import CertificateApprovalView from './views/CertificateApprovalView';
 import TeacherPortalView from './views/TeacherPortalView';
 import StudentLiveClassesView from './views/StudentLiveClassesView';
+import EmployerPortalView from './views/EmployerPortalView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
-  // 1. Identificación estricta de Roles: Administrador, Profesor y Estudiante
+  // 1. Identificación estricta de Roles: Administrador, Empleador, Profesor y Estudiante
   const userRole = (currentUser?.rol || '').toUpperCase();
   
   const isRoleAdmin = userRole === 'ADMIN' || 
@@ -64,7 +67,19 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                       currentUser?.cargo?.toLowerCase().includes('administrador') || 
                       currentUser?.cargo?.toLowerCase().includes('director');
 
-  const isRoleTeacher = !isRoleAdmin && (
+  const isRoleEmployer = !isRoleAdmin && (
+    userRole === 'EMPLOYER' || 
+    userRole === 'EMPLEADOR' || 
+    userRole === 'EMPRESA' || 
+    currentUser?.cargo?.toLowerCase().includes('empleador') || 
+    currentUser?.cargo?.toLowerCase().includes('empresa') || 
+    currentUser?.cargo?.toLowerCase().includes('reclutador') ||
+    currentUser?.cargo?.toLowerCase().includes('rrhh') ||
+    currentUser?.rut?.includes('76543210') ||
+    currentUser?.rut?.includes('76.543.210')
+  );
+
+  const isRoleTeacher = !isRoleAdmin && !isRoleEmployer && (
     userRole === 'TEACHER' || 
     userRole === 'DOCENTE' || 
     userRole === 'PROFESOR' || 
@@ -73,11 +88,13 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
     currentUser?.cargo?.toLowerCase().includes('profesor')
   );
 
-  const isRoleStudent = !isRoleAdmin && !isRoleTeacher;
+  const isRoleStudent = !isRoleAdmin && !isRoleTeacher && !isRoleEmployer;
 
   // 2. Tab por defecto según el rol:
   const defaultTabForRole = isRoleAdmin 
     ? 'ajustes-sitio' 
+    : isRoleEmployer
+    ? (initialTab || 'mis-ofertas')
     : isRoleTeacher 
     ? (initialTab === 'docente-panel' || initialTab === 'interaccion' || !initialTab ? 'interaccion-materiales' : initialTab)
     : (initialTab || 'area-personal');
@@ -216,9 +233,36 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
     },
   ];
 
+  // D. MENÚ EMPLEADOR / EMPRESAS (Tema Dorado / Ámbar Corporativo)
+  const employerMenuItems = [
+    { 
+      id: 'mis-ofertas', 
+      label: 'Mis Ofertas Laborales', 
+      desc: 'Publicar y Gestionar Vacantes',
+      icon: Briefcase,
+      color: 'text-amber-400'
+    },
+    { 
+      id: 'postulantes', 
+      label: 'Postulantes & Alumnos', 
+      desc: 'Revisión de Perfiles y CVs',
+      icon: Users,
+      color: 'text-orange-400'
+    },
+    { 
+      id: 'talento', 
+      label: 'Búsqueda de Egresados', 
+      desc: 'Oficios & Seguridad Certificados',
+      icon: Search,
+      color: 'text-yellow-400'
+    },
+  ];
+
   // Selección de items y estilos según el rol actual
   const currentMenuItems = isRoleAdmin 
     ? adminMenuItems 
+    : isRoleEmployer
+    ? employerMenuItems
     : isRoleTeacher 
     ? teacherMenuItems 
     : studentMenuItems;
@@ -234,6 +278,17 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
     tagText: 'text-purple-700 font-mono',
     breadcrumbColor: 'text-purple-700',
     statusTag: 'SENCE & SPD Conectado ✓'
+  } : isRoleEmployer ? {
+    themeName: 'employer',
+    badgeText: 'Portal Empresas & Empleadores',
+    badgeClass: 'bg-amber-50 border-amber-200 text-amber-800 shadow-sm',
+    activeNavClass: 'bg-amber-50 text-amber-900 border-amber-300 shadow-sm font-bold',
+    activeIconBg: 'bg-[#d97706] text-white shadow-sm',
+    avatarGradient: 'bg-gradient-to-tr from-[#d97706] to-amber-500',
+    scrollbarThumb: '[&::-webkit-scrollbar-thumb]:bg-amber-200',
+    tagText: 'text-amber-800 font-mono',
+    breadcrumbColor: 'text-amber-700',
+    statusTag: 'Empresa Verificada PrevySeg ✓'
   } : isRoleTeacher ? {
     themeName: 'teacher',
     badgeText: 'Panel Docente / Instructor',
@@ -312,7 +367,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
         {/* Lista de Menú Lateral del Rol con Iconos Claros */}
         <div className="space-y-1.5 flex-1">
           <div className="text-[10px] font-extrabold uppercase text-slate-500 tracking-wider px-3 pb-1">
-            {isRoleAdmin ? 'Gestión OTEC & Auditoría' : isRoleTeacher ? 'Módulos de Instrucción' : 'Mi Portal Académico'}
+            {isRoleAdmin ? 'Gestión OTEC & Auditoría' : isRoleEmployer ? 'Gestión de Reclutamiento' : isRoleTeacher ? 'Módulos de Instrucción' : 'Mi Portal Académico'}
           </div>
 
           {currentMenuItems.map((item) => {
@@ -480,7 +535,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
         <div className="h-16 border-b border-slate-200 bg-white/90 backdrop-blur-md px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-sm">
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <span className={`font-bold uppercase tracking-wider text-[10px] ${roleStyles.breadcrumbColor}`}>
-              {isRoleAdmin ? 'Administración OTEC' : isRoleTeacher ? 'Instrucción Docente' : 'Campus Virtual'}
+              {isRoleAdmin ? 'Administración OTEC' : isRoleEmployer ? 'Bolsa de Empleo y Contratación' : isRoleTeacher ? 'Instrucción Docente' : 'Campus Virtual'}
             </span>
             <span>/</span>
             <span className="text-slate-900 font-bold">
@@ -551,9 +606,27 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                 )}
               </motion.div>
 
+            ) : isRoleEmployer ? (
+
+              /* ================= 2. VISTAS DEL EMPLEADOR / EMPRESAS ================= */
+              <motion.div
+                key={`employer-${activeNavTab}`}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+              >
+                <EmployerPortalView 
+                  currentUser={currentUser} 
+                  activeTab={activeNavTab}
+                  onTabChange={(tab) => setActiveNavTab(tab)}
+                  onSelectCourse={handleSelectCourse}
+                />
+              </motion.div>
+
             ) : isRoleTeacher ? (
 
-              /* ================= 2. VISTAS DEL PROFESOR / DOCENTE ================= */
+              /* ================= 3. VISTAS DEL PROFESOR / DOCENTE ================= */
               <motion.div
                 key={`teacher-${activeNavTab}`}
                 initial={{ opacity: 0, y: 15 }}

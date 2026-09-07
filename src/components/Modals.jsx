@@ -310,6 +310,8 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
         if (onLoginSuccess) {
           const defaultTab = user.rol === 'ADMIN' 
             ? 'ajustes-sitio' 
+            : (user.rol === 'EMPLOYER' || user.rol === 'EMPLEADOR' || user.rol === 'EMPRESA')
+            ? 'mis-ofertas'
             : user.rol === 'TEACHER' 
             ? 'docente-panel' 
             : 'area-personal';
@@ -526,10 +528,10 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
               </div>
             </div>
 
-            {/* Quick Demo Credentials for the 3 Roles */}
+            {/* Quick Demo Credentials for the 4 Roles */}
             <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-[11px] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500 font-bold block uppercase text-[10px] tracking-wider">Demostración de los 3 Roles:</span>
+                <span className="text-slate-500 font-bold block uppercase text-[10px] tracking-wider">Demostración de los 4 Roles:</span>
                 <span className="text-[9px] bg-sky-100 text-[#0284c7] font-bold px-1.5 py-0.5 rounded">1-Click Login</span>
               </div>
               <div className="flex flex-col gap-1.5 text-slate-700">
@@ -544,7 +546,17 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
                   <span className="font-mono text-slate-500 text-[10px]">15.692.858-5</span>
                 </button>
 
-                {/* 2. Profesor / Docente */}
+                {/* 2. Empresa / Empleador */}
+                <button
+                  type="button"
+                  onClick={() => handleFillDemo('76543210-K', 'prevyseg2026')}
+                  className="text-left text-amber-700 hover:text-amber-900 flex justify-between items-center cursor-pointer p-1.5 rounded-lg hover:bg-amber-50 border border-amber-200 transition-colors"
+                >
+                  <span className="font-semibold">🏢 Minería & Logística del Norte (EMPRESA / EMPLEADOR)</span>
+                  <span className="font-mono text-slate-500 text-[10px]">76.543.210-K</span>
+                </button>
+
+                {/* 3. Profesor / Docente */}
                 <button
                   type="button"
                   onClick={() => handleFillDemo('21778425-5', '21778425')}
@@ -554,7 +566,7 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
                   <span className="font-mono text-slate-500 text-[10px]">21.778.425-5</span>
                 </button>
 
-                {/* 3. Estudiante */}
+                {/* 4. Estudiante */}
                 <button
                   type="button"
                   onClick={() => handleFillDemo('21778425-6', '21778425')}

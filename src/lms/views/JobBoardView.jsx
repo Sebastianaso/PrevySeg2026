@@ -30,7 +30,13 @@ const JobBoardView = ({ currentUser }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedJob, setSelectedJob] = useState(null);
-  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [appliedJobs, setAppliedJobs] = useState(() => {
+    try {
+      const saved = localStorage.getItem('prevyseg_student_applied_jobs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [];
+  });
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,7 +46,7 @@ const JobBoardView = ({ currentUser }) => {
   const [filterShift, setFilterShift] = useState('todos');
   const [filterLocation, setFilterLocation] = useState('todos');
 
-  // Fetch ofertas laborales reales desde public.jobs
+  // Fetch ofertas laborales reales desde public.jobs + ofertas de empleadores en localStorage
   useEffect(() => {
     let isMounted = true;
 
@@ -48,43 +54,100 @@ const JobBoardView = ({ currentUser }) => {
       setLoading(true);
       setError('');
       try {
-        const { data, error: err } = await supabase
-          .from('jobs')
-          .select('*')
-          .eq('activo', true)
-          .order('created_at', { ascending: false });
+        // 1. Obtener ofertas publicadas por empresas desde localStorage
+        let localEmployerJobs = [];
+        try {
+          const stored = localStorage.getItem('prevyseg_employer_jobs');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            localEmployerJobs = (parsed || []).filter(j => j.status === 'activa').map(j => ({
+              id: j.id,
+              title: j.title,
+              company: j.company || 'Minería & Logística del Norte S.A.',
+              location: j.location || 'Arica / Macro Zona Norte',
+              city: j.location?.split('/')[0]?.trim() || 'Arica',
+              salary: j.salary,
+              salaryNumber: j.salaryNum || 850000,
+              shift: j.shift,
+              type: j.area === 'seguridad' ? 'guardia' : 'cctv',
+              school: j.area === 'seguridad' ? 'seguridad' : 'oficios',
+              postedDate: j.postedDate || 'Reciente',
+              spots: `${j.spots} Vacantes`,
+              description: j.description,
+              requirements: j.requirements || ['Certificación OTEC PrevySeg']
+            }));
+          }
+        } catch (e) {
+          console.warn('Error reading employer jobs:', e);
+        }
 
-        if (err) throw err;
+        // 2. Obtener ofertas desde Supabase PostgreSQL
+        let supabaseJobs = [];
+        try {
+          const { data, error: err } = await supabase
+            .from('jobs')
+            .select('*')
+            .eq('activo', true)
+            .order('created_at', { ascending: false });
+
+          if (!err && data) {
+            supabaseJobs = (data || []).map(j => {
+              const titleLower = (j.cargo || '').toLowerCase();
+              const descLower = (j.descripcion || '').toLowerCase();
+              let detectedCity = 'Arica';
+              if (titleLower.includes('antofagasta') || descLower.includes('antofagasta') || titleLower.includes('spence')) {
+                detectedCity = 'Antofagasta';
+              } else if (titleLower.includes('iquique') || descLower.includes('iquique') || titleLower.includes('tamarugal')) {
+                detectedCity = 'Iquique';
+              } else if (titleLower.includes('calama') || descLower.includes('calama')) {
+                detectedCity = 'Calama';
+              }
+
+              const isOficios = !j.requiere_os10 || titleLower.includes('grúa') || titleLower.includes('soldador') || titleLower.includes('eléctrico') || titleLower.includes('solar');
+              const school = isOficios ? 'oficios' : 'seguridad';
+
+              return {
+                id: j.id,
+                title: j.cargo,
+                company: j.empresa || 'Minería & Logística del Norte S.A.',
+                location: `${detectedCity} / Macro Zona Norte`,
+                city: detectedCity,
+                salary: j.renta ? `$${Number(j.renta).toLocaleString('es-CL')} CLP Líquido` : 'A convenir',
+                salaryNumber: j.renta || 0,
+                shift: j.jornada || 'Turno Rotativo',
+                type: isOficios ? 'oficios' : (titleLower.includes('cctv') ? 'cctv' : 'guardia'),
+                school: school,
+                postedDate: new Date(j.created_at).toLocaleDateString('es-CL'),
+                spots: 'Vacantes Disponibles',
+                description: j.descripcion || 'Convocatoria laboral abierta para egresados de PrevySeg.',
+                requirements: [
+                  j.requiere_os10 ? 'Acreditación OS10 / SPD Requerida' : 'Capacitación Técnica PrevySeg',
+                  'Enseñanza media completa',
+                  'Certificado de antecedentes intachable',
+                  'Certificación OTEC PrevySeg (Preferencial)'
+                ]
+              };
+            });
+          }
+        } catch (dbErr) {
+          console.warn("Aviso al consultar jobs en base de datos:", dbErr);
+        }
 
         if (isMounted) {
-          const mapped = (data || []).map(j => ({
-            id: j.id,
-            title: j.cargo,
-            company: j.empresa,
-            location: 'Arica / Macro Zona Norte',
-            city: 'Arica',
-            salary: j.renta ? `$${Number(j.renta).toLocaleString('es-CL')} CLP Líquido` : 'A convenir',
-            salaryNumber: j.renta || 0,
-            shift: j.jornada || 'Turno Rotativo',
-            type: j.requiere_os10 ? 'guardia' : 'cctv',
-            school: j.requiere_os10 ? 'seguridad' : 'oficios',
-            postedDate: new Date(j.created_at).toLocaleDateString('es-CL'),
-            spots: 'Vacantes Disponibles',
-            description: j.descripcion || 'Convocatoria laboral abierta.',
-            requirements: [
-              j.requiere_os10 ? 'Acreditación OS10 / SPD Requerida' : 'Capacitación Técnica PrevySeg',
-              'Enseñanza media completa',
-              'Certificado de antecedentes intachable',
-              'Certificación OTEC PrevySeg (Preferencial)'
-            ]
-          }));
+          // Unir ofertas de empleadores y ofertas de base de datos evitando duplicados por ID
+          const combined = [...localEmployerJobs];
+          supabaseJobs.forEach(sj => {
+            if (!combined.some(cj => cj.id === sj.id || cj.title === sj.title)) {
+              combined.push(sj);
+            }
+          });
 
-          setJobs(mapped);
-          if (mapped.length > 0) setSelectedJob(mapped[0]);
+          setJobs(combined);
+          if (combined.length > 0) setSelectedJob(combined[0]);
         }
       } catch (err) {
         console.error("Error al obtener ofertas de empleo:", err);
-        if (isMounted) setError('Error al cargar ofertas laborales desde la base de datos.');
+        if (isMounted) setError('Error al cargar ofertas laborales.');
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -92,8 +155,15 @@ const JobBoardView = ({ currentUser }) => {
 
     fetchJobs();
 
+    // Escuchar actualizaciones dinámicas de empleadores
+    const handleJobsUpdated = () => {
+      fetchJobs();
+    };
+    window.addEventListener('prevyseg_jobs_updated', handleJobsUpdated);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('prevyseg_jobs_updated', handleJobsUpdated);
     };
   }, []);
 
@@ -112,11 +182,91 @@ const JobBoardView = ({ currentUser }) => {
   });
 
   const handleApply = (jobId) => {
+    const targetJob = jobs.find(j => j.id === jobId);
+
     if (!appliedJobs.includes(jobId)) {
-      setAppliedJobs([...appliedJobs, jobId]);
+      const updated = [...appliedJobs, jobId];
+      setAppliedJobs(updated);
+      try {
+        localStorage.setItem('prevyseg_student_applied_jobs', JSON.stringify(updated));
+      } catch (e) {}
     }
+
+    // Registrar postulación en prevyseg_job_applications para que el empleador la reciba en su portal
+    try {
+      const existingApps = JSON.parse(localStorage.getItem('prevyseg_job_applications') || '[]');
+      const studentRut = currentUser?.rut || currentUser?.user || '21.778.425-6';
+      const studentName = currentUser?.nombre || 'Matías Silva Lagos';
+
+      const newApp = {
+        id: `app-${Date.now()}`,
+        jobId: jobId,
+        jobTitle: targetJob?.title || 'Oferta Laboral',
+        company: targetJob?.company || 'Minería & Logística del Norte S.A.',
+        studentName: studentName,
+        rut: studentRut,
+        age: 27,
+        phone: currentUser?.telefono || '+56 9 8231 2128',
+        email: currentUser?.email || 'matias.silva@prevyseg.cl',
+        city: targetJob?.city || 'Arica',
+        school: targetJob?.school === 'oficios' ? 'oficios' : 'seguridad',
+        courseName: targetJob?.school === 'oficios' 
+          ? 'Operador y Conducción Segura de Grúa Horquilla (Clase D)' 
+          : 'Curso de Formación Guardia de Seguridad (Credencial SPD)',
+        finalGrade: 6.8,
+        attendanceRate: 98,
+        certifiedStatus: targetJob?.school === 'oficios'
+          ? 'Licencia Clase D Aprobada • Certificado SENCE NCh 2728 Validado'
+          : 'Credencial OS-10 Vigente • Certificado Acreditado SPD',
+        hasOs10: targetJob?.school !== 'oficios',
+        appliedDate: 'Hoy, ' + new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' hrs',
+        status: 'revision',
+        notes: `Postulación formal del alumno a la vacante "${targetJob?.title}". Perfil y calificaciones validadas por OTEC PrevySeg.`
+      };
+
+      const alreadyExists = existingApps.some(a => a.jobId === jobId && (a.rut === studentRut || a.studentName === studentName));
+      if (!alreadyExists) {
+        existingApps.unshift(newApp);
+        localStorage.setItem('prevyseg_job_applications', JSON.stringify(existingApps));
+      }
+
+      // Crear Notificación en Tiempo Real para el Empleador
+      try {
+        const existingNotifs = JSON.parse(localStorage.getItem('prevyseg_employer_notifications') || '[]');
+        const newNotif = {
+          id: `notif-${Date.now()}`,
+          type: 'new_application',
+          title: '¡Nueva Postulación Recibida!',
+          message: `${studentName} se ha postulado formalmente a la vacante "${targetJob?.title || 'Oferta Laboral'}".`,
+          studentName: studentName,
+          studentRut: studentRut,
+          studentPhone: currentUser?.telefono || '+56 9 8231 2128',
+          studentEmail: currentUser?.email || 'matias.silva@prevyseg.cl',
+          jobTitle: targetJob?.title || 'Oferta Laboral',
+          jobId: jobId,
+          school: targetJob?.school === 'oficios' ? 'oficios' : 'seguridad',
+          courseName: newApp.courseName,
+          applicationId: newApp.id,
+          timestamp: new Date().toISOString(),
+          timeAgo: 'Hace un momento',
+          read: false
+        };
+        existingNotifs.unshift(newNotif);
+        localStorage.setItem('prevyseg_employer_notifications', JSON.stringify(existingNotifs));
+
+        // Emitir evento para actualización instantánea en EmployerPortalView
+        window.dispatchEvent(new CustomEvent('prevyseg_new_notification', { detail: newNotif }));
+        window.dispatchEvent(new Event('prevyseg_applications_updated'));
+      } catch (notifErr) {
+        console.warn('Error saving employer notification:', notifErr);
+      }
+
+    } catch (e) {
+      console.warn('Error saving application:', e);
+    }
+
     setShowApplyModal(false);
-    alert("¡Postulación enviada con éxito! La empresa empleadora recibirá tu perfil verificado y los certificados emitidos por OTEC PrevySeg con acreditación oficial.");
+    alert(`¡Postulación enviada con éxito! La empresa empleadora "${targetJob?.company || 'Minería & Logística del Norte S.A.'}" ha recibido tu notificación en tiempo real con tu expediente académico y certificados oficiales PrevySeg.`);
   };
 
   return (

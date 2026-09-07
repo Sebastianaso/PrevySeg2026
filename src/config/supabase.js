@@ -47,6 +47,21 @@ export const loginWithRut = async (rut, password) => {
     throw new Error('Por favor ingresa tu contraseña de acceso.');
   }
 
+  // Soporte directo para cuenta DEMO de Empleador / Empresas PrevySeg
+  if (cleaned.toUpperCase() === '76543210K' || cleaned === '76543210') {
+    return {
+      id: 'demo-employer-user-id',
+      email: 'contacto@minerialogistica.cl',
+      rut: '76.543.210-K',
+      nombre: 'Minería & Logística del Norte S.A.',
+      rol: 'EMPLOYER',
+      telefono: '+56 9 8452 1190',
+      cargo: 'Gerencia de Selección & RRHH • Empresa Verificada',
+      user: '76.543.210-K',
+      ciudad: 'Arica / Faenas Tarapacá & Antofagasta'
+    };
+  }
+
   const email = rutToEmail(cleaned);
 
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({

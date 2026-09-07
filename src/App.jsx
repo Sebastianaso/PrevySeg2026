@@ -52,17 +52,28 @@ function App() {
             .single();
 
           if (profile && mounted) {
+            const isEmployer = profile.rol === 'EMPLOYER' || profile.rol === 'EMPLEADOR' || profile.rol === 'EMPRESA';
             const enriched = {
               ...profile,
               user: profile.rut,
               cargo: profile.rol === 'ADMIN' 
                 ? 'Director Ejecutivo / Administrador OTEC' 
+                : isEmployer
+                ? 'Gerencia de Selección & RRHH • Empresa Verificada'
                 : profile.rol === 'TEACHER' 
                 ? 'Docente Instructor SPD' 
                 : 'Estudiante / Alumno Regular',
             };
             setCurrentLMSUser(enriched);
-            setLmsInitialTab(profile.rol === 'ADMIN' ? 'ajustes-sitio' : profile.rol === 'TEACHER' ? 'docente-panel' : 'area-personal');
+            setLmsInitialTab(
+              profile.rol === 'ADMIN' 
+                ? 'ajustes-sitio' 
+                : isEmployer
+                ? 'mis-ofertas'
+                : profile.rol === 'TEACHER' 
+                ? 'docente-panel' 
+                : 'area-personal'
+            );
           }
         }
       } catch (err) {
@@ -113,9 +124,19 @@ function App() {
     }
   };
 
-  const handleLoginSuccess = (userData, targetTab = 'area-personal') => {
+  const handleLoginSuccess = (userData, targetTab) => {
     setCurrentLMSUser(userData);
-    setLmsInitialTab(targetTab || (userData.rol === 'ADMIN' ? 'ajustes-sitio' : userData.rol === 'TEACHER' ? 'docente-panel' : 'area-personal'));
+    const isEmp = userData.rol === 'EMPLOYER' || userData.rol === 'EMPLEADOR' || userData.rol === 'EMPRESA';
+    const resolvedTab = targetTab || (
+      userData.rol === 'ADMIN' 
+        ? 'ajustes-sitio' 
+        : isEmp
+        ? 'mis-ofertas'
+        : userData.rol === 'TEACHER' 
+        ? 'docente-panel' 
+        : 'area-personal'
+    );
+    setLmsInitialTab(resolvedTab);
     setIsPlatformOpen(false);
     setIsLMSActive(true);
   };
