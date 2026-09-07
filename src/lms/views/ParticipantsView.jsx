@@ -133,7 +133,13 @@ const ParticipantsView = ({ isEditMode }) => {
           fullName: u.nombre,
           email: u.email,
           rut: u.rut || 'Sin RUT',
-          rol: u.rol === 'ADMIN' ? 'Administrador' : u.rol === 'TEACHER' || u.rol === 'DOCENTE' ? 'Profesor / Docente' : 'Estudiante',
+          rol: u.rol === 'ADMIN' 
+            ? 'Administrador' 
+            : (u.rol === 'EMPRESA' || u.rol === 'EMPLOYER' || u.rol === 'EMPLEADOR') 
+            ? 'Empresa / Empleador' 
+            : u.rol === 'TEACHER' || u.rol === 'DOCENTE' 
+            ? 'Profesor / Docente' 
+            : 'Estudiante',
           rawRole: u.rol,
           curso: courseTitle,
           courseId: firstEnrollment?.courses?.id,
@@ -409,6 +415,7 @@ const ParticipantsView = ({ isEditMode }) => {
             >
               <option value="TODOS">Todos los Roles</option>
               <option value="Estudiante">Estudiantes</option>
+              <option value="Empresa">Empresas / Empleadores</option>
               <option value="Profesor">Profesores / Docentes</option>
               <option value="Administrador">Administradores</option>
             </select>
@@ -714,6 +721,7 @@ const ParticipantsView = ({ isEditMode }) => {
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#0284c7] focus:bg-white cursor-pointer"
                   >
                     <option value="STUDENT">Estudiante</option>
+                    <option value="EMPRESA">Empresa / Empleador</option>
                     <option value="TEACHER">Profesor / Docente</option>
                     <option value="ADMIN">Administrador OTEC</option>
                   </select>

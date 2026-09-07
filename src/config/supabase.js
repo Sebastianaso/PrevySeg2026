@@ -50,11 +50,11 @@ export const loginWithRut = async (rut, password) => {
   // Soporte directo para cuenta DEMO de Empleador / Empresas PrevySeg
   if (cleaned.toUpperCase() === '76543210K' || cleaned === '76543210') {
     return {
-      id: 'demo-employer-user-id',
+      id: 'fadc4c6a-62f1-4f68-b1f8-910d5e4ef8e3',
       email: 'contacto@minerialogistica.cl',
       rut: '76.543.210-K',
       nombre: 'Minería & Logística del Norte S.A.',
-      rol: 'EMPLOYER',
+      rol: 'EMPRESA',
       telefono: '+56 9 8452 1190',
       cargo: 'Gerencia de Selección & RRHH • Empresa Verificada',
       user: '76.543.210-K',
@@ -93,7 +93,11 @@ export const loginWithRut = async (rut, password) => {
       nombre: authData.user.user_metadata?.nombre || 'Usuario PrevySeg',
       rol: authData.user.user_metadata?.rol || 'STUDENT',
       telefono: authData.user.user_metadata?.telefono || '',
-      cargo: authData.user.user_metadata?.rol === 'ADMIN' ? 'Administrador OTEC' : 'Alumno Regular',
+      cargo: authData.user.user_metadata?.rol === 'ADMIN' 
+        ? 'Administrador OTEC' 
+        : (authData.user.user_metadata?.rol === 'EMPRESA' || authData.user.user_metadata?.rol === 'EMPLOYER')
+        ? 'Gerencia de Selección & RRHH • Empresa Verificada'
+        : 'Alumno Regular',
     };
     return fallbackUser;
   }
@@ -103,7 +107,9 @@ export const loginWithRut = async (rut, password) => {
     user: profile.rut, // Compatibilidad con vistas previas
     cargo: profile.rol === 'ADMIN' 
       ? 'Director Ejecutivo / Administrador OTEC' 
-      : profile.rol === 'TEACHER' 
+      : (profile.rol === 'EMPRESA' || profile.rol === 'EMPLOYER' || profile.rol === 'EMPLEADOR')
+      ? 'Gerencia de Selección & RRHH • Empresa Verificada'
+      : profile.rol === 'TEACHER' || profile.rol === 'DOCENTE'
       ? 'Docente Instructor SPD' 
       : 'Estudiante / Alumno Regular',
   };
