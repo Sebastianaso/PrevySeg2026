@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 
 import CoursesView from './views/CoursesView';
+import prevysegLogo from '../assets/images/prevyseg_logo.png';
 import SettingsView from './views/SettingsView';
 import ParticipantsView from './views/ParticipantsView';
 import ReportsView from './views/ReportsView';
@@ -346,16 +347,14 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
         <div className="space-y-3 pb-4 border-b border-slate-200 flex-shrink-0">
           <div 
             onClick={onReturnHome}
-            className="cursor-pointer select-none group"
+            className="cursor-pointer select-none group py-1"
             title="Volver al Sitio Web PrevySeg"
           >
-            <div className="flex items-baseline text-2xl font-black tracking-tight">
-              <span className="text-[#0284c7] group-hover:text-sky-500 transition-colors">Prevy</span>
-              <span className="text-[#00c2b2] group-hover:text-teal-600 transition-colors">Seg</span>
-            </div>
-            <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-              Organismo Técnico De Capacitación
-            </div>
+            <img 
+              src={prevysegLogo} 
+              alt="PrevySeg - Organismos Técnicos de Capacitación" 
+              className="h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            />
           </div>
 
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider ${roleStyles.badgeClass}`}>
@@ -483,8 +482,12 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
           >
             {mobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <div className="text-sm font-black text-slate-900">
-            <span className="text-[#0284c7]">Prevy</span><span className="text-[#00c2b2]">Seg</span>
+          <div onClick={onReturnHome} className="cursor-pointer py-1 select-none">
+            <img 
+              src={prevysegLogo} 
+              alt="PrevySeg" 
+              className="h-7 w-auto object-contain"
+            />
           </div>
         </div>
 

@@ -12,6 +12,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { FacebookIcon, TwitterIcon, InstagramIcon, YoutubeIcon } from './SocialIcons';
+import prevysegLogo from '../assets/images/prevyseg_logo.png';
 
 const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -127,15 +128,14 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
             smooth={true} 
             offset={-90} 
             duration={500}
-            className="cursor-pointer group flex flex-col items-start select-none"
+            className="cursor-pointer group flex items-center select-none py-0.5"
+            title="PrevySeg - Organismos Técnicos de Capacitación"
           >
-            <div className="flex items-baseline text-2xl sm:text-3xl font-black tracking-tight">
-              <span className="text-[#0284c7] group-hover:text-sky-600 transition-colors">Prevy</span>
-              <span className="text-[#00c2b2] group-hover:text-teal-600 transition-colors">Seg</span>
-            </div>
-            <span className="text-[9px] tracking-wider uppercase text-slate-500 font-semibold -mt-1 group-hover:text-slate-700 transition-colors">
-              Organismo Técnico De Capacitación
-            </span>
+            <img 
+              src={prevysegLogo} 
+              alt="PrevySeg - Organismos Técnicos de Capacitación" 
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            />
           </ScrollLink>
 
           {/* Desktop Navigation Menu */}
