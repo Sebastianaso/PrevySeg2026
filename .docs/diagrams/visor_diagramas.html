@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visor Oficial de Diagramas Mermaid - PrevySeg 2026</title>
+  <!-- Mermaid.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --primary: #072B4F;
+      --secondary: #00A896;
+      --accent: #0284c7;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #072B4F 0%, #041d35 100%);
+      border-bottom: 2px solid var(--secondary);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-title p {
+      font-size: 0.85rem;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--card-bg);
+      color: #fff;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn:hover {
+      background: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #00A896, #0284c7);
+      border: none;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 80px);
+      overflow: hidden;
+    }
+
+    /* Sidebar con pestañas */
+    .sidebar {
+      width: 320px;
+      background: #091322;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .tab-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: rgba(0, 168, 150, 0.15);
+      color: #2dd4bf;
+      border-color: rgba(0, 168, 150, 0.4);
+    }
+
+    .tab-btn span.badge {
+      font-size: 0.7rem;
+      background: #1e293b;
+      padding: 0.15rem 0.45rem;
+      border-radius: 0.25rem;
+      color: #94a3b8;
+      margin-left: auto;
+    }
+
+    /* Área del visor */
+    .viewport {
+      flex: 1;
+      background: #0b1120;
+      overflow: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 1100px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .card-header {
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .card-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .diagram-container {
+      padding: 2rem;
+      overflow-x: auto;
+      display: flex;
+      justify-content: center;
+      min-height: 400px;
+      background: #0f172a;
+    }
+
+    .code-accordion {
+      border-top: 1px solid var(--border);
+      background: #090e17;
+    }
+
+    .code-accordion summary {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      outline: none;
+      user-select: none;
+    }
+
+    .code-accordion summary:hover {
+      color: #fff;
+    }
+
+    pre {
+      padding: 1rem 1.5rem;
+      overflow-x: auto;
+      font-family: "Consolas", monospace;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      background: #05080f;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">
+      <h1>📊 Ecosistema PrevySeg 2026 • Visor Mermaid</h1>
+      <p>Organismo Técnico de Capacitación • Ley 21.659 SPD & SENCE</p>
+    </div>
+    <div class="toolbar">
+      <a href="https://mermaid.live" target="_blank" class="btn btn-primary">Abrir en Mermaid Live Editor ↗</a>
+      <a href="./diagramas_completos_mermaid.md" class="btn">Ver en Markdown 📄</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Barra Lateral de Selección -->
+    <nav class="sidebar" id="sidebarTabs">
+      <button class="tab-btn active" onclick="switchTab(0)">
+        <span>1. Flujo Procesos BPMN</span>
+        <span class="badge">BPMN 2.0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(1)">
+        <span>2. Casos de Uso</span>
+        <span class="badge">UML</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(2)">
+        <span>3. Secuencia Admisión</span>
+        <span class="badge">Bcrypt</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(3)">
+        <span>4. Estados Matrícula</span>
+        <span class="badge">Ciclo</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(4)">
+        <span>5. Clases de Dominio</span>
+        <span class="badge">Class</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(5)">
+        <span>6. Modelo Relacional DER</span>
+        <span class="badge">Postgres</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(6)">
+        <span>7. Contenedores C4</span>
+        <span class="badge">C4 Level 2</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab(7)">
+        <span>8. Despliegue Cloud</span>
+        <span class="badge">Edge/BaaS</span>
+      </button>
+    </nav>
+
+    <!-- Área Principal de Renderizado -->
+    <main class="viewport">
+      <div class="card">
+        <div class="card-header">
+          <h2 id="currentTitle">1. Flujo de Procesos To-Be (BPMN 2.0)</h2>
+          <button class="btn" onclick="copySource()">Copiar Código Mermaid 📋</button>
+        </div>
+        <div class="diagram-container" id="diagramContainer">
+          <div class="mermaid" id="mermaidTarget"></div>
+        </div>
+        <details class="code-accordion">
+          <summary>Ver / Ocultar Código Fuente Mermaid (.mmd)</summary>
+          <pre><code id="sourceCode"></code></pre>
+        </details>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Configuración de Mermaid
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#072B4F',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#00A896',
+        lineColor: '#0284c7',
+        secondaryColor: '#041d35',
+        tertiaryColor: '#1e293b'
+      },
+      securityLevel: 'loose'
+    });
+
+    // Definición de los 8 diagramas
+    const diagrams = [
+      {
+        title: "1. Flujo de Procesos To-Be (BPMN 2.0)",
+        code: `graph TD
+    A([Inicio: Postulante entra al Portal]) --> B[Selecciona Curso en Vitrina]
+    B --> C{"¿Curso Seguridad SPD u Oficio?"}
+    C -->|Seguridad Privada| D[Aviso: Examen ante SPD / OS-10]
+    C -->|Escuela de Oficios| E[Aviso: Certificación Directa OTEC]
+    D --> F[Completa Ficha de Admisión Digital]
+    E --> F
+    F --> G[Validación RUT Módulo 11 en tiempo real]
+    G --> H[Cálculo Automático Cuota 1: 50%]
+    H --> I[Pago de Abono vía Webpay o Transferencia]
+    I --> J[Envío de Comprobante y Antecedentes a WhatsApp]
+    J --> K{"¿Antecedentes Aprobados?"}
+    K -->|No| L[Notificación de Subsanación al Postulante]
+    L --> J
+    K -->|Sí| M[Creación de Cuenta LMS con Hash Bcrypt]
+    M --> N[Alumno Cursa Lecciones en Aula Virtual]
+    N --> O[Pago Cuota 2: Saldo 50% Restante]
+    O --> P[Evaluación Final de Competencias]
+    P --> Q[Emisión de Diploma Oficial sin Notas]
+    Q --> R([Fin del Proceso])`
+      },
+      {
+        title: "2. Diagrama de Casos de Uso (UML Comportamiento)",
+        code: `graph LR
+    subgraph Actores
+        P((Postulante))
+        E((Estudiante))
+        D((Docente))
+        A((Administrador OTEC))
+    end
+
+    subgraph Portal["Portal Público & Admisión"]
+        UC1["Inscribirse y Abonar 50%"]
+        UC2["Calcular Franquicia SENCE"]
+        UC3["Consultar por WhatsApp"]
+    end
+
+    subgraph LMS["Campus Virtual LMS"]
+        UC4["Visualizar Clases y Contenidos"]
+        UC5["Rendir Evaluaciones Online"]
+        UC6["Descargar Diploma Oficial"]
+        UC7["Gestionar Calificaciones"]
+        UC8["Administrar Participantes & Claves"]
+        UC9["Dar Visto Bueno a Certificados"]
+    end
+
+    P --> UC1
+    P --> UC2
+    P --> UC3
+    E --> UC4
+    E --> UC5
+    E --> UC6
+    D --> UC4
+    D --> UC7
+    A --> UC8
+    A --> UC9`
+      },
+      {
+        title: "3. Diagrama de Secuencia: Flujo Crítico de Admisión con Bcrypt",
+        code: `sequenceDiagram
+    autonumber
+    actor Postulante
+    participant Form as EnrollmentForm.jsx
+    participant Val as validation.js
+    participant Supa as Supabase Client
+    participant PG as PostgreSQL (pgcrypto)
+    participant WA as WhatsApp Business
+
+    Postulante->>Form: Ingresa RUT, Correo y Selecciona Curso
+    Form->>Val: formatRut(rut) y validateRut(rut)
+    Val-->>Form: RUT Válido (true)
+    Form->>Form: Calcula Cuota 1 (50%) y Cuota 2 (50%)
+    Postulante->>Form: Hace clic en "Confirmar Inscripción"
+    Form->>Supa: rpc('admin_create_user', { rut, password, rol: 'STUDENT' })
+    Supa->>PG: extensions.crypt(password, gen_salt('bf'))
+    PG-->>PG: Inserta en auth.users y public.users con hash Bcrypt
+    PG-->>Supa: Registro Creado (200 OK)
+    Supa-->>Form: Confirmación de Creación Exitosa
+    Form->>WA: Redirige con mensaje estructurado y código de matrícula
+    WA-->>Postulante: Ejecutivo recibe expediente para validar antecedentes`
+      },
+      {
+        title: "4. Diagrama de Estados: Ciclo de Vida de la Matrícula",
+        code: `stateDiagram-v2
+    [*] --> PRE_INSCRITO: Completa Formulario Web
+    PRE_INSCRITO --> ABONO_PENDIENTE: Plan 50% Generado
+    ABONO_PENDIENTE --> VALIDACION_DOCUMENTAL: Pago Cuota 1 (50%)
+    VALIDACION_DOCUMENTAL --> MATRICULADO_ACTIVO: Antecedentes Aprobados (SPD / OTEC)
+    VALIDACION_DOCUMENTAL --> RECHAZADO: Antecedentes Incompatibles
+    MATRICULADO_ACTIVO --> EN_CURSO: Acceso a Aula Virtual
+    EN_CURSO --> SALDO_PENDIENTE: Finaliza Unidades Didácticas
+    SALDO_PENDIENTE --> APROBADO: Pago Cuota 2 y Examen Rendido
+    APROBADO --> CERTIFICADO_EMITIDO: Visto Bueno del Administrador
+    CERTIFICADO_EMITIDO --> [*]`
+      },
+      {
+        title: "5. Diagrama de Clases del Dominio",
+        code: `classDiagram
+    class Usuario {
+        +UUID id
+        +String rut
+        +String email
+        +String nombreCompleto
+        +String rol
+        +String passwordHash
+        +validarRut() Boolean
+        +verificarPassword(String input) Boolean
+    }
+
+    class Curso {
+        +UUID id
+        +String codigoSence
+        +String nombre
+        +String tipoNormativo
+        +Integer arancelTotal
+        +Integer horasCronologicas
+        +calcularCuotaAbono() Integer
+    }
+
+    class Matricula {
+        +UUID id
+        +String estado
+        +Integer montoAbonado
+        +Integer saldoPendiente
+        +DateTime fechaMatricula
+        +registrarAbono(Integer monto) Void
+    }
+
+    class Certificado {
+        +UUID id
+        +String codigoVerificacion
+        +DateTime fechaEmision
+        +Boolean aprobadoAdmin
+        +generarDocumentoPDF() Byte[]
+    }
+
+    Usuario "1" <-- "*" Matricula : realizada por
+    Curso "1" <-- "*" Matricula : corresponde a
+    Matricula "1" <-- "0..1" Certificado : emite`
+      },
+      {
+        title: "6. Modelo Entidad-Relación Físico (DER)",
+        code: `erDiagram
+    USERS {
+        uuid id PK
+        string rut UK
+        string email UK
+        string nombre_completo
+        string rol "ADMIN | TEACHER | STUDENT"
+        string telefono
+        string encrypted_password
+        timestamp created_at
+    }
+
+    COURSES {
+        uuid id PK
+        string codigo_sence UK
+        string nombre
+        string tipo "SEGURIDAD_SPD | OFICIO_OTEC"
+        integer arancel_total
+        integer cuota_abono_50
+        integer horas_cronologicas
+        boolean activo
+    }
+
+    ENROLLMENTS {
+        uuid id PK
+        uuid user_id FK
+        uuid course_id FK
+        string estado "PRE_INSCRITO | ACTIVO | APROBADO"
+        integer monto_abonado
+        integer saldo_pendiente
+        string comprobante_abono_url
+        timestamp fecha_matricula
+    }
+
+    LESSONS {
+        uuid id PK
+        uuid course_id FK
+        string titulo
+        integer orden
+        text contenido_markdown
+        string video_url
+    }
+
+    CERTIFICATES {
+        uuid id PK
+        uuid enrollment_id FK
+        string codigo_verificacion UK
+        timestamp fecha_emision
+        boolean aprobado_por_admin
+        string hash_verificador
+    }
+
+    USERS ||--o{ ENROLLMENTS : "posee"
+    COURSES ||--o{ ENROLLMENTS : "incluye"
+    COURSES ||--o{ LESSONS : "contiene"
+    ENROLLMENTS ||--o| CERTIFICATES : "origina"`
+      },
+      {
+        title: "7. Diagrama de Contenedores (C4 Model - Nivel 2)",
+        code: `graph TB
+    subgraph C4["C4: Nivel 2 - Diagrama de Contenedores PrevySeg"]
+        USER["Usuarios Web: Alumnos, Docentes, Admins"] -->|HTTPS / TLS 1.3| SPA["Single Page Application: React 19 + Vite + Tailwind v4"]
+        SPA -->|REST / PostgREST| API_REST["Supabase PostgREST API Gateway"]
+        SPA -->|Auth JWT & Bcrypt| AUTH_SVC["Supabase GoTrue Auth Service"]
+        SPA -->|WebSockets WSS| RT_SVC["Supabase Realtime Engine"]
+        
+        API_REST -->|SQL con Row Level Security| DB[("PostgreSQL 15 Cluster + pgcrypto")]
+        AUTH_SVC -->|Stored Procedures Bcrypt| DB
+        SPA -->|HTTPS Webhook| WA["WhatsApp Business API"]
+        SPA -->|Redirect / Token| WEBPAY["Pasarela Webpay Plus Transbank"]
+    end`
+      },
+      {
+        title: "8. Diagrama de Despliegue de Infraestructura",
+        code: `graph LR
+    subgraph Clientes["Clientes"]
+        NAV["Navegadores Modernos: Chrome, Edge, Safari, Móvil"]
+    end
+
+    subgraph Edge["Edge CDN & Static Hosting (Vercel Global Network)"]
+        EDGE_SRV["Vercel Global Edge Points of Presence"]
+        STATIC["Assets Compilados: HTML, CSS, Bundles JS, WebP"]
+    end
+
+    subgraph BaaS["BaaS Cloud Infrastructure (Supabase AWS us-east-1)"]
+        KONG["Kong API Gateway Reverse Proxy"]
+        AUTH_POD["GoTrue Auth Service Docker Container"]
+        PG_POD[("PostgreSQL 15 Primary con Réplicas")]
+        S3_POD["S3 Object Storage: Diplomas y Comprobantes"]
+    end
+
+    NAV -->|HTTPS Port 443| EDGE_SRV
+    EDGE_SRV --> STATIC
+    NAV -->|API Requests TLS 1.3 / Port 443| KONG
+    KONG --> AUTH_POD
+    KONG --> PG_POD
+    KONG --> S3_POD`
+      }
+    ];
+
+    let currentIndex = 0;
+
+    async function renderCurrentDiagram() {
+      const item = diagrams[currentIndex];
+      document.getElementById('currentTitle').innerText = item.title;
+      document.getElementById('sourceCode').innerText = item.code;
+
+      const container = document.getElementById('diagramContainer');
+      container.innerHTML = `<div class="mermaid" id="mermaidTarget">${item.code}</div>`;
+      
+      try {
+        await mermaid.run({
+          nodes: [document.getElementById('mermaidTarget')]
+        });
+      } catch (err) {
+        console.error("Error renderizando mermaid:", err);
+      }
+    }
+
+    function switchTab(index) {
+      currentIndex = index;
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach((tab, i) => {
+        if (i === index) tab.classList.add('active');
+        else tab.classList.remove('active');
+      });
+      renderCurrentDiagram();
+    }
+
+    function copySource() {
+      const code = diagrams[currentIndex].code;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("¡Código fuente Mermaid copiado al portapapeles!");
+      }).catch(err => {
+        console.error("Error copiando al portapapeles:", err);
+      });
+    }
+
+    // Inicializar primer diagrama
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCurrentDiagram();
+    });
+  </script>
+</body>
+</html>

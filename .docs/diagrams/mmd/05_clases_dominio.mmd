@@ -1,0 +1,42 @@
+classDiagram
+    class Usuario {
+        +UUID id
+        +String rut
+        +String email
+        +String nombreCompleto
+        +String rol
+        +String passwordHash
+        +validarRut() Boolean
+        +verificarPassword(String input) Boolean
+    }
+
+    class Curso {
+        +UUID id
+        +String codigoSence
+        +String nombre
+        +String tipoNormativo
+        +Integer arancelTotal
+        +Integer horasCronologicas
+        +calcularCuotaAbono() Integer
+    }
+
+    class Matricula {
+        +UUID id
+        +String estado
+        +Integer montoAbonado
+        +Integer saldoPendiente
+        +DateTime fechaMatricula
+        +registrarAbono(Integer monto) Void
+    }
+
+    class Certificado {
+        +UUID id
+        +String codigoVerificacion
+        +DateTime fechaEmision
+        +Boolean aprobadoAdmin
+        +generarDocumentoPDF() Byte[]
+    }
+
+    Usuario "1" <-- "*" Matricula : realizada por
+    Curso "1" <-- "*" Matricula : corresponde a
+    Matricula "1" <-- "0..1" Certificado : emite

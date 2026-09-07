@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-DEFAULT: #0A4DA2;
+  --color-brand-light: #2a6dc2;
+  --color-brand-dark: #073570;
+  
+  --color-secondary-DEFAULT: #00A896;
+  --color-secondary-light: #23cebd;
+  --color-secondary-dark: #007a6c;
+  
+  --color-accent-DEFAULT: #F2A900;
+  --color-accent-light: #ffbf2b;
+  --color-accent-dark: #cc8d00;
+  
+  --color-navy-dark: #072B4F;
+  --color-navy-deep: #041d35;
+  
+  --color-teal-vibrant: #00A896;
+  --color-teal-soft: #e0f2f1;
+}
+
 @layer base {
   :root {
     --bg-main: #ffffff;

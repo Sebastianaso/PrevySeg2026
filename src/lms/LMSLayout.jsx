@@ -52,6 +52,7 @@ import JobBoardView from './views/JobBoardView';
 import CourseClassroomView from './views/CourseClassroomView';
 import CertificateApprovalView from './views/CertificateApprovalView';
 import TeacherPortalView from './views/TeacherPortalView';
+import StudentLiveClassesView from './views/StudentLiveClassesView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
   // 1. Identificación estricta de Roles: Administrador, Profesor y Estudiante
@@ -78,7 +79,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
   const defaultTabForRole = isRoleAdmin 
     ? 'ajustes-sitio' 
     : isRoleTeacher 
-    ? 'interaccion' 
+    ? (initialTab === 'docente-panel' || initialTab === 'interaccion' || !initialTab ? 'interaccion-materiales' : initialTab)
     : (initialTab || 'area-personal');
 
   const [activeNavTab, setActiveNavTab] = useState(defaultTabForRole);
@@ -147,18 +148,25 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
   // B. MENÚ PROFESOR / DOCENTE (Tema Azul Cielo / Marino)
   const teacherMenuItems = [
     { 
-      id: 'interaccion', 
-      label: 'Interacción con Alumnos', 
-      desc: 'Consultas, Dudas y Avisos',
+      id: 'interaccion-materiales', 
+      label: 'Interacción & Materiales', 
+      desc: 'Avisos, Mensajes y Repositorio de PDFs',
       icon: MessageSquare,
       color: 'text-sky-400'
     },
     { 
-      id: 'archivos', 
-      label: 'Materiales & Archivos', 
-      desc: 'Subida de PDFs y Guías',
-      icon: UploadCloud,
-      color: 'text-teal-400'
+      id: 'aula-vivo', 
+      label: 'Gestión Sala Zoom', 
+      desc: 'Crear, Iniciar y Configurar Clase',
+      icon: Video,
+      color: 'text-cyan-400'
+    },
+    { 
+      id: 'asistencia', 
+      label: 'Libro de Clases SENCE', 
+      desc: 'Control y Toma de Asistencia en Vivo',
+      icon: Clock,
+      color: 'text-emerald-400'
     },
     { 
       id: 'calificaciones', 
@@ -166,20 +174,6 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
       desc: 'Planilla Oficial SENCE',
       icon: Award,
       color: 'text-amber-400'
-    },
-    { 
-      id: 'asistencia', 
-      label: 'Libro de Clases SENCE', 
-      desc: 'Control y Asistencia 85%',
-      icon: Clock,
-      color: 'text-emerald-400'
-    },
-    { 
-      id: 'aula-vivo', 
-      label: 'Aula Virtual en Vivo', 
-      desc: 'Clase Sincrónica Online',
-      icon: Video,
-      color: 'text-cyan-400'
     },
   ];
 
@@ -191,6 +185,13 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
       desc: 'Mi Resumen Académico',
       icon: LayoutDashboard,
       color: 'text-teal-400'
+    },
+    { 
+      id: 'aula-vivo', 
+      label: 'Clases en Vivo & Zoom', 
+      desc: 'Videollamadas, Horarios y Materiales',
+      icon: Video,
+      color: 'text-cyan-400'
     },
     { 
       id: 'mis-cursos', 
@@ -563,7 +564,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                 <TeacherPortalView 
                   currentUser={currentUser} 
                   onSelectCourse={handleSelectCourse} 
-                  activeTab={activeNavTab === 'aula-vivo' ? 'interaccion' : activeNavTab}
+                  activeTab={activeNavTab}
                   onTabChange={(tab) => setActiveNavTab(tab)}
                 />
               </motion.div>
@@ -579,10 +580,17 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                 transition={{ duration: 0.25 }}
               >
                 {activeNavTab === 'area-personal' && (
-                  <PersonalAreaView onSelectCourse={handleSelectCourse} />
+                  <PersonalAreaView 
+                    currentUser={currentUser} 
+                    onSelectCourse={handleSelectCourse} 
+                    onNavigateTab={(tab) => setActiveNavTab(tab)} 
+                  />
+                )}
+                {activeNavTab === 'aula-vivo' && (
+                  <StudentLiveClassesView currentUser={currentUser} onSelectCourse={handleSelectCourse} />
                 )}
                 {activeNavTab === 'mis-cursos' && (
-                  <MyCoursesView onSelectCourse={handleSelectCourse} isEditMode={false} />
+                  <MyCoursesView currentUser={currentUser} onSelectCourse={handleSelectCourse} isEditMode={false} />
                 )}
                 {activeNavTab === 'capacitaciones-extras' && (
                   <ExtraCoursesView currentUser={currentUser} />

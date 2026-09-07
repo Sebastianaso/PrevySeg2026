@@ -34,6 +34,9 @@ function App() {
   const [lmsInitialTab, setLmsInitialTab] = useState('area-personal');
   const [authChecking, setAuthChecking] = useState(true);
 
+  // Controla si el usuario está viendo activamente el LMS (por defecto false para mostrar siempre la portada)
+  const [isLMSActive, setIsLMSActive] = useState(false);
+
   // Escuchar y verificar sesión activa en Supabase Auth al cargar
   useEffect(() => {
     let mounted = true;
@@ -74,6 +77,7 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         setCurrentLMSUser(null);
+        setIsLMSActive(false);
       }
     });
 
@@ -94,8 +98,12 @@ function App() {
   };
 
   const handleOpenPlatform = (mode = 'login') => {
-    setPlatformModalMode(mode);
-    setIsPlatformOpen(true);
+    if (currentLMSUser) {
+      setIsLMSActive(true);
+    } else {
+      setPlatformModalMode(mode);
+      setIsPlatformOpen(true);
+    }
   };
 
   const handleLearnMore = () => {
@@ -108,21 +116,24 @@ function App() {
   const handleLoginSuccess = (userData, targetTab = 'area-personal') => {
     setCurrentLMSUser(userData);
     setLmsInitialTab(targetTab || (userData.rol === 'ADMIN' ? 'ajustes-sitio' : userData.rol === 'TEACHER' ? 'docente-panel' : 'area-personal'));
+    setIsPlatformOpen(false);
+    setIsLMSActive(true);
   };
 
   const handleLogout = async () => {
     await logoutUser();
     setCurrentLMSUser(null);
+    setIsLMSActive(false);
   };
 
-  // Si el usuario está autenticado en la plataforma virtual, mostramos el LMS Layout completo
-  if (currentLMSUser) {
+  // Solo si el usuario explícitamente activó el LMS tras iniciar sesión, mostramos el LMS Layout
+  if (isLMSActive && currentLMSUser) {
     return (
       <LMSLayout
         currentUser={currentLMSUser}
         initialTab={lmsInitialTab}
         onLogout={handleLogout}
-        onReturnHome={() => setCurrentLMSUser(null)}
+        onReturnHome={() => setIsLMSActive(false)}
       />
     );
   }
@@ -135,6 +146,8 @@ function App() {
 
       {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll) */}
       <Header 
+        currentUser={currentLMSUser}
+        onLogout={handleLogout}
         onOpenPlatform={() => handleOpenPlatform('login')}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenEnrollment={() => handleOpenEnrollmentWithCourse('')}

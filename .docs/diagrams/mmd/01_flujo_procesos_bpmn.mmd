@@ -1,0 +1,20 @@
+graph TD
+    A([Inicio: Postulante entra al Portal]) --> B[Selecciona Curso en Vitrina]
+    B --> C{"¿Curso Seguridad SPD u Oficio?"}
+    C -->|Seguridad Privada| D[Aviso: Examen ante SPD / OS-10]
+    C -->|Escuela de Oficios| E[Aviso: Certificación Directa OTEC]
+    D --> F[Completa Ficha de Admisión Digital]
+    E --> F
+    F --> G[Validación RUT Módulo 11 en tiempo real]
+    G --> H[Cálculo Automático Cuota 1: 50%]
+    H --> I[Pago de Abono vía Webpay o Transferencia]
+    I --> J[Envío de Comprobante y Antecedentes a WhatsApp]
+    J --> K{"¿Antecedentes Aprobados?"}
+    K -->|No| L[Notificación de Subsanación al Postulante]
+    L --> J
+    K -->|Sí| M[Creación de Cuenta LMS con Hash Bcrypt]
+    M --> N[Alumno Cursa Lecciones en Aula Virtual]
+    N --> O[Pago Cuota 2: Saldo 50% Restante]
+    O --> P[Evaluación Final de Competencias]
+    P --> Q[Emisión de Diploma Oficial sin Notas]
+    Q --> R([Fin del Proceso])

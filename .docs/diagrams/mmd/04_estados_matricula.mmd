@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> PRE_INSCRITO: Completa Formulario Web
+    PRE_INSCRITO --> ABONO_PENDIENTE: Plan 50% Generado
+    ABONO_PENDIENTE --> VALIDACION_DOCUMENTAL: Pago Cuota 1 (50%)
+    VALIDACION_DOCUMENTAL --> MATRICULADO_ACTIVO: Antecedentes Aprobados (SPD / OTEC)
+    VALIDACION_DOCUMENTAL --> RECHAZADO: Antecedentes Incompatibles
+    MATRICULADO_ACTIVO --> EN_CURSO: Acceso a Aula Virtual
+    EN_CURSO --> SALDO_PENDIENTE: Finaliza Unidades Didácticas
+    SALDO_PENDIENTE --> APROBADO: Pago Cuota 2 y Examen Rendido
+    APROBADO --> CERTIFICADO_EMITIDO: Visto Bueno del Administrador
+    CERTIFICADO_EMITIDO --> [*]

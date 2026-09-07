@@ -15,14 +15,15 @@ import {
   Award,
   Sparkles,
   AlertCircle,
-  Loader2
+  Loader2,
+  Video
 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import heroGrad from '../../assets/images/hero_graduation.jpg';
 import promoImg from '../../assets/images/security_promo.jpg';
 import blogCctv from '../../assets/images/blog_cctv.jpg';
 
-const PersonalAreaView = ({ currentUser, onSelectCourse }) => {
+const PersonalAreaView = ({ currentUser, onSelectCourse, onNavigateTab }) => {
   const [filterTimeframe, setFilterTimeframe] = useState('7dias');
   const [filterSort, setFilterSort] = useState('fecha');
   const [searchActivity, setSearchActivity] = useState('');
@@ -114,6 +115,45 @@ const PersonalAreaView = ({ currentUser, onSelectCourse }) => {
           <span>{error}</span>
         </div>
       )}
+
+      {/* Banner de Acceso Rápido a Clases en Vivo & Videoconferencia Zoom */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-[#072B4F] via-[#041d35] to-[#0a3055] text-white p-5 sm:p-6 rounded-3xl border border-slate-700 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-400/40 text-teal-300 flex items-center justify-center flex-shrink-0 animate-pulse">
+            <Video size={24} />
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-red-500 text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                🔴 En Vivo Hoy 19:00 hrs
+              </span>
+              <span className="text-xs text-teal-300 font-bold">
+                Videoconferencia Sincrónica SENCE
+              </span>
+            </div>
+            <h3 className="text-sm sm:text-base font-black text-white">
+              Clase N° 7: Legislación de Seguridad Privada y Ley N° 21.659
+            </h3>
+            <p className="text-xs text-slate-300">
+              Docente: Mayor (R) Marcelo Valenzuela • Sala Zoom, Horarios y Materiales Oficiales Disponibles
+            </p>
+          </div>
+        </div>
+
+        {onNavigateTab && (
+          <button
+            onClick={() => onNavigateTab('aula-vivo')}
+            className="bg-gradient-to-r from-[#00A896] to-[#0284c7] hover:from-teal-400 hover:to-sky-500 text-white text-xs font-black px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 cursor-pointer flex-shrink-0 transition-all active:scale-95 border border-teal-300/40"
+          >
+            <Video size={16} />
+            <span>Ingresar a Clases en Vivo</span>
+          </button>
+        )}
+      </motion.div>
 
       {/* Banner de Certificado Oficial Emitido (Dinámico si existe) */}
       {latestCertificate ? (

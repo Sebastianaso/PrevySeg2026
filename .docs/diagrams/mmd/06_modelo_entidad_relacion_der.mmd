@@ -1,0 +1,56 @@
+erDiagram
+    USERS {
+        uuid id PK
+        string rut UK
+        string email UK
+        string nombre_completo
+        string rol "ADMIN | TEACHER | STUDENT"
+        string telefono
+        string encrypted_password
+        timestamp created_at
+    }
+
+    COURSES {
+        uuid id PK
+        string codigo_sence UK
+        string nombre
+        string tipo "SEGURIDAD_SPD | OFICIO_OTEC"
+        integer arancel_total
+        integer cuota_abono_50
+        integer horas_cronologicas
+        boolean activo
+    }
+
+    ENROLLMENTS {
+        uuid id PK
+        uuid user_id FK
+        uuid course_id FK
+        string estado "PRE_INSCRITO | ACTIVO | APROBADO"
+        integer monto_abonado
+        integer saldo_pendiente
+        string comprobante_abono_url
+        timestamp fecha_matricula
+    }
+
+    LESSONS {
+        uuid id PK
+        uuid course_id FK
+        string titulo
+        integer orden
+        text contenido_markdown
+        string video_url
+    }
+
+    CERTIFICATES {
+        uuid id PK
+        uuid enrollment_id FK
+        string codigo_verificacion UK
+        timestamp fecha_emision
+        boolean aprobado_por_admin
+        string hash_verificador
+    }
+
+    USERS ||--o{ ENROLLMENTS : "posee"
+    COURSES ||--o{ ENROLLMENTS : "incluye"
+    COURSES ||--o{ LESSONS : "contiene"
+    ENROLLMENTS ||--o| CERTIFICATES : "origina"

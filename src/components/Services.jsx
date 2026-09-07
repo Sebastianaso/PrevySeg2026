@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight,
@@ -16,7 +16,22 @@ import {
 import cctvOperatorImg from '../assets/images/cctv_operator.jpg';
 import securityGuardsImg from '../assets/images/security_guards.jpg';
 import securitySupervisorImg from '../assets/images/security_supervisor.jpg';
+
+// New Generated Course Images
+import conflictImg from '../assets/images/course_conflict_resolution_1788545038374.jpg';
+import portImg from '../assets/images/course_port_security_1788545050484.jpg';
+import cyberImg from '../assets/images/course_cybersecurity_1788545064007.jpg';
+import forkliftImg from '../assets/images/course_forklift_1788545102116.jpg';
+import logisticsImg from '../assets/images/course_logistics_1788545116792.jpg';
+import electricalImg from '../assets/images/course_electrical_1788545127954.jpg';
+import weldingImg from '../assets/images/course_welding_1788545200802.jpg';
+import solarImg from '../assets/images/course_solar_1788545243947.jpg';
+import mechanicImg from '../assets/images/course_mechanic_1788545261840.jpg';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SenceTramosSection from './SenceTramosSection';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Dynamic Pattern Cover Component
 const CourseCover = ({ item }) => {
@@ -179,7 +194,7 @@ export const COURSES_DATA = [
     school: 'seguridad',
     title: '_2_66_2026 Resolución de Conflictos y Manejo de Crisis Código Sence: 1238088725',
     category: 'Seguridad Privada',
-    coverType: 'pattern-grey',
+    image: conflictImg,
     price: '$85.000 CLP',
     priceDetail: 'Franquicia SENCE 100%',
     duration: '40 Horas',
@@ -190,7 +205,7 @@ export const COURSES_DATA = [
     school: 'seguridad',
     title: 'Control de Acceso y Seguridad Marítimo Portuaria (PBIP)',
     category: 'Seguridad Privada',
-    coverType: 'pattern-cyan',
+    image: portImg,
     price: '$110.000 CLP',
     priceDetail: 'Faena Portuaria TPA Arica',
     duration: '45 Horas',
@@ -201,7 +216,7 @@ export const COURSES_DATA = [
     school: 'seguridad',
     title: 'Capacitación en Sistemas Internos ITIC y Ciberseguridad',
     category: 'Sistemas internos',
-    coverType: 'pattern-blue-hex',
+    image: cyberImg,
     price: '$75.000 CLP',
     priceDetail: 'Tecnologías de la Información',
     duration: '30 Horas',
@@ -214,7 +229,7 @@ export const COURSES_DATA = [
     school: 'oficios',
     title: 'Operador y Conducción Segura de Grúa Horquilla (Clase D)',
     category: 'Operaciones & Logística',
-    coverType: 'pattern-amber-hex',
+    image: forkliftImg,
     price: '$150.000 CLP',
     priceDetail: 'Salida Laboral Inmediata en Faenas',
     duration: '40 Horas Teórico-Prácticas',
@@ -225,7 +240,7 @@ export const COURSES_DATA = [
     school: 'oficios',
     title: 'Logística, Bodega y Gestión de Almacenamiento WMS',
     category: 'Operaciones & Logística',
-    coverType: 'pattern-emerald',
+    image: logisticsImg,
     price: '$95.000 CLP',
     priceDetail: 'Franquicia SENCE e Inserción Directa',
     duration: '35 Horas',
@@ -236,7 +251,7 @@ export const COURSES_DATA = [
     school: 'oficios',
     title: 'Instalaciones Eléctricas Domiciliarias e Industriales (SEC Clase D)',
     category: 'Técnico & Mantenimiento',
-    coverType: 'pattern-amber-hex',
+    image: electricalImg,
     price: '$180.000 CLP',
     priceDetail: 'Preparación para Certificación SEC',
     duration: '60 Horas',
@@ -247,7 +262,7 @@ export const COURSES_DATA = [
     school: 'oficios',
     title: 'Soldadura al Arco Voltáico y Montaje Estructural en Faena',
     category: 'Técnico & Mantenimiento',
-    coverType: 'pattern-grey',
+    image: weldingImg,
     price: '$160.000 CLP',
     priceDetail: 'Norma AWS & Seguridad Industrial',
     duration: '50 Horas',
@@ -258,7 +273,7 @@ export const COURSES_DATA = [
     school: 'oficios',
     title: 'Instalación y Mantenimiento de Paneles Solares Fotovoltaicos',
     category: 'Energía & Sustentabilidad',
-    coverType: 'pattern-cyan',
+    image: solarImg,
     price: '$135.000 CLP',
     priceDetail: 'Energías Renovables Norte Grande',
     duration: '40 Horas',
@@ -269,7 +284,7 @@ export const COURSES_DATA = [
     school: 'oficios',
     title: 'Mantenimiento Mecánico Preventivo de Maquinaria Industrial',
     category: 'Técnico & Mantenimiento',
-    coverType: 'pattern-emerald',
+    image: mechanicImg,
     price: '$120.000 CLP',
     priceDetail: 'Equipos de faenas y transporte',
     duration: '40 Horas',
@@ -295,51 +310,86 @@ const Services = ({ onSelectCourse }) => {
     ? schoolFilteredCourses
     : schoolFilteredCourses.filter(c => c.category === selectedCategory);
 
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Header Animation
+      gsap.fromTo('.services-header',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: '.services-header', start: 'top 85%', once: true } }
+      );
+
+      // School Selector Animation
+      gsap.fromTo('.services-school-selector',
+        { opacity: 0, scale: 0.95, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.6, delay: 0.2, ease: 'back.out(1.2)', scrollTrigger: { trigger: '.services-header', start: 'top 85%', once: true } }
+      );
+
+      // Categories Animation
+      gsap.fromTo('.services-category-pill',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out', scrollTrigger: { trigger: '.services-school-selector', start: 'top 90%', once: true } }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="servicios" className="py-24 px-4 sm:px-8 bg-white relative border-t border-slate-200">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <section id="servicios" ref={sectionRef} className="py-24 px-4 sm:px-8 bg-white relative border-t border-slate-100 overflow-hidden">
+      
+      {/* Decorative Blur Backgrounds */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-DEFAULT/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute top-40 left-0 w-[400px] h-[400px] bg-teal-vibrant/5 rounded-full blur-[80px] pointer-events-none -translate-x-1/2" />
+
+      <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         
         {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto space-y-4"
-        >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold shadow-sm">
-            <Shield size={14} className="text-emerald-600" />
-            <span>Oferta Académica & Formación Acreditada SENCE 2026</span>
+        {/* Section Header */}
+        <div className="services-header text-center max-w-3xl mx-auto space-y-6">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-brand-DEFAULT/10 border border-brand-DEFAULT/20 text-brand-DEFAULT text-xs font-black tracking-widest uppercase shadow-sm">
+            <Shield size={14} />
+            <span>Oferta Académica & Formación Acreditada SENCE</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-            Programas y <span className="text-[#0284c7]">Especializaciones</span>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-navy-dark tracking-tight leading-[1.1]">
+            Programas y <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-DEFAULT to-teal-vibrant">
+              Especializaciones
+            </span>
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-            Formación intensiva de rápida empleabilidad para combatir la desocupación regional en Arica y la Macro Zona Norte (Iquique, Antofagasta y Calama).
+          <p className="text-slate-500 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto font-medium">
+            Formación intensiva de rápida empleabilidad para combatir la desocupación regional en Arica y la Macro Zona Norte.
           </p>
-        </motion.div>
+        </div>
 
         {/* 1. MÓDULO A: SELECTOR PRINCIPAL DE ESCUELA (Seguridad Privada vs Escuela de Oficios) */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto p-2 bg-slate-100 rounded-3xl border border-slate-200 shadow-md flex flex-col sm:flex-row gap-2"
-        >
+        {/* 1. MÓDULO A: SELECTOR PRINCIPAL DE ESCUELA (Seguridad Privada vs Escuela de Oficios) */}
+        <div className="services-school-selector max-w-3xl mx-auto p-2 bg-slate-50/80 backdrop-blur-md rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row gap-2 relative">
+          
+          {/* Active Highlight Pill Background */}
+          <div 
+            className="absolute top-2 bottom-2 rounded-2xl transition-all duration-500 ease-out hidden sm:block bg-white shadow-md border border-slate-100"
+            style={{
+              width: activeSchool === 'todos' ? '25%' : (activeSchool === 'seguridad' ? '37.5%' : '37.5%'),
+              left: activeSchool === 'todos' ? '0.5rem' : (activeSchool === 'seguridad' ? 'calc(25% + 0.75rem)' : 'calc(62.5% + 1rem)'),
+            }}
+          />
+
           {/* Opción 1: Todos */}
           <button
             onClick={() => {
               setActiveSchool('todos');
               setSelectedCategory('Todos');
             }}
-            className={`flex-1 py-3 px-4 rounded-2xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+            className={`relative z-10 sm:w-1/4 py-3.5 px-4 rounded-2xl text-xs font-bold transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 ${
               activeSchool === 'todos'
-                ? 'bg-white text-slate-900 shadow-md border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                ? 'text-brand-DEFAULT sm:bg-transparent bg-white shadow-md sm:shadow-none sm:border-transparent border border-slate-200'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Sparkles size={15} className="text-[#0284c7]" />
-            <span>Todos los Cursos</span>
+            <Sparkles size={16} className={activeSchool === 'todos' ? 'text-brand-DEFAULT' : 'text-slate-400'} />
+            <span>Todos</span>
           </button>
 
           {/* Opción 2: Escuela de Seguridad Privada */}
@@ -348,18 +398,18 @@ const Services = ({ onSelectCourse }) => {
               setActiveSchool('seguridad');
               setSelectedCategory('Todos');
             }}
-            className={`flex-[1.4] py-3.5 px-4 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 border ${
+            className={`relative z-10 sm:w-[37.5%] py-3.5 px-4 rounded-2xl text-xs font-black transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 ${
               activeSchool === 'seguridad'
-                ? 'bg-gradient-to-r from-[#0284c7] to-sky-600 text-white border-sky-400 shadow-md shadow-sky-600/20'
-                : 'text-slate-700 hover:text-slate-900 bg-white/70 border-slate-200 hover:border-sky-300'
+                ? 'text-navy-dark sm:bg-transparent bg-white shadow-md sm:shadow-none sm:border-transparent border border-slate-200'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Shield size={16} className={activeSchool === 'seguridad' ? 'text-white' : 'text-[#0284c7]'} />
-            <span>Escuela de Seguridad Privada</span>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
+            <Shield size={16} className={activeSchool === 'seguridad' ? 'text-brand-DEFAULT' : 'text-slate-400'} />
+            <span>Escuela de Seguridad</span>
+            <span className={`text-[9px] px-2 py-0.5 rounded-full border transition-colors ${
               activeSchool === 'seguridad'
-                ? 'bg-sky-950/40 text-white border-sky-300/40'
-                : 'bg-sky-50 text-sky-800 border-sky-200'
+                ? 'bg-brand-DEFAULT/10 text-brand-DEFAULT border-brand-DEFAULT/20'
+                : 'bg-slate-100 text-slate-400 border-slate-200'
             }`}>SPD</span>
           </button>
 
@@ -369,45 +419,39 @@ const Services = ({ onSelectCourse }) => {
               setActiveSchool('oficios');
               setSelectedCategory('Todos');
             }}
-            className={`flex-[1.4] py-3.5 px-4 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 border ${
+            className={`relative z-10 sm:w-[37.5%] py-3.5 px-4 rounded-2xl text-xs font-black transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 ${
               activeSchool === 'oficios'
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-300 shadow-md shadow-amber-500/20'
-                : 'text-slate-700 hover:text-slate-900 bg-white/70 border-slate-200 hover:border-amber-300'
+                ? 'text-amber-600 sm:bg-transparent bg-white shadow-md sm:shadow-none sm:border-transparent border border-slate-200'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Wrench size={16} className={activeSchool === 'oficios' ? 'text-white' : 'text-amber-500'} />
+            <Wrench size={16} className={activeSchool === 'oficios' ? 'text-amber-500' : 'text-slate-400'} />
             <span>Escuela de Oficios</span>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
+            <span className={`text-[9px] px-2 py-0.5 rounded-full border transition-colors ${
               activeSchool === 'oficios'
-                ? 'bg-amber-950/40 text-white border-amber-300/40'
-                : 'bg-amber-50 text-amber-800 border-amber-200'
+                ? 'bg-amber-100 text-amber-700 border-amber-200'
+                : 'bg-slate-100 text-slate-400 border-slate-200'
             }`}>30 Días</span>
           </button>
-        </motion.div>
+        </div>
 
         {/* 2. Sub-Filter Pills por Área/Categoría */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap items-center justify-center gap-2 pt-2"
-        >
+        {/* 2. Sub-Filter Pills por Área/Categoría */}
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-2 relative z-10">
           {categories.map((cat) => (
-            <motion.button
+            <button
               key={cat}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+              className={`services-category-pill px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer border ${
                 selectedCategory === cat
-                  ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-md shadow-sky-600/20'
-                  : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border-slate-200'
+                  ? 'bg-navy-dark text-white border-navy-dark shadow-lg shadow-navy-dark/20 scale-105'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-800 hover:bg-slate-50 hover:shadow-sm'
               }`}
             >
               {cat}
-            </motion.button>
+            </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* 3. Grid de Cursos Responsivo */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -421,7 +465,7 @@ const Services = ({ onSelectCourse }) => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
                 whileHover={{ y: -6, scale: 1.015 }}
-                className="rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-lg hover:shadow-2xl hover:border-sky-300 transition-all duration-300 flex flex-col justify-between group"
+                className="rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-md hover:shadow-2xl hover:border-brand-light/50 transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   {/* 1. Cover Visual */}
@@ -441,7 +485,7 @@ const Services = ({ onSelectCourse }) => {
                       )}
                     </div>
 
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug group-hover:text-[#0284c7] transition-colors line-clamp-3">
+                    <h3 className="text-sm sm:text-base font-bold text-navy-dark leading-snug group-hover:text-brand-DEFAULT transition-colors line-clamp-3">
                       {course.title}
                     </h3>
                   </div>
@@ -453,7 +497,7 @@ const Services = ({ onSelectCourse }) => {
                     <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
                       Arancel Oficial:
                     </div>
-                    <div className="text-lg sm:text-xl font-black text-[#0284c7] tracking-tight">
+                    <div className="text-lg sm:text-xl font-black text-brand-DEFAULT tracking-tight">
                       {course.price}
                     </div>
                     <div className="text-[11px] font-semibold text-emerald-600">
@@ -465,7 +509,7 @@ const Services = ({ onSelectCourse }) => {
                     whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(2, 132, 199, 0.3)' }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onSelectCourse(course.title)}
-                    className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn border border-sky-400/30"
+                    className="bg-gradient-to-r from-brand-DEFAULT to-brand-dark hover:from-brand-light hover:to-brand-DEFAULT text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer flex-shrink-0 group/btn border border-brand-light/30"
                   >
                     <span>Inscribirme</span>
                     <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />

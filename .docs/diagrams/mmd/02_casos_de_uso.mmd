@@ -1,0 +1,33 @@
+graph LR
+    subgraph Actores
+        P((Postulante))
+        E((Estudiante))
+        D((Docente))
+        A((Administrador OTEC))
+    end
+
+    subgraph Portal["Portal Público & Admisión"]
+        UC1["Inscribirse y Abonar 50%"]
+        UC2["Calcular Franquicia SENCE"]
+        UC3["Consultar por WhatsApp"]
+    end
+
+    subgraph LMS["Campus Virtual LMS"]
+        UC4["Visualizar Clases y Contenidos"]
+        UC5["Rendir Evaluaciones Online"]
+        UC6["Descargar Diploma Oficial"]
+        UC7["Gestionar Calificaciones"]
+        UC8["Administrar Participantes & Claves"]
+        UC9["Dar Visto Bueno a Certificados"]
+    end
+
+    P --> UC1
+    P --> UC2
+    P --> UC3
+    E --> UC4
+    E --> UC5
+    E --> UC6
+    D --> UC4
+    D --> UC7
+    A --> UC8
+    A --> UC9

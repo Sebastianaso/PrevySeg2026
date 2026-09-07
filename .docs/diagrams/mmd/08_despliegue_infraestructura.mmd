@@ -1,0 +1,23 @@
+graph LR
+    subgraph Clientes["Clientes"]
+        NAV["Navegadores Modernos: Chrome, Edge, Safari, Móvil"]
+    end
+
+    subgraph Edge["Edge CDN & Static Hosting (Vercel Global Network)"]
+        EDGE_SRV["Vercel Global Edge Points of Presence"]
+        STATIC["Assets Compilados: HTML, CSS, Bundles JS, WebP"]
+    end
+
+    subgraph BaaS["BaaS Cloud Infrastructure (Supabase AWS us-east-1)"]
+        KONG["Kong API Gateway Reverse Proxy"]
+        AUTH_POD["GoTrue Auth Service Docker Container"]
+        PG_POD[("PostgreSQL 15 Primary con Réplicas")]
+        S3_POD["S3 Object Storage: Diplomas y Comprobantes"]
+    end
+
+    NAV -->|HTTPS Port 443| EDGE_SRV
+    EDGE_SRV --> STATIC
+    NAV -->|API Requests TLS 1.3 / Port 443| KONG
+    KONG --> AUTH_POD
+    KONG --> PG_POD
+    KONG --> S3_POD

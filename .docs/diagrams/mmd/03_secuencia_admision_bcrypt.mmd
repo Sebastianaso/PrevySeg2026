@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor Postulante
+    participant Form as EnrollmentForm.jsx
+    participant Val as validation.js
+    participant Supa as Supabase Client
+    participant PG as PostgreSQL (pgcrypto)
+    participant WA as WhatsApp Business
+
+    Postulante->>Form: Ingresa RUT, Correo y Selecciona Curso
+    Form->>Val: formatRut(rut) y validateRut(rut)
+    Val-->>Form: RUT Válido (true)
+    Form->>Form: Calcula Cuota 1 (50%) y Cuota 2 (50%)
+    Postulante->>Form: Hace clic en "Confirmar Inscripción"
+    Form->>Supa: rpc('admin_create_user', { rut, password, rol: 'STUDENT' })
+    Supa->>PG: extensions.crypt(password, gen_salt('bf'))
+    PG-->>PG: Inserta en auth.users y public.users con hash Bcrypt
+    PG-->>Supa: Registro Creado (200 OK)
+    Supa-->>Form: Confirmación de Creación Exitosa
+    Form->>WA: Redirige con mensaje estructurado y código de matrícula
+    WA-->>Postulante: Ejecutivo recibe expediente para validar antecedentes

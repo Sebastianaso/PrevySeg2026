@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { FacebookIcon, TwitterIcon, InstagramIcon, YoutubeIcon } from './SocialIcons';
 
-const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
+const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -148,6 +148,11 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
                 smooth={true}
                 offset={-85}
                 duration={500}
+                onClick={() => {
+                  if (item.to === 'admision') {
+                    window.dispatchEvent(new CustomEvent('open-admission'));
+                  }
+                }}
                 activeClass="text-[#0284c7] border-b-2 border-[#0284c7] pb-0.5"
                 className="text-slate-600 hover:text-[#0284c7] cursor-pointer py-1 transition-all duration-200 tracking-widest relative group"
               >
@@ -169,15 +174,39 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
             </motion.button>
 
             {/* Plataforma Virtual Button */}
-            <motion.button
-              whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.3)' }}
-              whileTap={{ scale: 0.96 }}
-              onClick={onOpenPlatform}
-              className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-5 rounded-lg shadow-md shadow-sky-600/20 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
-            >
-              <Sparkles size={13} className="text-cyan-200 animate-pulse" />
-              <span>PLATAFORMA VIRTUAL</span>
-            </motion.button>
+            {currentUser ? (
+              <div className="flex items-center gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(0, 194, 178, 0.4)' }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={onOpenPlatform}
+                  className="bg-gradient-to-r from-teal-600 to-[#0284c7] hover:from-teal-500 hover:to-sky-600 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-4 rounded-lg shadow-md border border-teal-300/40 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                  title="Abrir panel virtual"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>MI PANEL ({currentUser.rol === 'ADMIN' ? 'ADMIN' : 'CAMPUS'})</span>
+                </motion.button>
+                {onLogout && (
+                  <button
+                    onClick={onLogout}
+                    className="text-[11px] font-bold text-slate-500 hover:text-red-500 px-2 py-1 rounded hover:bg-slate-100 transition-colors cursor-pointer"
+                    title="Cerrar sesión activa"
+                  >
+                    Salir
+                  </button>
+                )}
+              </div>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.3)' }}
+                whileTap={{ scale: 0.96 }}
+                onClick={onOpenPlatform}
+                className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-5 rounded-lg shadow-md shadow-sky-600/20 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+              >
+                <Sparkles size={13} className="text-cyan-200 animate-pulse" />
+                <span>PLATAFORMA VIRTUAL</span>
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile Hamburger & Controls Button */}
@@ -219,7 +248,12 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
                   smooth={true}
                   offset={-85}
                   duration={500}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (item.to === 'admision') {
+                      window.dispatchEvent(new CustomEvent('open-admission'));
+                    }
+                  }}
                   activeClass="text-[#0284c7] font-extrabold bg-sky-50"
                   className="text-slate-700 hover:text-[#0284c7] text-sm font-semibold tracking-wider px-3 py-2 rounded-lg transition-colors cursor-pointer hover:bg-slate-50"
                 >
@@ -234,10 +268,23 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment }) => {
                     setMobileMenuOpen(false);
                     onOpenPlatform();
                   }}
-                  className="w-full bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-lg shadow-md text-center flex items-center justify-center gap-2 cursor-pointer border border-sky-400/30"
+                  className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-lg shadow-md text-center flex items-center justify-center gap-2 cursor-pointer border ${
+                    currentUser 
+                      ? 'bg-gradient-to-r from-teal-600 to-[#0284c7] border-teal-300/40' 
+                      : 'bg-gradient-to-r from-[#0284c7] to-[#0369a1] border-sky-400/30'
+                  }`}
                 >
-                  <span>PLATAFORMA VIRTUAL</span>
-                  <ExternalLink size={14} />
+                  {currentUser ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span>INGRESAR A MI PANEL ({currentUser.rol === 'ADMIN' ? 'ADMIN' : 'CAMPUS'})</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>PLATAFORMA VIRTUAL</span>
+                      <ExternalLink size={14} />
+                    </>
+                  )}
                 </motion.button>
               </div>
             </motion.div>
