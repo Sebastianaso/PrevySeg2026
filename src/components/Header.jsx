@@ -8,11 +8,31 @@ import {
   Search, 
   Menu, 
   X,
-  ExternalLink,
-  Sparkles
+  LogOut
 } from 'lucide-react';
 import { FacebookIcon, TwitterIcon, InstagramIcon, YoutubeIcon } from './SocialIcons';
 import prevysegLogo from '../assets/images/prevyseg_logo.png';
+
+// Icono de red/nodos idéntico al de Plataforma Virtual
+const VirtualPlatformIcon = ({ className = "w-4 h-4 text-cyan-300" }) => (
+  <svg 
+    className={className} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2.2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="2.8" fill="currentColor" />
+    <circle cx="19" cy="6" r="2.2" fill="currentColor" />
+    <circle cx="5" cy="8" r="2.2" fill="currentColor" />
+    <circle cx="18" cy="18" r="2.2" fill="currentColor" />
+    <line x1="12" y1="12" x2="19" y2="6" stroke="currentColor" strokeWidth="2" />
+    <line x1="12" y1="12" x2="5" y2="8" stroke="currentColor" strokeWidth="2" />
+    <line x1="12" y1="12" x2="18" y2="18" stroke="currentColor" strokeWidth="2" />
+  </svg>
+);
 
 const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,32 +49,30 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
   const navItems = [
     { name: 'INICIO', to: 'inicio' },
     { name: 'QUIÉNES SOMOS', to: 'quienes-somos' },
-    { name: 'ESCUELAS & CURSOS', to: 'servicios' },
-    { name: 'FICHA DE ADMISIÓN (50%)', to: 'admision', highlight: true },
+    { name: 'ESCUELAS', to: 'escuelas' },
     { name: 'CONTACTO', to: 'contacto' },
   ];
 
-
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300">
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 shadow-xs">
       
-      {/* 1. Top Informational Bar (Chile Security & SENCE Accreditation Banner) */}
-      <div className="bg-[#0f1012] text-white py-1.5 px-4 sm:px-8 border-b border-white/10 text-xs">
+      {/* 1. Top Bar Azul Marino PrevySeg (#072B4F) con Acreditación SPD & SENCE e información de contacto */}
+      <div className="bg-[#072B4F] text-white py-2 px-4 sm:px-8 border-b border-white/10 text-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
           
-          {/* Social Icons & SENCE / SPD Tag */}
-          <div className="flex items-center space-x-3 text-slate-300">
-            <span className="bg-[#00c2b2]/20 text-[#00c2b2] text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border border-[#00c2b2]/40 tracking-wider">
-              Acreditación SPD (Subsecretaría de Prevención del Delito) & SENCE
+          {/* Badge Acreditación y Redes Sociales */}
+          <div className="flex items-center space-x-3 text-slate-200">
+            <span className="bg-[#00A896]/20 text-[#00FFE0] text-[10px] font-extrabold uppercase px-2.5 py-1 rounded border border-[#00A896]/50 tracking-wider shadow-xs">
+              ACREDITACIÓN SPD (SUBSECRETARÍA DE PREVENCIÓN DEL DELITO) & SENCE
             </span>
-            <div className="h-3 w-px bg-white/10 hidden sm:block"></div>
+            <div className="h-3.5 w-px bg-white/20 hidden sm:block"></div>
             <motion.a 
               whileHover={{ scale: 1.15, color: '#38bdf8' }}
               href="https://facebook.com" 
               target="_blank" 
               rel="noreferrer" 
               aria-label="Facebook PrevySeg"
-              className="hover:text-sky-200 transition-colors duration-200"
+              className="text-white/80 hover:text-white transition-colors duration-200"
             >
               <FacebookIcon size={14} />
             </motion.a>
@@ -64,7 +82,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
               target="_blank" 
               rel="noreferrer" 
               aria-label="Twitter PrevySeg"
-              className="hover:text-sky-200 transition-colors duration-200"
+              className="text-white/80 hover:text-white transition-colors duration-200"
             >
               <TwitterIcon size={14} />
             </motion.a>
@@ -74,7 +92,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
               target="_blank" 
               rel="noreferrer" 
               aria-label="Instagram PrevySeg"
-              className="hover:text-sky-200 transition-colors duration-200"
+              className="text-white/80 hover:text-white transition-colors duration-200"
             >
               <InstagramIcon size={14} />
             </motion.a>
@@ -84,31 +102,31 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
               target="_blank" 
               rel="noreferrer" 
               aria-label="YouTube PrevySeg"
-              className="hover:text-sky-200 transition-colors duration-200"
+              className="text-white/80 hover:text-white transition-colors duration-200"
             >
               <YoutubeIcon size={14} />
             </motion.a>
           </div>
 
-          {/* Top Contact Info */}
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-medium text-[11px] sm:text-xs">
+          {/* Información de Contacto Superior */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3.5 gap-y-1 font-medium text-[11px] sm:text-xs text-white/90">
             <a 
               href="tel:+56978691869" 
-              className="flex items-center gap-1.5 hover:text-sky-200 transition-colors"
+              className="flex items-center gap-1.5 hover:text-[#00FFE0] transition-colors"
             >
               <Phone size={12} className="text-white fill-white" />
-              <span>+56 9 7869 1869</span>
+              <span className="font-semibold">+56 9 7869 1869</span>
             </a>
-            <span className="text-sky-300/60 hidden sm:inline">|</span>
+            <span className="text-white/30 hidden sm:inline">|</span>
             <a 
               href="mailto:prevyseg.capacitaciones@gmail.com" 
-              className="flex items-center gap-1.5 hover:text-sky-200 transition-colors"
+              className="flex items-center gap-1.5 hover:text-[#00FFE0] transition-colors"
             >
               <Mail size={12} className="text-white" />
               <span>prevyseg.capacitaciones@gmail.com</span>
             </a>
-            <span className="text-sky-300/60 hidden md:inline">|</span>
-            <span className="flex items-center gap-1.5 text-sky-100">
+            <span className="text-white/30 hidden md:inline">|</span>
+            <span className="flex items-center gap-1.5 text-white/90">
               <MapPin size={12} className="text-white" />
               <span>Blanco Encalada #666, Arica. Chile</span>
             </span>
@@ -116,12 +134,13 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
         </div>
       </div>
 
-      {/* 2. Main Navigation Bar with Glassmorphism */}
-      <nav className={`bg-white/90 backdrop-blur-xl border-b border-slate-200 transition-all duration-300 ${
-        isScrolled ? 'py-2.5 shadow-md shadow-slate-900/5' : 'py-3.5'
+      {/* 2. Barra Principal de Navegación (Blanca, limpia, horizontal) */}
+      <nav className={`bg-white border-b border-slate-200 transition-all duration-300 ${
+        isScrolled ? 'py-2.5 shadow-md shadow-slate-900/5' : 'py-3'
       } px-4 sm:px-8`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Brand Logo */}
+          
+          {/* Logo PrevySeg */}
           <ScrollLink 
             to="inicio" 
             spy={true} 
@@ -138,8 +157,8 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
             />
           </ScrollLink>
 
-          {/* Desktop Navigation Menu */}
-          <div className="hidden lg:flex items-center space-x-7 text-xs font-bold tracking-wider">
+          {/* Menú de Enlaces Desktop */}
+          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8 text-xs font-bold tracking-wider">
             {navItems.map((item) => (
               <ScrollLink
                 key={item.name}
@@ -150,71 +169,66 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
                 duration={500}
                 onClick={() => {
                   if (item.to === 'admision') {
+                    if (onOpenEnrollment) onOpenEnrollment('');
                     window.dispatchEvent(new CustomEvent('open-admission'));
                   }
                 }}
-                activeClass="text-[#0284c7] border-b-2 border-[#0284c7] pb-0.5"
-                className="text-slate-600 hover:text-[#0284c7] cursor-pointer py-1 transition-all duration-200 tracking-widest relative group"
+                activeClass="text-[#0A4DA2] font-black"
+                className="text-slate-700 hover:text-[#0A4DA2] cursor-pointer py-1 transition-colors duration-200 tracking-wider relative group"
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0284c7] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0A4DA2] transition-all duration-300 group-hover:w-full" />
               </ScrollLink>
             ))}
 
-            {/* Search Icon Button */}
+            {/* Botón Circular de Búsqueda */}
             <motion.button
-              whileHover={{ scale: 1.1, backgroundColor: 'rgba(2, 132, 199, 0.08)' }}
-              whileTap={{ scale: 0.92 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
               onClick={onOpenSearch}
-              className="text-slate-600 hover:text-[#0284c7] p-2 rounded-full border border-slate-200 hover:border-sky-400 bg-slate-50 hover:bg-white transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-full border border-slate-200 hover:border-[#0A4DA2]/40 text-slate-500 hover:text-[#0A4DA2] bg-slate-50 hover:bg-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
               aria-label="Buscar cursos"
               title="Buscar cursos (Ctrl+K)"
             >
-              <Search size={15} />
+              <Search size={16} />
             </motion.button>
 
-            {/* Plataforma Virtual Button */}
-            {currentUser ? (
-              <div className="flex items-center gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(0, 194, 178, 0.4)' }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={onOpenPlatform}
-                  className="bg-gradient-to-r from-teal-600 to-[#0284c7] hover:from-teal-500 hover:to-sky-600 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-4 rounded-lg shadow-md border border-teal-300/40 transition-all duration-200 flex items-center gap-2 cursor-pointer"
-                  title="Abrir panel virtual"
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>MI PANEL ({currentUser.rol === 'ADMIN' ? 'ADMIN' : 'CAMPUS'})</span>
-                </motion.button>
-                {onLogout && (
-                  <button
-                    onClick={onLogout}
-                    className="text-[11px] font-bold text-slate-500 hover:text-red-500 px-2 py-1 rounded hover:bg-slate-100 transition-colors cursor-pointer"
-                    title="Cerrar sesión activa"
-                  >
-                    Salir
-                  </button>
-                )}
-              </div>
-            ) : (
+            {/* Botón Azul PLATAFORMA VIRTUAL */}
+            <div className="flex items-center gap-2">
               <motion.button
-                whileHover={{ scale: 1.04, boxShadow: '0 0 20px rgba(2, 132, 199, 0.3)' }}
-                whileTap={{ scale: 0.96 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={onOpenPlatform}
-                className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white text-xs font-extrabold uppercase tracking-wider py-2.5 px-5 rounded-lg shadow-md shadow-sky-600/20 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                className="bg-[#0A4DA2] hover:bg-[#073570] text-white text-xs font-extrabold uppercase tracking-wider py-3 px-6 rounded-lg shadow-md shadow-[#0A4DA2]/25 border border-[#0A4DA2] transition-all duration-200 flex items-center gap-2.5 cursor-pointer"
+                title="Ingresar a la Plataforma Virtual"
               >
-                <Sparkles size={13} className="text-cyan-200 animate-pulse" />
+                <VirtualPlatformIcon className="w-4 h-4 text-cyan-300" />
                 <span>PLATAFORMA VIRTUAL</span>
+                {currentUser && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping ml-1" title="Sesión activa" />
+                )}
               </motion.button>
-            )}
+
+              {currentUser && onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="text-slate-400 hover:text-red-500 p-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                  title="Cerrar sesión activa"
+                  aria-label="Cerrar sesión"
+                >
+                  <LogOut size={16} />
+                </button>
+              )}
+            </div>
+
           </div>
 
-          {/* Mobile Hamburger & Controls Button */}
+          {/* Botones de Control para Dispositivos Móviles */}
           <div className="flex items-center gap-2 lg:hidden">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onOpenSearch}
-              className="text-slate-600 hover:text-[#0284c7] p-2 rounded-lg border border-slate-200 bg-slate-50"
+              className="w-9 h-9 flex items-center justify-center text-slate-600 hover:text-[#0A4DA2] rounded-lg border border-slate-200 bg-slate-50"
               aria-label="Buscar"
             >
               <Search size={18} />
@@ -222,7 +236,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-slate-700 hover:text-slate-900 p-2 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none"
+              className="w-9 h-9 flex items-center justify-center text-slate-700 hover:text-slate-900 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none"
               aria-label="Abrir menú"
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -230,7 +244,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
           </div>
         </div>
 
-        {/* Mobile Menu Dropdown with Framer Motion */}
+        {/* Menú Desplegable Móvil */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -238,7 +252,7 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25 }}
-              className="lg:hidden mt-3 pt-3 border-t border-slate-200 flex flex-col space-y-2 pb-3 overflow-hidden bg-white/95 rounded-2xl p-3 shadow-lg"
+              className="lg:hidden mt-3 pt-3 border-t border-slate-200 flex flex-col space-y-2 pb-3 overflow-hidden bg-white/98 rounded-2xl p-3 shadow-lg"
             >
               {navItems.map((item) => (
                 <ScrollLink
@@ -251,11 +265,12 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
                   onClick={() => {
                     setMobileMenuOpen(false);
                     if (item.to === 'admision') {
+                      if (onOpenEnrollment) onOpenEnrollment('');
                       window.dispatchEvent(new CustomEvent('open-admission'));
                     }
                   }}
-                  activeClass="text-[#0284c7] font-extrabold bg-sky-50"
-                  className="text-slate-700 hover:text-[#0284c7] text-sm font-semibold tracking-wider px-3 py-2 rounded-lg transition-colors cursor-pointer hover:bg-slate-50"
+                  activeClass="text-[#0A4DA2] font-black bg-blue-50"
+                  className="text-slate-700 hover:text-[#0A4DA2] text-sm font-semibold tracking-wider px-3 py-2.5 rounded-lg transition-colors cursor-pointer hover:bg-slate-50"
                 >
                   {item.name}
                 </ScrollLink>
@@ -268,25 +283,29 @@ const Header = ({ onOpenPlatform, onOpenSearch, onOpenEnrollment, currentUser, o
                     setMobileMenuOpen(false);
                     onOpenPlatform();
                   }}
-                  className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-lg shadow-md text-center flex items-center justify-center gap-2 cursor-pointer border ${
-                    currentUser 
-                      ? 'bg-gradient-to-r from-teal-600 to-[#0284c7] border-teal-300/40' 
-                      : 'bg-gradient-to-r from-[#0284c7] to-[#0369a1] border-sky-400/30'
-                  }`}
+                  className="w-full bg-[#0A4DA2] hover:bg-[#073570] text-white text-xs font-extrabold uppercase tracking-wider py-3.5 px-4 rounded-lg shadow-md text-center flex items-center justify-center gap-2 cursor-pointer border border-[#0A4DA2]"
                 >
-                  {currentUser ? (
-                    <>
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                      <span>INGRESAR A MI PANEL ({currentUser.rol === 'ADMIN' ? 'ADMIN' : 'CAMPUS'})</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>PLATAFORMA VIRTUAL</span>
-                      <ExternalLink size={14} />
-                    </>
+                  <VirtualPlatformIcon className="w-4 h-4 text-cyan-300" />
+                  <span>PLATAFORMA VIRTUAL</span>
+                  {currentUser && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping ml-1" />
                   )}
                 </motion.button>
               </div>
+
+              {currentUser && onLogout && (
+                <div className="pt-1 text-center">
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLogout();
+                    }}
+                    className="text-xs font-bold text-red-600 hover:text-red-700 py-1.5 cursor-pointer"
+                  >
+                    Cerrar sesión activa ({currentUser.user || currentUser.email})
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

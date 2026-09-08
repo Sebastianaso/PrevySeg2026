@@ -1,245 +1,379 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
-import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Award, Sparkles, CheckCircle2 } from 'lucide-react';
+import { 
+  ArrowRight, 
+  ShieldCheck, 
+  Award, 
+  Sparkles, 
+  CheckCircle2, 
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  Wrench,
+  GraduationCap,
+  FileText
+} from 'lucide-react';
 import gsap from 'gsap';
-import heroImg from '../assets/images/graduacion_prevyseg.png';
 
-const Hero = ({ onOpenContact, onOpenEnrollment }) => {
+// Imágenes para el carrusel de fondo según la escuela
+import heroImg from '../assets/images/hero_graduation.jpg';
+import securityGuards from '../assets/images/security_guards.jpg';
+import securitySupervisor from '../assets/images/security_supervisor.jpg';
+import cctvOperator from '../assets/images/cctv_operator.jpg';
+import securityPromo from '../assets/images/security_promo.jpg';
+import portImg from '../assets/images/course_port_security_1788545050484.jpg';
+import cyberImg from '../assets/images/course_cybersecurity_1788545064007.jpg';
+import agricultureImg from '../assets/images/course_agriculture.jpg';
+import aestheticImg from '../assets/images/course_aesthetic.jpg';
+import elderlyImg from '../assets/images/course_elderly_care.jpg';
+import bankCashierImg from '../assets/images/course_bank_cashier.jpg';
+import foodImg from '../assets/images/course_gastronomy.jpg';
+import conflictImg from '../assets/images/course_conflict_resolution_1788545038374.jpg';
+
+const SECURITY_SLIDES = [
+  { img: securityGuards, title: 'Formación de Guardias de Seguridad (Ley 21.659)', tag: 'Acreditación Oficial SPD' },
+  { img: securitySupervisor, title: 'Formación de Vigilantes Privados (Banca y Valores)', tag: 'Alta Seguridad' },
+  { img: portImg, title: 'Formación de Seguridad Marítimo Portuaria (Directemar)', tag: 'Código PBIP TPA' },
+  { img: cctvOperator, title: 'Operador de CCTV Codificado por SENCE', tag: 'Tecnología & Sistemas' },
+  { img: cyberImg, title: 'CCTV y Alarmas de Seguridad Privada', tag: 'Sistemas Electrónicos' },
+  { img: heroImg, title: 'Supervisor de Seguridad Privada', tag: 'Liderazgo y Turnos SPD' }
+];
+
+const TRADES_SLIDES = [
+  { img: conflictImg, title: 'Resolución de Conflictos y Situaciones Difíciles', tag: 'Habilidades Laborales' },
+  { img: agricultureImg, title: 'Manejo y Uso de Plaguicidas Agrícolas (Norma SAG)', tag: 'Área Agropecuaria' },
+  { img: portImg, title: 'Operaciones Portuarias de Carga, Descarga y Seguridad', tag: 'Logística y Operaciones' },
+  { img: foodImg, title: 'Higiene, Seguridad y Manipulación de Alimentos', tag: 'Área Alimentación' },
+  { img: aestheticImg, title: 'Técnicas de Depilación, Manicure y Maquillaje Carnaval', tag: 'Estética & Servicios' },
+  { img: elderlyImg, title: 'Cuidado Adulto Mayor y Personas Postradas', tag: 'Área de Salud' },
+  { img: bankCashierImg, title: 'Cajero Bancario y Administración de Condominios', tag: 'Área Administración' }
+];
+
+const Hero = ({ 
+  onOpenContact, 
+  onOpenEnrollment, 
+  onOpenSchoolDetail,
+  activeSchool = 'seguridad',
+  onSwitchSchool 
+}) => {
+  const sectionRef = useRef(null);
   const titleRef = useRef(null);
   const descRef = useRef(null);
   const ctaRef = useRef(null);
-  const imageCardRef = useRef(null);
-  const containerRef = useRef(null);
+  const badgesRef = useRef(null);
+  const overlayRef = useRef(null);
+  
+  const [currentBg, setCurrentBg] = useState(0);
 
+  const activeSlides = activeSchool === 'seguridad' ? SECURITY_SLIDES : TRADES_SLIDES;
+
+  // Navegación de slides
+  const nextSlide = useCallback(() => {
+    setCurrentBg((prev) => (prev + 1) % activeSlides.length);
+  }, [activeSlides.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentBg((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
+  }, [activeSlides.length]);
+
+  // Rotación automática cada 6 segundos
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
+
+  // Reset slide index al cambiar de escuela
+  useEffect(() => {
+    setCurrentBg(0);
+  }, [activeSchool]);
+
+  // Animaciones de entrada con GSAP
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      // Badge slide in
       tl.fromTo(
-        '.hero-badge',
-        { opacity: 0, y: -20, scale: 0.9 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.4 }
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.4 }
       );
 
-      // Title words stagger with 3D perspective
-      if (titleRef.current) {
-        const words = titleRef.current.querySelectorAll('.hero-word');
-        tl.fromTo(
-          words,
-          { opacity: 0, y: 35, rotateX: -30 },
-          { opacity: 1, y: 0, rotateX: 0, duration: 0.4, stagger: 0.05 },
-          '-=0.2'
-        );
-      }
-
-      // Shimmer gradient text
       tl.fromTo(
-        '.hero-gradient-text',
-        { backgroundPosition: '100% 0%' },
-        { backgroundPosition: '0% 0%', duration: 0.7, ease: 'power2.inOut' },
-        '-=0.3'
-      );
-
-      // Description fade up
-      tl.fromTo(
-        descRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5 },
-        '-=0.4'
-      );
-
-      // Buttons stagger
-      tl.fromTo(
-        '.hero-cta-btn',
-        { opacity: 0, y: 25, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.1 },
-        '-=0.3'
-      );
-
-      // Trust badges
-      tl.fromTo(
-        '.hero-trust-badge',
-        { opacity: 0, x: -15 },
-        { opacity: 1, x: 0, duration: 0.4, stagger: 0.1 },
+        '.hero-switcher-box',
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.4 },
         '-=0.2'
       );
 
-      // Image card entrance
       tl.fromTo(
-        imageCardRef.current,
-        { opacity: 0, scale: 0.92, x: 40 },
-        { opacity: 1, scale: 1, x: 0, duration: 0.8, ease: 'power3.out' },
-        '-=0.6'
+        '.hero-badge',
+        { opacity: 0, y: -15, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.35 },
+        '-=0.15'
       );
 
-      // Subtle mouse move parallax on image
-      const handleMouseMove = (e) => {
-        const { clientX, clientY } = e;
-        const xPercent = (clientX / window.innerWidth - 0.5) * 2;
-        const yPercent = (clientY / window.innerHeight - 0.5) * 2;
-        gsap.to(imageCardRef.current, {
-          x: xPercent * 10,
-          y: yPercent * 10,
-          duration: 0.8,
-          ease: 'power1.out'
-        });
-      };
-
-      window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, containerRef);
+      tl.fromTo(
+        '.hero-title-text',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.45 },
+        '-=0.1'
+      );
+    }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
-  return (
-    <section 
-      ref={containerRef}
-      id="inicio" 
-      className="relative min-h-[85vh] flex items-center justify-center py-16 lg:py-24 px-4 sm:px-8 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-white"
-    >
-      {/* Ambient background glows */}
-      <div className="absolute top-1/4 left-10 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none animate-float" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none animate-float" style={{ animationDelay: '2.5s' }} />
+  }, [activeSchool]);
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
-        
-        {/* Left Content Column */}
-        <div className="lg:col-span-6 flex flex-col justify-center text-left space-y-6">
-          
-          {/* Badge */}
-          <div className="hero-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-800 text-xs font-semibold w-fit shadow-sm">
-            <Award size={14} className="text-[#0284c7] animate-pulse" />
-            <span>Acreditación Oficial SPD (Prevención del Delito) & SENCE NCh 2728</span>
+  const isSecurity = activeSchool === 'seguridad';
+
+  return (
+    <section
+      ref={sectionRef}
+      id="inicio"
+      className="relative min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-16"
+      style={{ backgroundColor: '#071626' }}
+    >
+      {/* Carrusel de Fondo Fotográfico */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {activeSlides.map((slide, idx) => (
+          <div
+            key={slide.title}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              idx === currentBg ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+            }`}
+            style={{
+              backgroundImage: `url(${slide.img})`,
+              backgroundPosition: 'center',
+              backgroundSize: 'cover',
+              transition: 'opacity 1s ease-in-out, transform 8s ease-out',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Degradado Superpuesto Oficial adaptado a la Escuela */}
+      <div
+        ref={overlayRef}
+        className="absolute inset-0 z-[1] transition-all duration-700"
+        style={{
+          background: isSecurity
+            ? 'linear-gradient(135deg, rgba(7,22,38,0.95) 0%, rgba(10,43,79,0.88) 45%, rgba(10,125,140,0.78) 100%)'
+            : 'linear-gradient(135deg, rgba(7,22,38,0.95) 0%, rgba(11,32,50,0.88) 45%, rgba(0,168,150,0.78) 100%)',
+        }}
+      />
+
+      {/* Malla decorativa sutil */}
+      <div
+        className="absolute inset-0 z-[2] opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      {/* Flechas de navegación del carrusel */}
+      <button
+        onClick={prevSlide}
+        aria-label="Slide anterior"
+        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white/80 hover:text-white items-center justify-center transition-all duration-200 cursor-pointer hover:scale-110 active:scale-95 shadow-lg"
+      >
+        <ChevronLeft size={22} />
+      </button>
+
+      <button
+        onClick={nextSlide}
+        aria-label="Siguiente slide"
+        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white/80 hover:text-white items-center justify-center transition-all duration-200 cursor-pointer hover:scale-110 active:scale-95 shadow-lg"
+      >
+        <ChevronRight size={22} />
+      </button>
+
+      {/* ========== CONTENIDO PRINCIPAL ========== */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-8 py-16 lg:py-24">
+        <div className="max-w-3xl">
+
+          {/* =========================================================================
+              1. BOTONES INTERCAMBIABLES DE SELECCIÓN DE ESCUELA (SOLICITUD EXPLÍCITA)
+          ========================================================================= */}
+          <div className="hero-switcher-box mb-6 inline-flex p-1.5 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/25 shadow-2xl gap-1.5">
+            
+            {/* Botón Escuela de Seguridad */}
+            <button
+              type="button"
+              onClick={() => {
+                if (onSwitchSchool) onSwitchSchool('seguridad');
+                window.dispatchEvent(new CustomEvent('switch-school', { detail: 'seguridad' }));
+              }}
+              className={`flex items-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 cursor-pointer ${
+                isSecurity
+                  ? 'bg-gradient-to-r from-[#00C4D8] to-[#0A7D8C] text-[#071626] shadow-xl shadow-[#00C4D8]/30 scale-[1.03] ring-2 ring-white/40'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Shield size={18} className={isSecurity ? 'text-[#071626]' : 'text-[#00C4D8]'} />
+              <span>Escuela de Seguridad Privada</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase ${
+                isSecurity ? 'bg-black/20 text-[#071626]' : 'bg-white/10 text-white/60'
+              }`}>
+                SPD
+              </span>
+            </button>
+
+            {/* Botón Escuela de Oficios */}
+            <button
+              type="button"
+              onClick={() => {
+                if (onSwitchSchool) onSwitchSchool('oficios');
+                window.dispatchEvent(new CustomEvent('switch-school', { detail: 'oficios' }));
+              }}
+              className={`flex items-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 cursor-pointer ${
+                !isSecurity
+                  ? 'bg-gradient-to-r from-[#00FFE0] to-[#00A896] text-[#071626] shadow-xl shadow-[#00FFE0]/30 scale-[1.03] ring-2 ring-white/40'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Wrench size={18} className={!isSecurity ? 'text-[#071626]' : 'text-[#00FFE0]'} />
+              <span>Escuela de Oficios SENCE</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase ${
+                !isSecurity ? 'bg-black/20 text-[#071626]' : 'bg-white/10 text-white/60'
+              }`}>
+                NCh 2728
+              </span>
+            </button>
           </div>
 
-          {/* Main Hero Title */}
-          <h1 
-            ref={titleRef}
-            className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 leading-tight tracking-tight"
-            style={{ perspective: '800px' }}
-          >
-            <span className="hero-word inline-block">Escuela</span>{' '}
-            <span className="hero-word inline-block">de</span>{' '}
-            <span className="hero-word inline-block">Seguridad</span>{' '}
-            <span className="hero-word inline-block">Privada</span>{' '}
-            <span className="hero-word inline-block text-slate-400">&</span>{' '}
-            <br className="hidden sm:inline" />
-            <span className="hero-word hero-gradient-text inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#0284c7] via-sky-600 to-[#00c2b2] font-black">
-              Escuela
-            </span>{' '}
-            <span className="hero-word hero-gradient-text inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#0284c7] via-sky-600 to-[#00c2b2] font-black">
-              de
-            </span>{' '}
-            <span className="hero-word hero-gradient-text inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#0284c7] via-sky-600 to-[#00c2b2] font-black">
-              Oficios
+          {/* Badge Acreditación específico de la Escuela */}
+          <div className="hero-badge inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-white/90 text-xs font-semibold mb-6 shadow-lg">
+            <Award size={15} className={isSecurity ? 'text-[#00C4D8]' : 'text-[#00FFE0]'} />
+            <span className="tracking-wide">
+              {isSecurity
+                ? 'Acreditación Oficial SPD (Prevención del Delito) • Carabineros OS-10 • Ley 21.659'
+                : 'Norma Chilena NCh 2728:2015 SGS • Registro SENCE N°A-4721 • Certificación Directa OTEC'}
             </span>
+          </div>
+
+          {/* Título Principal de la Escuela Seleccionada */}
+          <h1
+            ref={titleRef}
+            className="hero-title-text text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.1] tracking-tight mb-6 text-white"
+            style={{ textShadow: '0 2px 25px rgba(0,0,0,0.6)' }}
+          >
+            {isSecurity ? (
+              <>
+                <span>Escuela de</span>{' '}
+                <span 
+                  className="text-transparent bg-clip-text"
+                  style={{
+                    backgroundImage: 'linear-gradient(90deg, #00C4D8, #00FFE0, #00C4D8)',
+                  }}
+                >
+                  Seguridad Privada
+                </span>
+              </>
+            ) : (
+              <>
+                <span>Escuela de</span>{' '}
+                <span 
+                  className="text-transparent bg-clip-text"
+                  style={{
+                    backgroundImage: 'linear-gradient(90deg, #00FFE0, #00A896, #00FFE0)',
+                  }}
+                >
+                  Oficios Industriales
+                </span>
+              </>
+            )}
           </h1>
 
-          {/* Description */}
-          <p 
+          {/* Descripción específica de la Escuela */}
+          <p
             ref={descRef}
-            className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-normal"
+            className="text-white/85 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl mb-10"
+            style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
           >
-            <strong className="font-bold text-slate-900">PREVYSEG CAPACITACIONES</strong>, líder en formación acelerada y empleabilidad en la Macro Zona Norte. Capacitación 100% online y semipresencial para <span className="text-[#0284c7] font-semibold">Arica, Iquique, Antofagasta y Calama</span> con credencial oficial SPD y oficios industriales de rápida colocación.
+            {isSecurity ? (
+              <>
+                <strong className="font-bold text-white">PrevySeg Capacitaciones:</strong> Formación y perfeccionamiento técnico-legal riguroso para Guardias de Seguridad, Vigilantes Privados, Seguridad Portuaria (Directemar) y Supervisores, con preparación de excelencia para el examen oficial de la Autoridad Fiscalizadora.
+              </>
+            ) : (
+              <>
+                <strong className="font-bold text-white">PrevySeg Capacitaciones:</strong> Formación en Resolución de Conflictos, Área Agropecuaria (Plaguicidas SAG), Operaciones Portuarias, Manipulación de Alimentos, Estética, Cuidado Adulto Mayor y Cajero Bancario con certificación directa OTEC PrevySeg con validez nacional SENCE.
+              </>
+            )}
           </p>
 
-          {/* Call to Actions */}
-          <div ref={ctaRef} className="flex flex-wrap items-center gap-4 pt-2">
-            <ScrollLink
-              to="admision"
-              spy={true}
-              smooth={true}
-              offset={-85}
-              duration={500}
-              onClick={() => window.dispatchEvent(new CustomEvent('open-admission'))}
-              className="group hero-cta-btn"
-            >
-              <button
-                className="bg-gradient-to-r from-[#00c2b2] to-teal-500 hover:from-teal-500 hover:to-teal-600 text-white font-black text-sm px-7 py-3.5 rounded-xl shadow-lg shadow-teal-500/20 border border-teal-400 transition-all duration-200 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
-              >
-                <Sparkles size={16} />
-                <span>Llenar Ficha (Abono 50%)</span>
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </ScrollLink>
-
-            <ScrollLink
-              to="servicios"
-              spy={true}
-              smooth={true}
-              offset={-85}
-              duration={500}
-              className="group hero-cta-btn"
-            >
-              <button
-                className="bg-gradient-to-r from-[#0284c7] to-[#0369a1] hover:from-sky-500 hover:to-sky-700 text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-sky-500/20 border border-sky-400/30 transition-all duration-200 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
-              >
-                <span>Explorar Cursos</span>
-              </button>
-            </ScrollLink>
-
-            <ScrollLink
-              to="contacto"
-              spy={true}
-              smooth={true}
-              offset={-85}
-              duration={500}
-              className="hero-cta-btn"
-            >
-              <button
-                className="bg-white hover:bg-slate-50 border border-slate-200 hover:border-sky-300 text-slate-700 font-semibold text-sm px-5 py-3.5 rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-2 shadow-sm hover:scale-105 active:scale-95"
-              >
-                <ShieldCheck size={16} className="text-[#0284c7]" />
-                <span>Contacto</span>
-              </button>
-            </ScrollLink>
-          </div>
-
-          {/* Trust badges */}
-          <div className="pt-6 border-t border-slate-200 flex flex-wrap items-center gap-6 text-xs text-slate-500 font-medium">
-            <div className="hero-trust-badge flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00c2b2] shadow-sm shadow-teal-400 animate-ping" />
-              <span className="text-slate-700 font-medium">Credencial SPD Oficial</span>
-            </div>
-            <div className="hero-trust-badge flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-[#0284c7]" />
-              <span className="text-slate-700 font-medium">Arica • Iquique • Antofagasta</span>
-            </div>
-            <div className="hero-trust-badge flex items-center gap-2">
-              <Sparkles size={14} className="text-amber-500" />
-              <span className="text-slate-700 font-medium">Declaración Jurada en 1 Hoja</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Media Column */}
-        <div className="lg:col-span-6 flex justify-center lg:justify-end">
-          <div ref={imageCardRef} className="relative group w-full max-w-xl hero-image-card">
-            {/* Background Glow */}
-            <div className="absolute -inset-1.5 bg-gradient-to-r from-[#0284c7] via-cyan-400 to-[#00c2b2] rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition duration-700"></div>
+          {/* Botones de Acción (Call to Action) */}
+          <div ref={ctaRef} className="flex flex-wrap items-center gap-3.5 mb-10">
             
-            {/* Main Image Frame */}
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-2xl bg-white hover:-translate-y-1 transition-transform duration-300">
-              <img
-                src={heroImg}
-                alt="Grupo de egresados y titulados de Prevyseg Capacitaciones"
-                className="w-full h-auto object-cover transform group-hover:scale-105 transition duration-700 block"
-                loading="eager"
-              />
-              {/* Badge footer */}
-              <div className="bg-white/95 backdrop-blur-md px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-800">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="font-semibold text-slate-800">Ceremonia de Certificación y Graduación</span>
-                </div>
-                <span className="text-[#0284c7] font-extrabold bg-sky-50 px-2.5 py-1 rounded-md border border-sky-200">PrevySeg Arica</span>
-              </div>
+            {/* Botón 1: Ver catálogo de capacitaciones de esta escuela */}
+            <ScrollLink 
+              to="servicios" 
+              spy 
+              smooth 
+              offset={-80} 
+              duration={500}
+              className="group"
+            >
+              <button 
+                type="button"
+                className={`hero-cta-btn font-black text-sm px-7 py-4 rounded-xl shadow-2xl transition-all duration-300 flex items-center gap-2.5 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
+                  isSecurity
+                    ? 'bg-gradient-to-r from-[#00C4D8] to-[#0A7D8C] text-[#071626] hover:brightness-110 shadow-[#00C4D8]/40'
+                    : 'bg-gradient-to-r from-[#00FFE0] to-[#00A896] text-[#071626] hover:brightness-110 shadow-[#00FFE0]/40'
+                }`}
+              >
+                <span>{isSecurity ? 'Ver Capacitaciones de Seguridad' : 'Ver Capacitaciones de Oficios'}</span>
+                <ArrowRight size={17} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+              </button>
+            </ScrollLink>
+
+            {/* Botón 2: Abrir ventana con descripciones y temarios */}
+            <button 
+              type="button"
+              onClick={() => {
+                if (onOpenSchoolDetail) onOpenSchoolDetail(activeSchool);
+              }}
+              className="hero-cta-btn bg-[#071626]/90 hover:bg-[#0B2032] backdrop-blur-md text-white font-bold text-sm px-6 py-4 rounded-xl border border-white/20 transition-all duration-300 flex items-center gap-2 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-[#071626]/50"
+            >
+              <FileText size={16} className={isSecurity ? 'text-[#00C4D8]' : 'text-[#00FFE0]'} />
+              <span>Temarios Oficiales & Requisitos</span>
+            </button>
+          </div>
+
+          {/* Badges de Confianza / Garantías */}
+          <div ref={badgesRef} className="flex flex-wrap items-center gap-6 text-xs text-white/60 font-medium">
+            <div className="hero-trust-badge flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full animate-pulse ${isSecurity ? 'bg-[#00C4D8]' : 'bg-[#00FFE0]'}`} />
+              <span className="text-white/80">
+                {isSecurity ? 'Credencial Oficial SPD' : 'Diploma Directo PrevySeg OTEC'}
+              </span>
+            </div>
+            <div className="hero-trust-badge flex items-center gap-2">
+              <CheckCircle2 size={14} className={isSecurity ? 'text-[#00C4D8]' : 'text-[#00FFE0]'} />
+              <span className="text-white/80">Arica • Iquique • Antofagasta</span>
+            </div>
+            <div className="hero-trust-badge flex items-center gap-2">
+              <Sparkles size={14} className="text-amber-400" />
+              <span className="text-white/80">Abono Inicial 50% para Matrícula</span>
             </div>
           </div>
-        </div>
 
+          {/* Pill informativa del carrusel */}
+          <div className="mt-8 inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white/70 text-xs">
+            <span className={`w-1.5 h-1.5 rounded-full ${isSecurity ? 'bg-[#00C4D8]' : 'bg-[#00FFE0]'}`} />
+            <span className="font-semibold text-white/90">
+              {String(currentBg + 1).padStart(2, '0')} / {String(activeSlides.length).padStart(2, '0')}
+            </span>
+            <span className="text-white/40">•</span>
+            <span className="text-white/85 truncate max-w-[260px] sm:max-w-md">
+              {activeSlides[currentBg].title}
+            </span>
+          </div>
+
+        </div>
       </div>
     </section>
   );

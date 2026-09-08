@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText,
@@ -39,122 +39,316 @@ import {
   cleanRut, 
   validateRut, 
   validateEmail, 
-  validatePhone 
+  validatePhone,
+  checkStudentSingleCourse,
+  enrollStudentInSchool
 } from '../config/supabase';
 
 // ================= LISTA OFICIAL DE CURSOS DE LA FICHA PREVYSEG =================
+// ================= LISTA OFICIAL DE CURSOS DE LA FICHA PREVYSEG =================
 export const OFFICIAL_COURSES = [
+  // --- ESCUELA DE SEGURIDAD PRIVADA ---
   {
-    id: 'ggss-form-presencial',
-    name: 'GGSS FORMACIÓN PRESENCIAL',
-    code: 'OS10-FP-01',
+    id: 'seg-01',
+    name: 'Formación de guardias de seguridad',
+    code: 'OS10-FORM-01',
     type: 'spd',
-    category: 'Seguridad Privada SPD',
+    school: 'seguridad',
+    category: 'Formación Inicial SPD',
     hours: '90 Horas Cronológicas',
-    price: 140000,
-    cuota1: 70000,
-    cuota2: 70000,
-    modality: 'Presencial (Sede Arica)',
-    description: 'Curso intensivo de formación inicial para nuevos guardias de seguridad. Incluye instrucción presencial en legislación de seguridad privada, defensa personal, primeros auxilios, prevención de riesgos y control de accesos.',
-    certificationNote: 'PrevySeg entrega la capacitación y preparación completa. Para obtener la acreditación y credencial oficial de Guardia de Seguridad, la Subsecretaría de Prevención del Delito (SPD) / Autoridad Fiscalizadora aplica un examen evaluativo externo presencial.'
+    price: 120000,
+    cuota1: 60000,
+    cuota2: 60000,
+    modality: 'Presencial / Semipresencial',
+    description: 'Curso oficial exigido por la Ley 21.659. Prepara al alumno en legislación, primeros auxilios, defensa personal y examen ante la Autoridad Fiscalizadora.',
+    certificationNote: 'PrevySeg entrega la capacitación preparatoria completa. La credencial oficial SPD es otorgada tras rendir el examen ante Carabineros OS-10.'
   },
   {
-    id: 'ggss-form-online',
-    name: 'GGSS FORMACIÓN ONLINE',
-    code: 'OS10-FO-02',
+    id: 'seg-02',
+    name: 'Formación de vigilantes privados',
+    code: 'OS10-VIG-02',
     type: 'spd',
-    category: 'Seguridad Privada SPD',
-    hours: '90 Horas E-Learning',
-    price: 140000,
-    cuota1: 70000,
-    cuota2: 70000,
-    modality: 'Online Sincrónico SENCE',
-    description: 'Capacitación a distancia a través de nuestra aula virtual interactiva con clases en vivo, simuladores de casos reales y talleres guiados por instructores acreditados.',
-    certificationNote: 'PrevySeg entrega la capacitación preparatoria completa. La credencial oficial final es otorgada por la SPD tras rendir y aprobar el examen oficial ante la autoridad fiscalizadora.'
+    school: 'seguridad',
+    category: 'Formación Inicial SPD',
+    hours: '100 Horas',
+    price: 190000,
+    cuota1: 95000,
+    cuota2: 95000,
+    modality: 'Presencial con Polígono de Tiro',
+    description: 'Instrucción especializada para entidades bancarias, transporte de valores y recintos estratégicos con porte de armas regulado.',
+    certificationNote: 'Instrucción con tiro práctico y examen ante la Autoridad Fiscalizadora.'
   },
   {
-    id: 'ggss-perf-presencial',
-    name: 'GGSS PERFECCIONAMIENTO PRESENCIAL',
-    code: 'OS10-PP-03',
+    id: 'seg-03',
+    name: 'Formación de guardia de seguridad marítimo portuario',
+    code: 'DIR-FORM-03',
     type: 'spd',
-    category: 'Seguridad Privada SPD',
-    hours: '36 Horas Cronológicas',
-    price: 90000,
-    cuota1: 45000,
-    cuota2: 45000,
-    modality: 'Presencial (Sede Arica)',
-    description: 'Reentrenamiento y actualización de conocimientos obligatorio cada 3 años para guardias activos. Actualización en Ley 21.659, derechos humanos, control de crisis y procedimientos operativos.',
-    certificationNote: 'Capacitación preparatoria para renovación trienal. PrevySeg prepara al alumno para la rendición exitosa del examen de renovación ante la SPD / OS-10.'
-  },
-  {
-    id: 'ggss-perf-online',
-    name: 'GGSS PERFECCIONAMIENTO ONLINE',
-    code: 'OS10-PO-04',
-    type: 'spd',
-    category: 'Seguridad Privada SPD',
-    hours: '36 Horas E-Learning',
-    price: 90000,
-    cuota1: 45000,
-    cuota2: 45000,
-    modality: 'Online Sincrónico SENCE',
-    description: 'Actualización normativa y perfeccionamiento en modalidad e-learning con flexibilidad horaria, ideal para trabajadores de turnos rotativos en minería, retail o puertos.',
-    certificationNote: 'Capacitación preparatoria para renovación trienal. La acreditación renovada es formalizada tras la rendición del examen ante la entidad fiscalizadora SPD.'
-  },
-  {
-    id: 'ggss-maritimo-perf',
-    name: 'GGSS MARÍTIMO PORTUARIO PERFECCIONAMIENTO',
-    code: 'DIR-MPP-05',
-    type: 'spd',
-    category: 'Seguridad Privada Directemar / SPD',
-    hours: '40 Horas',
-    price: 110000,
-    cuota1: 55000,
-    cuota2: 55000,
-    modality: 'Presencial / Terreno',
-    description: 'Reentrenamiento especializado para personal de seguridad en puertos, muelles y recintos marítimos de la Macro Zona Norte. Código PBIP y normativas marítimas.',
-    certificationNote: 'PrevySeg imparte la instrucción técnica especializada. La acreditación para faenas marítimas requiere la validación y examen ante la Autoridad Marítima (Directemar) / SPD.'
-  },
-  {
-    id: 'ggss-maritimo-form',
-    name: 'GGSS MARÍTIMO PORTUARIO FORMACIÓN',
-    code: 'DIR-MPF-06',
-    type: 'spd',
-    category: 'Seguridad Privada Directemar / SPD',
+    school: 'seguridad',
+    category: 'Formación Inicial Directemar',
     hours: '90 Horas',
-    price: 150000,
-    cuota1: 75000,
-    cuota2: 75000,
-    modality: 'Presencial / Terreno',
-    description: 'Formación integral para guardias marítimo-portuarios. Inspección de cargas, control de accesos a naves, protocolos internacionales de seguridad portuaria y código PBIP.',
-    certificationNote: 'Capacitación preparatoria integral. La credencial marítimo-portuaria es otorgada mediante examen oficial ante la autoridad marítima reguladora Directemar / SPD.'
-  },
-  {
-    id: 'cctv-online',
-    name: 'CCTV ONLINE',
-    code: 'CCTV-ON-07',
-    type: 'oficio',
-    category: 'Escuela de Oficios / Seguridad Electrónica',
-    hours: '40 Horas',
-    price: 140000,
-    cuota1: 70000,
-    cuota2: 70000,
-    modality: 'Online Sincrónico',
-    description: 'Operación profesional de centrales de monitoreo y cámaras de televigilancia (CCTV), software VMS, detección de intrusiones, protocolos de comunicación con carabineros y grabación judicial.',
-    certificationNote: 'Certificación Directa OTEC PrevySeg. Se entrega Diploma y Certificado Oficial OTEC con registro SENCE y código de validación digital al completar las horas del curso.'
-  },
-  {
-    id: 'otro-oficios',
-    name: 'OTRO (ESCUELA DE OFICIOS)',
-    code: 'OFIC-ESP-08',
-    type: 'oficio',
-    category: 'Escuela de Oficios Industriales PrevySeg',
-    hours: '40 a 120 Horas',
     price: 130000,
     cuota1: 65000,
     cuota2: 65000,
-    modality: 'Presencial / Práctico en Taller',
-    description: 'Formación acelerada en oficios técnicos de alta demanda laboral: Soldadura Industrial SMAW/MIG, Conducción de Grúa Horquilla (Clase D), Gestión de Bodega y Logística, Electricidad Domiciliaria/Industrial, Paneles Solares.',
-    certificationNote: 'Certificación Directa OTEC PrevySeg. Se entrega Diploma y Certificado de Aprobación Oficial emitido por PrevySeg con acreditación SENCE, válido curricularmente para desempeñarse en empresas de todo Chile.'
+    modality: 'Presencial / Recintos Portuarios',
+    description: 'Resguardo y control de accesos en muelles, terminales marítimos y recintos portuarios bajo Código PBIP y Directemar.',
+    certificationNote: 'Acreditación oficial para faenas marítimo-portuarias ante Directemar.'
+  },
+  {
+    id: 'seg-04',
+    name: 'Formación para porteros, nocheros, rondines u otro de similar carácter',
+    code: 'OS10-PORT-04',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Formación Inicial SENCE',
+    hours: '50 Horas',
+    price: 95000,
+    cuota1: 47500,
+    cuota2: 47500,
+    modality: 'Online Asíncrono + Práctico',
+    description: 'Control de libro de novedades, rondas nocturnas perimetrales y protocolos de emergencia en condominios y empresas.',
+    certificationNote: 'Certificación OTEC PrevySeg con Reconocimiento SENCE.'
+  },
+  {
+    id: 'seg-05',
+    name: 'Perfeccionamiento de guardias de seguridad',
+    code: 'OS10-PERF-05',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Perfeccionamiento SPD',
+    hours: '36 Horas',
+    price: 90000,
+    cuota1: 45000,
+    cuota2: 45000,
+    modality: 'Semipresencial (Reentrenamiento Trienal)',
+    description: 'Reentrenamiento obligatorio cada 3 años para renovación de credencial ante la Subsecretaría de Prevención del Delito.',
+    certificationNote: 'Preparación para el examen trienal de renovación ante la SPD.'
+  },
+  {
+    id: 'seg-06',
+    name: 'Perfeccionamiento de guardia de seguridad marítimo portuario',
+    code: 'DIR-PERF-06',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Perfeccionamiento Directemar',
+    hours: '40 Horas',
+    price: 100000,
+    cuota1: 50000,
+    cuota2: 50000,
+    modality: 'Presencial / Directemar',
+    description: 'Actualización en inspección de naves, contenedores y faenas portuarias bajo normativa PBIP.',
+    certificationNote: 'Revalidación oficial ante la Autoridad Marítima Directemar.'
+  },
+  {
+    id: 'seg-07',
+    name: 'Perfeccionamiento para porteros, nocheros, rondines u otro de similar carácter',
+    code: 'OS10-PPERF-07',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Perfeccionamiento SENCE',
+    hours: '30 Horas',
+    price: 75000,
+    cuota1: 37500,
+    cuota2: 37500,
+    modality: 'Online Flexible',
+    description: 'Actualización periódica para personal de control y conserjería con foco en emergencias residenciales.',
+    certificationNote: 'Certificación Continua OTEC PrevySeg.'
+  },
+  {
+    id: 'seg-08',
+    name: 'Técnicas de operación de circuitos cerrados de televisión (CCTV codificado por SENCE)',
+    code: 'CCTV-SENCE-08',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Tecnología y Sistemas de Seguridad',
+    hours: '60 Horas',
+    price: 140000,
+    cuota1: 70000,
+    cuota2: 70000,
+    modality: 'Online Sincrónico + Software VMS',
+    description: 'Operación profesional de software VMS, cámaras domo PTZ, reconocimiento facial y trazabilidad forense para centrales de monitoreo.',
+    certificationNote: 'Certificación Oficial SENCE OTEC PrevySeg.'
+  },
+  {
+    id: 'seg-09',
+    name: 'Técnicas de operación CCTV y alarmas de seguridad privada',
+    code: 'CCTV-ALARM-09',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Tecnología y Sistemas de Seguridad',
+    hours: '65 Horas',
+    price: 150000,
+    cuota1: 75000,
+    cuota2: 75000,
+    modality: 'Semipresencial con Paneles de Alarma',
+    description: 'Integración de centrales de alarma perimetral, sensores infrarrojos y respuesta ante intrusiones.',
+    certificationNote: 'Certificación Técnica SENCE OTEC PrevySeg.'
+  },
+  {
+    id: 'seg-10',
+    name: 'Supervisor de seguridad privada',
+    code: 'SUP-SPD-10',
+    type: 'spd',
+    school: 'seguridad',
+    category: 'Tecnología y Sistemas de Seguridad',
+    hours: '120 Horas',
+    price: 180000,
+    cuota1: 90000,
+    cuota2: 90000,
+    modality: '100% Online Aula Virtual',
+    description: 'Gestión de turnos, confección de Directivas de Funcionamiento conforme a la Ley 21.659 y liderazgo operativo en terreno.',
+    certificationNote: 'Certificación de Competencias de Supervisor OTEC PrevySeg.'
+  },
+
+  // --- ESCUELA DE OFICIOS Y HABILIDADES ---
+  {
+    id: 'of-01',
+    name: 'Resolución de conflictos y manejo de situaciones difíciles',
+    code: 'OF-CONF-01',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Desarrollo de Habilidades Laborales',
+    hours: '40 Horas Online Asíncrona',
+    price: 95000,
+    cuota1: 47500,
+    cuota2: 47500,
+    modality: 'Online Asíncrona (Plataforma 24/7)',
+    description: 'Estrategias de negociación, contención emocional, mediación de controversias laborales y resolución constructiva en entornos de trabajo exigentes.',
+    certificationNote: 'Certificación Directa OTEC PrevySeg con Código SENCE.'
+  },
+  {
+    id: 'of-02',
+    name: 'Técnicas de manejo de resolución de conflictos',
+    code: 'OF-CONF-02',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Desarrollo de Habilidades Laborales',
+    hours: '8 Horas Presencial',
+    price: 55000,
+    cuota1: 27500,
+    cuota2: 27500,
+    modality: 'Presencial Intensivo en Sede',
+    description: 'Taller práctico con dinámicas de rol y simulación para el manejo asertivo del estrés y control de crisis interpersonal.',
+    certificationNote: 'Certificado de Taller Práctico Intensivo OTEC PrevySeg.'
+  },
+  {
+    id: 'of-03',
+    name: 'Manejo y uso de plaguicidas agrícolas',
+    code: 'OF-AGRO-03',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área Agropecuaria',
+    hours: '40 Horas',
+    price: 120000,
+    cuota1: 60000,
+    cuota2: 60000,
+    modality: 'Semipresencial (Teoría + Campo)',
+    description: 'Protocolos de dosificación segura, equipos de protección EPP, calibración de pulverizadores y primeros auxilios ante intoxicaciones conforme a norma SAG.',
+    certificationNote: 'Certificación Preparatoria para Credencial de Aplicador SAG.'
+  },
+  {
+    id: 'of-04',
+    name: 'Operaciones básicas de carga, descarga y protocolos de seguridad en recintos portuarios',
+    code: 'OF-PORT-04',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área Logística y Operaciones',
+    hours: '50 Horas',
+    price: 140000,
+    cuota1: 70000,
+    cuota2: 70000,
+    modality: 'Semipresencial con Terreno Portuario',
+    description: 'Técnicas de estiba y desestiba, manejo de cargas críticas en muelles, señalética de maniobras y uso seguro de eslingas en recintos portuarios.',
+    certificationNote: 'Certificación Laboral OTEC PrevySeg con Respaldo SENCE.'
+  },
+  {
+    id: 'of-05',
+    name: 'Procedimientos de higiene, seguridad y prevención de riesgos en procesos de manipulación de alimentos',
+    code: 'OF-ALIM-05',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área Alimentación',
+    hours: '40 Horas',
+    price: 85000,
+    cuota1: 42500,
+    cuota2: 42500,
+    modality: 'Online + Taller Higiénico',
+    description: 'Buenas Prácticas de Manufactura (BPM), control de puntos críticos (HACCP), inocuidad y desinfección conforme a la Seremi de Salud.',
+    certificationNote: 'Certificación Oficial para Carnet de Manipulador de Alimentos.'
+  },
+  {
+    id: 'of-06',
+    name: 'Técnicas de depilación con cera miel',
+    code: 'OF-EST-06',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área Estética y Servicios',
+    hours: '30 Horas Prácticas',
+    price: 90000,
+    cuota1: 45000,
+    cuota2: 45000,
+    modality: 'Presencial en Taller Estético',
+    description: 'Anatomía folicular, temperatura adecuada de cera miel natural, extracción sin dolor, asepsia profesional y cuidados post-depilatorios.',
+    certificationNote: 'Diploma de Competencia Práctica OTEC PrevySeg.'
+  },
+  {
+    id: 'of-07',
+    name: 'Técnicas de manicure',
+    code: 'OF-EST-07',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área Estética y Servicios',
+    hours: '35 Horas Prácticas',
+    price: 95000,
+    cuota1: 47500,
+    cuota2: 47500,
+    modality: 'Presencial en Taller Estético',
+    description: 'Manicure rusa y tradicional, limado anatómico, esmaltado semipermanente UV/LED, cuidado de la uña natural y diseños en tendencia.',
+    certificationNote: 'Diploma de Competencia Práctica OTEC PrevySeg.'
+  },
+  {
+    id: 'of-08',
+    name: 'Técnicas de maquillaje carnaval',
+    code: 'OF-EST-08',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área Estética y Servicios',
+    hours: '30 Horas Prácticas',
+    price: 90000,
+    cuota1: 45000,
+    cuota2: 45000,
+    modality: 'Presencial Especializado',
+    description: 'Técnicas de maquillaje artístico resistente a sudor y clima, aplicación de pedrería, glitter y pigmentos para bailarines de carnavales.',
+    certificationNote: 'Diploma de Competencia Práctica OTEC PrevySeg.'
+  },
+  {
+    id: 'of-09',
+    name: 'Cuidado adulto mayor y personas postradas',
+    code: 'OF-SALUD-09',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área de Salud',
+    hours: '60 Horas Teórico-Prácticas',
+    price: 130000,
+    cuota1: 65000,
+    cuota2: 65000,
+    modality: 'Semipresencial con Prácticas Asistidas',
+    description: 'Movilización de personas postradas, prevención de úlceras por decúbito, aseo en cama, control de signos vitales y administración asistida de medicamentos.',
+    certificationNote: 'Certificación Asistencial OTEC PrevySeg con Respaldo SENCE.'
+  },
+  {
+    id: 'of-10',
+    name: 'Cajero bancario, administración de condominios',
+    code: 'OF-ADM-10',
+    type: 'oficio',
+    school: 'oficios',
+    category: 'Área de Administración',
+    hours: '50 Horas',
+    price: 110000,
+    cuota1: 55000,
+    cuota2: 55000,
+    modality: 'Online Sincrónico + Simulador',
+    description: 'Detección de billetes falsos, cuadratura diaria de caja, gestión de gastos comunes y administración bajo la Nueva Ley de Copropiedad Inmobiliaria.',
+    certificationNote: 'Certificación OTEC PrevySeg de Cajero y Administrador.'
   }
 ];
 
@@ -172,14 +366,89 @@ export const OFFICIAL_DOCUMENTS = [
   { id: 10, name: 'CONTRATO DE TRABAJO Y SEGURO DE VIDA (SOLO EN CASO DE EMPRESA)', detail: 'Requerido exclusivamente si la postulación es financiada por empresa.', requiredFor: 'empresa' }
 ];
 
-const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
-  // 1. Selector de Curso
-  const initialCourse = OFFICIAL_COURSES.find(c => 
-    defaultCourseName && (c.name.toLowerCase().includes(defaultCourseName.toLowerCase()) || defaultCourseName.toLowerCase().includes(c.name.toLowerCase()))
-  ) || OFFICIAL_COURSES[0];
+// Funciones de Normalización y Búsqueda Robusta de Cursos
+export const normalizeCourseName = (str) => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+};
 
-  const [selectedCourseId, setSelectedCourseId] = useState(initialCourse.id);
-  const [selectedOficioDetail, setSelectedOficioDetail] = useState('Técnicas de Soldadura Industrial SMAW / MIG');
+export const findMatchingCourse = (query) => {
+  if (!query) return OFFICIAL_COURSES[0];
+  
+  // 1. Por ID directo
+  const byId = OFFICIAL_COURSES.find(c => c.id === query);
+  if (byId) return byId;
+
+  const targetNorm = normalizeCourseName(query);
+  if (!targetNorm) return OFFICIAL_COURSES[0];
+
+  // 2. Por coincidencia exacta normalizada
+  const exactNorm = OFFICIAL_COURSES.find(c => normalizeCourseName(c.name) === targetNorm);
+  if (exactNorm) return exactNorm;
+
+  // 3. Por subcadena
+  const subMatch = OFFICIAL_COURSES.find(c => {
+    const cNorm = normalizeCourseName(c.name);
+    return cNorm.includes(targetNorm) || targetNorm.includes(cNorm);
+  });
+  if (subMatch) return subMatch;
+
+  // 4. Por palabras clave relevantes (longitud >= 4 caracteres)
+  const words = query
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .split(/[^a-z0-9]+/)
+    .filter(w => w.length >= 4);
+
+  if (words.length > 0) {
+    let bestMatch = null;
+    let maxMatches = 0;
+    for (const c of OFFICIAL_COURSES) {
+      const cLower = c.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const matchCount = words.filter(w => cLower.includes(w)).length;
+      if (matchCount > maxMatches) {
+        maxMatches = matchCount;
+        bestMatch = c;
+      }
+    }
+    if (bestMatch && maxMatches > 0) {
+      return bestMatch;
+    }
+  }
+
+  return OFFICIAL_COURSES[0];
+};
+
+const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
+  // 1. Selector de Curso con sincronización reactiva
+  const [selectedCourseId, setSelectedCourseId] = useState(() => {
+    return findMatchingCourse(defaultCourseName).id;
+  });
+  const [isChangingCourse, setIsChangingCourse] = useState(false);
+
+  // Sincronizar reactivamente cuando defaultCourseName cambie desde fuera
+  useEffect(() => {
+    if (defaultCourseName) {
+      const matched = findMatchingCourse(defaultCourseName);
+      if (matched) {
+        setSelectedCourseId(matched.id);
+        setIsChangingCourse(false);
+      }
+    }
+  }, [defaultCourseName]);
+
+  // Obtener curso actual
+  const currentCourse = OFFICIAL_COURSES.find(c => c.id === selectedCourseId) || OFFICIAL_COURSES[0];
+  const isSpdCourse = currentCourse.school === 'seguridad';
+  const courseFullName = currentCourse.name;
 
   // 2. Datos del Alumno (Alumno Dependiente)
   const [formData, setFormData] = useState({
@@ -213,10 +482,8 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
   const [paymentCompleted, setPaymentCompleted] = useState(false);
   const [enrollmentCode, setEnrollmentCode] = useState('');
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
-
-  // Obtener curso actual
-  const currentCourse = OFFICIAL_COURSES.find(c => c.id === selectedCourseId) || OFFICIAL_COURSES[0];
-  const isSpdCourse = currentCourse.type === 'spd';
+  const [singleCourseError, setSingleCourseError] = useState(null);
+  const [registeredSchool, setRegisteredSchool] = useState('seguridad');
   
   // Cálculo de montos
   const totalAmount = currentCourse.price;
@@ -228,6 +495,7 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'rut') {
+      setSingleCourseError(null);
       setFormData(prev => ({ ...prev, rut: formatRut(value) }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -237,6 +505,7 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
   const handleProcessEnrollmentAndPayment = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSingleCourseError(null);
 
     const generatedCode = `PS-${Math.floor(100000 + Math.random() * 900000)}`;
     setEnrollmentCode(generatedCode);
@@ -246,23 +515,44 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
         const cleanR = cleanRut(formData.rut);
         const formattedRut = formatRut(cleanR) || formData.rut.trim();
 
-        // 1. Obtener curso id de la base de datos
-        const { data: matchedCourses } = await supabase
-          .from('courses')
-          .select('id')
-          .limit(1);
-        const cId = matchedCourses?.[0]?.id || null;
+        // 1. REGLA ESTRICTA: 1 ESTUDIANTE = 1 SOLO CURSO ACTIVO
+        // Comprobar si este RUT ya está registrado con curso confirmado en EscuelaSeguridad o EscuelaOficio
+        const existingEnrollment = await checkStudentSingleCourse(formattedRut);
+        if (existingEnrollment?.enrolled && existingEnrollment.courseId !== currentCourse.id) {
+          setSingleCourseError({
+            rut: formattedRut,
+            courseName: existingEnrollment.courseName,
+            schoolName: existingEnrollment.schoolName
+          });
+          setIsSubmitting(false);
+          return;
+        }
 
-        // 2. Verificar si el usuario ya existe
+        // 2. Obtener curso id de la base de datos coincidente por título
+        let cId = null;
+        try {
+          const { data: matchedCourses } = await supabase
+            .from('courses')
+            .select('id')
+            .ilike('titulo', `%${currentCourse.name.slice(0, 20)}%`)
+            .limit(1);
+          cId = matchedCourses?.[0]?.id || null;
+        } catch (cErr) {
+          console.warn('Could not fetch exact course id:', cErr);
+        }
+
+        // 3. Verificar si el usuario ya existe en public.users
         const { data: existingUser } = await supabase
           .from('users')
           .select('id')
           .eq('rut', formattedRut)
           .maybeSingle();
 
+        let userIdToUse = existingUser?.id;
+
         if (!existingUser) {
           // Crear usuario nuevo con contraseña encriptada (Bcrypt) mediante RPC
-          await adminCreateUser({
+          const createdRes = await adminCreateUser({
             rut: formattedRut,
             nombre: formData.nombre.trim() || 'Postulante PrevySeg',
             email: formData.email.trim() || `${cleanR}@prevyseg.cl`,
@@ -271,24 +561,59 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
             password: cleanR, // Clave inicial por defecto: RUT limpio (encriptada con Bcrypt)
             courseId: cId,
           });
-        } else if (cId) {
-          // Si el usuario ya existía, registrar su matrícula
+          userIdToUse = createdRes?.id;
+        }
+
+        // 4. Determinar escuela de destino (oficios o seguridad)
+        const targetSchool = currentCourse.school === 'oficios' ? 'oficios' : 'seguridad';
+        setRegisteredSchool(targetSchool);
+
+        // 5. Insertar o actualizar en la tabla especializada de la escuela (escuela_seguridad o escuela_oficio)
+        if (userIdToUse) {
+          await enrollStudentInSchool({
+            userId: userIdToUse,
+            rut: formattedRut,
+            nombre: formData.nombre.trim() || 'Postulante PrevySeg',
+            email: formData.email.trim() || `${cleanR}@prevyseg.cl`,
+            telefono: formData.telefono.trim(),
+            courseId: currentCourse.id,
+            courseName: currentCourse.name,
+            modalidad: currentCourse.modality,
+            horas: currentCourse.hours,
+            totalAmount,
+            cuota50: amountToPayNow,
+            school: targetSchool
+          });
+        }
+
+        // 6. Registrar en public.enrollments para mantener sincronizada el aula LMS
+        if (userIdToUse && cId) {
           await supabase
             .from('enrollments')
-            .insert({
-              user_id: existingUser.id,
+            .upsert({
+              user_id: userIdToUse,
               course_id: cId,
               estado: 'PENDIENTE',
               progreso: 0,
               abono_inicial: amountToPayNow,
               documentos_validados: false,
-            })
+            }, { onConflict: 'user_id,course_id' })
             .select()
             .maybeSingle();
         }
       }
     } catch (err) {
       console.warn('Enrollment db persist notice:', err);
+      // Si el error fue por restricción de curso único en base de datos
+      if (err.message && (err.message.includes('matrícula activa') || err.message.includes('solo puede pertenecer a un curso'))) {
+        setSingleCourseError({
+          rut: formData.rut,
+          courseName: 'Curso Previamente Asignado',
+          schoolName: 'PrevySeg'
+        });
+        setIsSubmitting(false);
+        return;
+      }
     }
 
     setIsSubmitting(false);
@@ -302,15 +627,13 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
 
   // Construir mensaje directo a WhatsApp Oficial de PrevySeg
   const whatsappNumber = "56982312128"; // Contacto oficial de Admisión
-  const courseFullName = selectedCourseId === 'otro-oficios' 
-    ? `${currentCourse.name} (${selectedOficioDetail})` 
-    : currentCourse.name;
 
   const whatsappMessage = encodeURIComponent(
     `*📋 NUEVA FICHA DE INSCRIPCIÓN - PREVYSEG OTEC*\n` +
     `*N° Solicitud:* ${enrollmentCode || 'PS-DIGITAL'}\n` +
     `----------------------------------------\n` +
     `*🎓 CURSO:* ${courseFullName}\n` +
+    `*Escuela:* ${currentCourse.school === 'seguridad' ? 'Escuela de Seguridad Privada' : 'Escuela de Oficios y Habilidades'}\n` +
     `*Modalidad:* ${currentCourse.modality} (${currentCourse.hours})\n` +
     `*Tipo Certificación:* ${isSpdCourse ? 'Capacitación Preparatoria Examen SPD' : 'Certificación Directa OTEC PrevySeg'}\n\n` +
     `*👤 DATOS DEL ALUMNO:*\n` +
@@ -362,7 +685,7 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
               </p>
             </div>
 
-            {/* Resumen del Pago / Abono */}
+            {/* Resumen del Pago / Abono & Escuela Asignada */}
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 max-w-lg mx-auto text-left text-xs sm:text-sm space-y-3 font-mono text-slate-800 shadow-sm">
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">Alumno:</span>
@@ -371,6 +694,12 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">RUT:</span>
                 <span className="font-bold text-slate-900">{formData.rut || 'No informado'}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-200 pb-2">
+                <span className="text-slate-500">Escuela Asignada:</span>
+                <span className="font-black text-slate-900">
+                  {registeredSchool === 'seguridad' ? '🛡️ Escuela de Seguridad (escuela_seguridad)' : '⚙️ Escuela de Oficios (escuela_oficio)'}
+                </span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">Abono Realizado (Cuota N°1):</span>
@@ -488,162 +817,165 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
             </div>
           </div>
 
-          {/* ================= 1.- SELECCIÓN DEL CURSO ================= */}
-          <div className="space-y-4">
+          {/* ================= 1.- CURSO SELECCIONADO PARA POSTULACIÓN ================= */}
+          <div className="space-y-3">
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
               <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded-xl bg-sky-50 text-[#0284c7] flex items-center justify-center text-xs font-black border border-sky-200">
+                <span className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black border ${
+                  currentCourse.school === 'seguridad'
+                    ? 'bg-sky-50 text-[#0284c7] border-sky-200'
+                    : 'bg-emerald-50 text-[#00A896] border-emerald-200'
+                }`}>
                   1
                 </span>
-                <span>1.- CURSO / PROGRAMA DE CAPACITACIÓN</span>
+                <span>1.- CURSO SELECCIONADO PARA POSTULACIÓN</span>
               </h2>
-              <span className="text-xs text-slate-500 font-mono">Seleccione el programa a cursar</span>
-            </div>
 
-            {/* Grid con los 8 Cursos de la Ficha física */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {OFFICIAL_COURSES.map((c) => {
-                const isSelected = selectedCourseId === c.id;
-                return (
-                  <motion.div
-                    key={c.id}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedCourseId(c.id)}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 relative ${
-                      isSelected
-                        ? 'bg-sky-50/80 border-[#0284c7] shadow-lg shadow-sky-500/10 ring-2 ring-[#0284c7]/40'
-                        : 'bg-slate-50 border-slate-200 hover:border-sky-300 hover:bg-white'
-                    }`}
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider ${
-                          c.type === 'spd' ? 'bg-sky-100 text-sky-800 border border-sky-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
-                        }`}>
-                          {c.type === 'spd' ? 'Seguridad SPD' : 'Escuela Oficios'}
-                        </span>
-                        {isSelected && (
-                          <div className="w-5 h-5 rounded-full bg-[#0284c7] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                            <Check size={12} className="stroke-[3]" />
-                          </div>
-                        )}
-                      </div>
-
-                      <h3 className="text-xs font-black text-slate-900 leading-snug">
-                        {c.name}
-                      </h3>
-
-                      <p className="text-[11px] text-slate-500 leading-tight">
-                        {c.modality} • {c.hours}
-                      </p>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-200 flex flex-col gap-1 text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-500 text-[10px]">Arancel Total:</span>
-                        <span className="font-bold text-slate-900 font-mono">${c.price.toLocaleString('es-CL')}</span>
-                      </div>
-                      <div className="flex justify-between items-center bg-sky-50 px-2 py-1 rounded-lg border border-sky-200">
-                        <span className="text-[#0284c7] text-[10px] font-bold">Abono 50%:</span>
-                        <span className="font-black text-[#0284c7] font-mono">${c.cuota1.toLocaleString('es-CL')}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Sub-selector si elige OTRO (Escuela de Oficios) */}
-            {selectedCourseId === 'otro-oficios' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2 text-xs"
+              <button
+                type="button"
+                onClick={() => setIsChangingCourse(!isChangingCourse)}
+                className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
               >
-                <label className="font-bold text-amber-900 block flex items-center gap-1.5">
-                  <Sparkles size={14} className="text-amber-600" />
-                  <span>Especifique el Programa Técnico de la Escuela de Oficios (30 Días):</span>
-                </label>
-                <select
-                  value={selectedOficioDetail}
-                  onChange={(e) => setSelectedOficioDetail(e.target.value)}
-                  className="w-full bg-white border border-amber-300 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                >
-                  <option value="Técnicas de Soldadura Industrial SMAW / MIG">Técnicas de Soldadura Industrial SMAW / MIG</option>
-                  <option value="Operación y Conducción Segura de Grúa Horquilla (Clase D)">Operación y Conducción Segura de Grúa Horquilla (Clase D)</option>
-                  <option value="Técnicas de Operaciones Logísticas, Bodega y WMS">Técnicas de Operaciones Logísticas, Bodega y WMS</option>
-                  <option value="Electricidad Básica e Instalaciones Domiciliarias (SEC D)">Electricidad Básica e Instalaciones Domiciliarias (SEC D)</option>
-                  <option value="Instalación y Mantenimiento de Paneles Solares Fotovoltaicos">Instalación y Mantenimiento de Paneles Solares Fotovoltaicos</option>
-                  <option value="Mantenimiento Mecánico Básico Industrial">Mantenimiento Mecánico Básico Industrial</option>
-                </select>
-              </motion.div>
-            )}
-
-            {/* ================= APARTADO EXPLICATIVO: DESCRIPCIÓN + DISTINCIÓN SPD VS OFICIOS ================= */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 border border-slate-200 shadow-md space-y-4">
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
-                <div className="flex items-center gap-2">
-                  <Info size={18} className="text-[#0284c7]" />
-                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider">
-                    Detalle del Curso Seleccionado: <span className="text-[#0284c7]">{courseFullName}</span>
-                  </h4>
-                </div>
-                <span className="text-xs font-mono text-slate-500">
-                  {currentCourse.hours} • {currentCourse.modality}
-                </span>
-              </div>
-
-              {/* 1. Descripción de lo que se hace en el curso */}
-              <div className="space-y-1 text-xs text-slate-600">
-                <strong className="text-slate-900 block font-bold">¿Qué se hace y qué aprenderás en este curso?</strong>
-                <p className="leading-relaxed text-slate-600">
-                  {currentCourse.description}
-                </p>
-              </div>
-
-              {/* 2. Cuadro Normativo de Certificación (Distinción Guardia SPD vs Oficios) */}
-              <AnimatePresence mode="wait">
-                {isSpdCourse ? (
-                  <motion.div
-                    key="spd-card"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="p-4 rounded-2xl bg-sky-50 border-2 border-sky-300 space-y-2 text-xs"
-                  >
-                    <div className="flex items-center gap-2 text-sky-900 font-extrabold text-xs sm:text-sm">
-                      <ShieldCheck size={18} className="text-[#0284c7] flex-shrink-0" />
-                      <span>MODALIDAD DE ACREDITACIÓN: EXAMEN OFICIAL ANTE LA SUBSECRETARÍA DE PREVENCIÓN DEL DELITO (SPD)</span>
-                    </div>
-                    <p className="text-slate-700 leading-relaxed">
-                      En <strong className="text-slate-900">PrevySeg</strong> te entregamos la <strong>preparación y capacitación integral</strong> (teórica, táctica y legal) requerida por el reglamento.
-                      <br />
-                      <strong className="text-amber-800">ATENCIÓN:</strong> Para ser oficialmente Guardia de Seguridad acreditado, la normativa exige la <u>acreditación externa por parte de la Subsecretaría de Prevención del Delito (SPD)</u>, en la cual se debe rendir y aprobar un <strong>examen evaluativo presencial</strong> ante dicha entidad reguladora. En PrevySeg te preparamos al 100% para aprobar tu examen con honores.
-                    </p>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="oficio-card"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-300 space-y-2 text-xs"
-                  >
-                    <div className="flex items-center gap-2 text-emerald-900 font-extrabold text-xs sm:text-sm">
-                      <Award size={18} className="text-emerald-600 flex-shrink-0" />
-                      <span>MODALIDAD DE ACREDITACIÓN: ENTREGA DIRECTA DE DIPLOMA Y CERTIFICADO PREVYSEG OTEC</span>
-                    </div>
-                    <p className="text-slate-700 leading-relaxed">
-                      A diferencia de los cursos de guardia que requieren examen ante la SPD, en los programas de la <strong className="text-slate-900">Escuela de Oficios</strong> <u>sí se entregan formalmente los Diplomas y Certificados de Aprobación Oficial emitidos directamente por PrevySeg OTEC</u>, con registro SENCE y código de validación digital para presentarlo en cualquier empresa o faena del país.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
+                <span>{isChangingCourse ? 'Cerrar selector' : 'Cambiar de curso'}</span>
+                <ChevronDown size={14} className={`transition-transform duration-200 ${isChangingCourse ? 'rotate-180' : ''}`} />
+              </button>
             </div>
 
+            {/* Selector desplegable alternativo (Solo si el usuario presiona 'Cambiar de curso') */}
+            <AnimatePresence>
+              {isChangingCourse && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-4 rounded-2xl bg-slate-100 border border-slate-300 space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700">
+                      Selecciona otro programa de capacitación si deseas cambiar tu postulación:
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-mono">20 Programas Oficiales</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <span className="text-[10px] font-black text-sky-800 uppercase tracking-wider block mb-1">
+                        🛡️ Escuela de Seguridad Privada (SPD / OS-10)
+                      </span>
+                      <select
+                        value={selectedCourseId}
+                        onChange={(e) => {
+                          setSelectedCourseId(e.target.value);
+                          setIsChangingCourse(false);
+                        }}
+                        className="w-full bg-white border border-sky-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      >
+                        {OFFICIAL_COURSES.filter(c => c.school === 'seguridad').map(c => (
+                          <option key={c.id} value={c.id}>
+                            {c.name} — ${c.price.toLocaleString('es-CL')}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wider block mb-1">
+                        ⚙️ Escuela de Oficios y Habilidades (SENCE)
+                      </span>
+                      <select
+                        value={selectedCourseId}
+                        onChange={(e) => {
+                          setSelectedCourseId(e.target.value);
+                          setIsChangingCourse(false);
+                        }}
+                        className="w-full bg-white border border-emerald-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      >
+                        {OFFICIAL_COURSES.filter(c => c.school === 'oficios').map(c => (
+                          <option key={c.id} value={c.id}>
+                            {c.name} — ${c.price.toLocaleString('es-CL')}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Tarjeta Destacada del Curso Seleccionado (Limpia y Compacta) */}
+            <div className={`p-5 sm:p-6 rounded-2xl border transition-all ${
+              currentCourse.school === 'seguridad'
+                ? 'bg-gradient-to-br from-sky-50/80 via-white to-blue-50/40 border-sky-300/90 shadow-lg shadow-sky-500/5'
+                : 'bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/40 border-emerald-300/90 shadow-lg shadow-emerald-500/5'
+            }`}>
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                <div className="space-y-2 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider ${
+                      currentCourse.school === 'seguridad'
+                        ? 'bg-[#071626] text-[#00C4D8] border border-[#0A7D8C]/50'
+                        : 'bg-[#071626] text-[#00FFE0] border border-[#00A896]/50'
+                    }`}>
+                      {currentCourse.school === 'seguridad' ? '🛡️ Escuela de Seguridad Privada' : '⚙️ Escuela de Oficios y SENCE'}
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 px-2.5 py-0.5 rounded-md border border-slate-200">
+                      {currentCourse.category}
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 px-2.5 py-0.5 rounded-md border border-slate-200">
+                      {currentCourse.modality} • {currentCourse.hours}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug">
+                    {currentCourse.name}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {currentCourse.description}
+                  </p>
+
+                  {currentCourse.certificationNote && (
+                    <div className="text-[11px] font-semibold text-slate-600 flex items-center gap-1.5 pt-1">
+                      <Award size={14} className={currentCourse.school === 'seguridad' ? 'text-[#0284c7]' : 'text-[#00A896]'} />
+                      <span>{currentCourse.certificationNote}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Arancel Oficial Total y Abono 50% */}
+                <div className="flex-shrink-0 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm min-w-[220px]">
+                  <div className="text-left sm:text-right">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Arancel Oficial Total:</span>
+                    <span className="text-lg sm:text-xl font-black text-slate-900 font-mono">
+                      ${currentCourse.price.toLocaleString('es-CL')} CLP
+                    </span>
+                  </div>
+                  <div className={`px-3.5 py-1.5 rounded-xl border font-mono text-xs font-black flex items-center gap-1.5 ${
+                    currentCourse.school === 'seguridad'
+                      ? 'bg-sky-50 text-[#0284c7] border-sky-200'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  }`}>
+                    <span className="text-[10px] font-bold uppercase">Abono 50%:</span>
+                    <span>${currentCourse.cuota1.toLocaleString('es-CL')} CLP</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cuadro Normativo Acreditación */}
+              <div className="mt-4 pt-3 border-t border-slate-200">
+                {isSpdCourse ? (
+                  <div className="flex items-start gap-2 text-[11px] text-sky-900 bg-sky-50/70 p-2.5 rounded-xl border border-sky-200">
+                    <ShieldCheck size={16} className="text-[#0284c7] flex-shrink-0 mt-0.5" />
+                    <span><strong>Acreditación SPD:</strong> PrevySeg imparte la instrucción preparatoria completa. La credencial oficial SPD es otorgada tras rendir el examen reglamentario ante la Autoridad Fiscalizadora.</span>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-2 text-[11px] text-emerald-900 bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200">
+                    <Award size={16} className="text-emerald-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>Certificación Directa PrevySeg OTEC:</strong> Incluye Diploma Oficial con código de verificación SENCE y validación curricular nacional bajo Norma NCh 2728:2015.</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* ================= 2.- ALUMNO DEPENDIENTE (DATOS PERSONALES) ================= */}
@@ -690,6 +1022,22 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]"
                 />
               </div>
+
+              {/* Alerta si el estudiante ya pertenece a un curso activo */}
+              {singleCourseError && (
+                <div className="sm:col-span-2 lg:col-span-3 p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-xs text-amber-950 space-y-2 animate-pulse">
+                  <div className="flex items-center gap-2 font-black text-amber-900 text-sm">
+                    <BadgeAlert size={20} className="text-amber-600 flex-shrink-0" />
+                    <span>ALUMNO YA MATRICULADO (REGLA INSTITUCIONAL: 1 CURSO POR ESTUDIANTE)</span>
+                  </div>
+                  <p className="leading-relaxed">
+                    El RUT <strong>{singleCourseError.rut}</strong> ya cuenta con una matrícula activa en el curso: <strong className="text-slate-900 underline">{singleCourseError.courseName}</strong> ({singleCourseError.schoolName}).
+                  </p>
+                  <p className="text-slate-600 text-[11px]">
+                    En PrevySeg cada estudiante pertenece a un único curso a la vez para asegurar una formación rigurosa y su certificación oficial. Puedes acceder directamente a tu aula virtual para continuar tus clases o contactar a coordinación académica si requieres un cambio de programa.
+                  </p>
+                </div>
+              )}
 
               {/* Fecha de Nacimiento */}
               <div className="space-y-1.5">

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="100%" height="100%">
+  <defs>
+    <!-- Paleta del Tríptico Oficial de Oficios: Deep Navy / Petrol Teal / Bright Aqua -->
+    <linearGradient id="tradeNavyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#0B2032" />
+      <stop offset="50%" stopColor="#071626" />
+      <stop offset="100%" stopColor="#040D18" />
+    </linearGradient>
+    <linearGradient id="tradeTealGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#00C4D8" />
+      <stop offset="50%" stopColor="#00A896" />
+      <stop offset="100%" stopColor="#0A7D8C" />
+    </linearGradient>
+    <linearGradient id="tradeAqua" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#00FFE0" />
+      <stop offset="100%" stopColor="#00A896" />
+    </linearGradient>
+  </defs>
+
+  <!-- ISOTIPO: ENGRANAJE Y HERRAMIENTAS DE OFICIOS -->
+  <g transform="translate(10, 10)">
+    <!-- Anillo exterior técnico -->
+    <circle cx="70" cy="70" r="66" stroke="url(#tradeTealGrad)" stroke-width="2.5" stroke-dasharray="5 3" opacity="0.9" />
+    <circle cx="70" cy="70" r="60" stroke="#ffffff" stroke-width="0.8" opacity="0.25" />
+    
+    <!-- Corona de Engranaje Técnico -->
+    <path d="
+      M64 8 H76 L78 18 C82 19 86 21 90 23 L99 17 L108 26 L101 35 C103 39 105 43 107 47 L117 49 V61 L107 63 C105 67 103 71 101 75 L108 84 L99 93 L90 87 C86 89 82 91 78 92 L76 102 H64 L62 92 C58 91 54 89 50 87 L41 93 L32 84 L39 75 C37 71 35 67 33 63 L23 61 V49 L33 47 C35 43 37 39 39 35 L32 26 L41 17 L50 23 C54 21 58 19 62 18 Z
+    " 
+    transform="scale(1.2) translate(-14, -10)"
+    fill="url(#tradeNavyGrad)" stroke="url(#tradeTealGrad)" stroke-width="3" stroke-linejoin="round"/>
+    
+    <!-- Barras Diagonales Geométricas (Folleto) -->
+    <g opacity="0.45">
+      <path d="M50 32 L58 24 L96 62 L88 70 Z" fill="#00C4D8" />
+      <path d="M42 46 L50 38 L104 92 L96 100 Z" fill="#00A896" />
+    </g>
+
+    <!-- Centro metálico / taller -->
+    <circle cx="70" cy="70" r="38" fill="url(#tradeNavyGrad)" stroke="#00C4D8" stroke-width="2"/>
+    <circle cx="70" cy="70" r="32" fill="#071626" stroke="#00A896" stroke-width="1.2"/>
+
+    <!-- Íconos de oficios técnicos -->
+    <g transform="translate(70, 70)">
+      <circle cx="0" cy="0" r="16" fill="#00A896" opacity="0.2"/>
+      <path d="M-3 -18 L7 -2 L0 -2 L5 16 L-7 1 L0 1 Z" fill="url(#tradeAqua)" stroke="#ffffff" stroke-width="1"/>
+      <path d="M-15 -10 L-11 -6 L-6 -11 L-10 -15 Z M-6 -11 L10 5 L7 8 L-9 -8 Z" fill="#E0F2FE"/>
+      <path d="M-10 6 C-10 1 10 1 10 6 H13 V9 H-13 V6 Z" fill="url(#tradeTealGrad)" stroke="#ffffff" stroke-width="0.8"/>
+    </g>
+
+    <!-- Cinta SENCE • NCH 2728 -->
+    <path d="M46 118 L70 124 L94 118 L91 125 L70 129 L49 125 Z" fill="url(#tradeTealGrad)" />
+    <text x="70" y="123" text-anchor="middle" fill="#FFFFFF" font-size="5" font-weight="900" font-family="Arial, sans-serif" letter-spacing="0.8">
+      SENCE • NCH 2728
+    </text>
+  </g>
+
+  <!-- LOGOTIPO / TEXTO OFICIAL (ESTILO EXACTO AL TRÍPTICO DE OFICIOS) -->
+  <g transform="translate(160, 32)">
+    <!-- Logo PrevySeg del Folleto -->
+    <g transform="translate(0, 0)">
+      <text x="0" y="24" fill="#071626" font-size="28" font-weight="900" font-family="Arial, Helvetica, sans-serif" letter-spacing="-0.5">
+        Prevy
+      </text>
+      <text x="78" y="24" fill="#00A896" font-size="28" font-weight="300" font-family="Arial, Helvetica, sans-serif">
+        Seg
+      </text>
+      <!-- Subrayado de arco -->
+      <path d="M78 28 C95 31 115 31 128 26" stroke="#00A896" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="132" cy="25" r="2.2" fill="#00A896"/>
+
+      <!-- Badge Calidad SGS NCh 2728 -->
+      <rect x="145" y="8" width="145" height="18" rx="4" fill="#00A896" fill-opacity="0.12" stroke="#00A896" stroke-opacity="0.4"/>
+      <text x="217" y="20" text-anchor="middle" fill="#008B8B" font-size="9" font-weight="800" font-family="Arial, sans-serif" letter-spacing="0.8">NORMA NCh 2728 SGS</text>
+    </g>
+
+    <!-- Título Principal (Exacto al Folleto de Oficios) -->
+    <text x="0" y="62" fill="#071626" font-size="21" font-weight="900" font-family="Arial, Helvetica, sans-serif" letter-spacing="-0.5">
+      OFICIOS Y CURSOS SENCE
+    </text>
+
+    <!-- Bajada del Tríptico -->
+    <text x="0" y="84" fill="#008B8B" font-size="11" font-weight="700" font-family="Arial, sans-serif">
+      Capacitación en Oficios y Competencias Laborales
+    </text>
+    <text x="0" y="100" fill="#64748b" font-size="10" font-weight="500" font-family="Arial, sans-serif">
+      Habilidades Técnicas y Laborales para la Inserción Laboral • Registro SENCE
+    </text>
+  </g>
+</svg>

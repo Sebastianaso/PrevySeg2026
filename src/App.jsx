@@ -3,7 +3,6 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import AboutUs from './components/AboutUs';
 import Services from './components/Services';
-import AdmissionSection from './components/AdmissionSection';
 import ExecutionSection from './components/ExecutionSection';
 import StatsSection from './components/StatsSection';
 import ExperiencesSection from './components/ExperiencesSection';
@@ -19,8 +18,10 @@ import {
   ArticleModal, 
   EnrollmentModal 
 } from './components/Modals';
+import SchoolDetailModal from './components/SchoolDetailModal';
 
 function App() {
+  const [activeSchool, setActiveSchool] = useState('seguridad'); // 'seguridad' | 'oficios'
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
@@ -28,6 +29,7 @@ function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedSchoolModal, setSelectedSchoolModal] = useState(null); // 'seguridad' | 'oficios' | null
   
   // Estado de usuario autenticado en LMS y pestaña inicial
   const [currentLMSUser, setCurrentLMSUser] = useState(null);
@@ -172,34 +174,43 @@ function App() {
         onOpenPlatform={() => handleOpenPlatform('login')}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenEnrollment={() => handleOpenEnrollmentWithCourse('')}
+        onOpenSchoolDetail={(school) => setSelectedSchoolModal(school)}
+        activeSchool={activeSchool}
+        onSwitchSchool={setActiveSchool}
       />
 
       {/* Main Page Layout */}
       <main className="flex-grow relative z-10">
         
-        {/* Section #inicio (Hero) */}
+        {/* Section #inicio (Hero con Switcher Intercambiable de Escuela) */}
         <Hero 
           onOpenContact={() => handleOpenContactWithCourse('')}
           onOpenEnrollment={() => handleOpenEnrollmentWithCourse('')}
+          onOpenSchoolDetail={(school) => setSelectedSchoolModal(school)}
+          activeSchool={activeSchool}
+          onSwitchSchool={setActiveSchool}
         />
 
-        {/* Section #quienes-somos (About Us: Misión, Visión, Valores) */}
-        <AboutUs />
+        {/* Section #quienes-somos (About Us: Misión Oficial PrevySeg, Visión, Valores) */}
+        <AboutUs 
+          onSelectSchool={(school) => {
+            setActiveSchool(school);
+            setSelectedSchoolModal(school);
+          }}
+        />
 
-        {/* Section #servicios (Programas de Formación, Cursos & Tramos Franquicia SENCE) */}
+        {/* Section #servicios (Catálogo de Cursos de la Escuela Activa con Apertura de Ficha al Inscribirse) */}
         <Services 
           onSelectCourse={(course) => handleOpenEnrollmentWithCourse(course)}
+          onOpenSchoolDetail={(school) => setSelectedSchoolModal(school)}
+          activeSchool={activeSchool}
+          onSwitchSchool={setActiveSchool}
         />
 
-        {/* Section #admision (Ficha de Inscripción Digital Oficial con Abono 50% y Validación WhatsApp) */}
-        <AdmissionSection 
-          defaultSelectedCourse={selectedCourse}
-          onOpenPlatform={() => handleOpenPlatform('login')}
-        />
-
-        {/* Execution Section (Cyan Checkmarks, Action, and Promo Image) */}
+        {/* Execution Section (Cyan Checkmarks, Action, and Promo Image adaptables a la Escuela activa) */}
         <ExecutionSection 
           onLearnMore={handleLearnMore}
+          activeSchool={activeSchool}
         />
 
         {/* Stats Section (Light Contrast 4 Indicators) */}
@@ -222,6 +233,22 @@ function App() {
       <ScrollToTop />
 
       {/* Interactive Modals */}
+      <SchoolDetailModal
+        isOpen={Boolean(selectedSchoolModal)}
+        school={selectedSchoolModal}
+        onClose={() => setSelectedSchoolModal(null)}
+        onSelectCourse={(courseTitle) => handleOpenEnrollmentWithCourse(courseTitle)}
+        onEnterStudentView={() => {
+          setSelectedSchoolModal(null);
+          if (currentLMSUser) {
+            setIsLMSActive(true);
+          } else {
+            handleOpenPlatform('login');
+          }
+        }}
+        currentUser={currentLMSUser}
+      />
+
       <EnrollmentModal
         isOpen={isEnrollmentOpen}
         onClose={() => setIsEnrollmentOpen(false)}

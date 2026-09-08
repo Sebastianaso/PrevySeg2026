@@ -151,7 +151,32 @@ export const registerStudent = async ({ rut, password, nombre, emailPersonal, te
     throw new Error(rpcError.message || 'Error al registrar postulante en la base de datos.');
   }
 
-  // 2. Iniciar sesión automáticamente para el nuevo estudiante
+  // 2. Respaldo directo para garantizar inserción en escuela_oficio o escuela_seguridad
+  try {
+    const targetTable = escuela === 'oficios' ? 'escuela_oficio' : 'escuela_seguridad';
+    const formattedRut = formatRut(cleaned) || String(rut).trim();
+    if (regUser?.id) {
+      await supabase.from(targetTable).upsert({
+        user_id: regUser.id,
+        rut: formattedRut,
+        nombre: String(nombre).trim(),
+        email: emailPersonal ? String(emailPersonal).trim() : `${cleaned}@prevyseg.cl`,
+        telefono: telefono ? String(telefono).trim() : null,
+        curso_id: escuela === 'oficios' ? 'postulante-oficios' : 'postulante-seguridad',
+        curso_nombre: escuela === 'oficios' ? 'Postulante Registrado - Escuela de Oficios' : 'Postulante Registrado - Escuela de Seguridad',
+        modalidad: 'Por Definir',
+        horas: 'Por Definir',
+        monto_total: 0,
+        abono_50: 0,
+        estado_matricula: 'REGISTRADO',
+        estado_pago: 'PENDIENTE_INSCRIPCION',
+      }, { onConflict: 'user_id' });
+    }
+  } catch (syncErr) {
+    console.warn('Fallback school record notice:', syncErr);
+  }
+
+  // 3. Iniciar sesión automáticamente para el nuevo estudiante
   try {
     const authEmail = rutToEmail(cleaned);
     const { data: authData } = await supabase.auth.signInWithPassword({
@@ -245,4 +270,130 @@ export const checkRutExists = async (rut) => {
  */
 export const logoutUser = async () => {
   await supabase.auth.signOut();
+};
+
+/**
+ * Verifica si un estudiante ya pertenece a un curso activo en escuela_seguridad o escuela_oficio.
+ * Regla de Negocio: Cada estudiante pertenece solo a 1 curso.
+ */
+export const checkStudentSingleCourse = async (rutOrUserId) => {
+  if (!rutOrUserId) return null;
+  const clean = cleanRut(String(rutOrUserId));
+  const formatted = formatRut(clean) || String(rutOrUserId);
+
+  try {
+    // 1. Buscar en escuela_seguridad
+    const { data: segData } = await supabase
+      .from('escuela_seguridad')
+      .select('*')
+      .or(`rut.eq."${formatted}",rut.eq."${clean}"`)
+      .maybeSingle();
+
+    if (segData && segData.estado_pago === 'ABONO_50_CONFIRMADO' && !String(segData.curso_id).startsWith('postulante-')) {
+      return {
+        enrolled: true,
+        school: 'seguridad',
+        schoolName: 'Escuela de Seguridad Privada',
+        courseName: segData.curso_nombre,
+        courseId: segData.curso_id,
+        record: segData
+      };
+    }
+
+    // 2. Buscar en escuela_oficio
+    const { data: ofData } = await supabase
+      .from('escuela_oficio')
+      .select('*')
+      .or(`rut.eq."${formatted}",rut.eq."${clean}"`)
+      .maybeSingle();
+
+    if (ofData && ofData.estado_pago === 'ABONO_50_CONFIRMADO' && !String(ofData.curso_id).startsWith('postulante-')) {
+      return {
+        enrolled: true,
+        school: 'oficios',
+        schoolName: 'Escuela de Oficios y Cursos SENCE',
+        courseName: ofData.curso_nombre,
+        courseId: ofData.curso_id,
+        record: ofData
+      };
+    }
+  } catch (err) {
+    console.warn('Check single course notice:', err);
+  }
+
+  return { enrolled: false };
+};
+
+/**
+ * Registra formalmente a un estudiante en su respectiva escuela (escuela_seguridad o escuela_oficio).
+ * Aplica la regla estricta: 1 estudiante = 1 solo curso activo.
+ */
+export const enrollStudentInSchool = async ({
+  userId,
+  rut,
+  nombre,
+  email,
+  telefono,
+  courseId,
+  courseName,
+  modalidad,
+  horas,
+  totalAmount,
+  cuota50,
+  school = 'seguridad'
+}) => {
+  const cleanR = cleanRut(rut);
+  const formattedRut = formatRut(cleanR) || rut;
+
+  // 1. Verificar si ya está matriculado con curso confirmado en cualquier escuela
+  const check = await checkStudentSingleCourse(userId || formattedRut);
+  if (check?.enrolled && check.courseId !== String(courseId)) {
+    throw new Error(
+      `El estudiante ya cuenta con una matrícula activa en el curso "${check.courseName}" (${check.schoolName}). En PrevySeg cada estudiante pertenece a 1 solo curso a la vez.`
+    );
+  }
+
+  const targetTable = school === 'oficios' ? 'escuela_oficio' : 'escuela_seguridad';
+  const otherTable = school === 'oficios' ? 'escuela_seguridad' : 'escuela_oficio';
+
+  // Si tenía un registro previo de postulante web sin curso en la otra escuela, limpiarlo para evitar conflicto de regla
+  if (userId) {
+    try {
+      await supabase
+        .from(otherTable)
+        .delete()
+        .eq('user_id', userId)
+        .eq('estado_pago', 'PENDIENTE_INSCRIPCION');
+    } catch (e) {
+      // Ignore if not found
+    }
+  }
+
+  const insertPayload = {
+    user_id: userId,
+    rut: formattedRut,
+    nombre: (nombre || '').trim(),
+    email: email ? email.trim() : null,
+    telefono: telefono ? telefono.trim() : null,
+    curso_id: String(courseId || 'general'),
+    curso_nombre: courseName,
+    modalidad: modalidad || 'Presencial / Online',
+    horas: String(horas || '40-90 Horas'),
+    monto_total: Number(totalAmount) || 0,
+    abono_50: Number(cuota50) || 0,
+    estado_matricula: 'MATRICULADO',
+    estado_pago: 'ABONO_50_CONFIRMADO',
+  };
+
+  const { data, error } = await supabase
+    .from(targetTable)
+    .upsert(insertPayload, { onConflict: 'user_id' })
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message || `Error al registrar en ${targetTable}`);
+  }
+
+  return data;
 };

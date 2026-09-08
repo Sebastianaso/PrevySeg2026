@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Award, 
   ArrowRight, 
-  Edit3
+  Edit3,
+  Sliders,
+  Calendar,
+  Users
 } from 'lucide-react';
-import { COURSES_DATA } from '../../components/Services';
+import { getSavedCourses } from '../../data/coursesData';
+import CourseManagerModal from '../../components/CourseManagerModal';
 
 const CoursesView = ({ onSelectCourse, isEditMode }) => {
+  const [courses, setCourses] = useState(getSavedCourses());
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail) setCourses(e.detail);
+      else setCourses(getSavedCourses());
+    };
+    window.addEventListener('prevyseg-courses-updated', handleUpdate);
+    return () => window.removeEventListener('prevyseg-courses-updated', handleUpdate);
+  }, []);
   return (
     <div className="space-y-8">
       {/* Banner / Header */}
@@ -24,20 +39,31 @@ const CoursesView = ({ onSelectCourse, isEditMode }) => {
           </p>
         </div>
 
-        {isEditMode && (
+        <div className="flex flex-wrap items-center gap-2">
           <button 
-            onClick={() => alert("Crear nueva cohorte o curso SENCE")}
-            className="bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold px-5 py-3 rounded-xl shadow-md flex items-center gap-2 cursor-pointer flex-shrink-0"
+            onClick={() => setIsManagerOpen(true)}
+            className="bg-[#071626] hover:bg-[#0B2032] text-white text-xs font-bold px-4 py-3 rounded-xl shadow-md flex items-center gap-2 cursor-pointer flex-shrink-0"
+            title="Modificar cupos, fechas y disponibilidad en tiempo real"
           >
-            <Edit3 size={15} />
-            <span>Crear Nuevo Curso</span>
+            <Sliders size={15} className="text-[#00FFE0]" />
+            <span>Gestionar Disponibilidad, Cupos y Fechas</span>
           </button>
-        )}
+
+          {isEditMode && (
+            <button 
+              onClick={() => alert("Crear nueva cohorte o curso SENCE")}
+              className="bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold px-4 py-3 rounded-xl shadow-md flex items-center gap-2 cursor-pointer flex-shrink-0"
+            >
+              <Edit3 size={15} />
+              <span>Crear Nuevo Curso</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Grid of Courses */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {COURSES_DATA.map((course) => (
+        {courses.map((course) => (
           <div
             key={course.id}
             onClick={() => onSelectCourse(course.title)}
@@ -54,11 +80,29 @@ const CoursesView = ({ onSelectCourse, isEditMode }) => {
                 </span>
               </div>
 
-              {/* Title Only */}
-              <div className="p-5">
-                <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-[#0284c7] transition-colors line-clamp-3">
+              {/* Title and Badges */}
+              <div className="p-5 space-y-2.5">
+                <h3 className="text-sm font-semibold text-slate-900 leading-snug group-hover:text-[#0284c7] transition-colors line-clamp-2">
                   {course.title}
                 </h3>
+
+                <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                  {course.disponible && course.cupos > 0 ? (
+                    <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>{course.cupos} cupos</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                      <span>Agotado</span>
+                    </span>
+                  )}
+
+                  <span className="inline-flex items-center gap-1 font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                    <Calendar size={11} className="text-amber-600" />
+                    <span>Inicio: {course.fecha_inicio}</span>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -74,6 +118,11 @@ const CoursesView = ({ onSelectCourse, isEditMode }) => {
           </div>
         ))}
       </div>
+
+      <CourseManagerModal
+        isOpen={isManagerOpen}
+        onClose={() => setIsManagerOpen(false)}
+      />
     </div>
   );
 };
