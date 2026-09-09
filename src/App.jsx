@@ -26,6 +26,7 @@ function App() {
   const [isEnrollmentOpen, setIsEnrollmentOpen] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
   const [platformModalMode, setPlatformModalMode] = useState('login');
+  const [platformInitialRut, setPlatformInitialRut] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState('');
@@ -110,11 +111,14 @@ function App() {
     setIsEnrollmentOpen(true);
   };
 
-  const handleOpenPlatform = (mode = 'login') => {
+  const handleOpenPlatform = (mode = 'login', initialRut = '') => {
     if (currentLMSUser) {
       setIsLMSActive(true);
     } else {
       setPlatformModalMode(mode);
+      if (initialRut) {
+        setPlatformInitialRut(initialRut);
+      }
       setIsPlatformOpen(true);
     }
   };
@@ -253,6 +257,10 @@ function App() {
         isOpen={isEnrollmentOpen}
         onClose={() => setIsEnrollmentOpen(false)}
         defaultCourse={selectedCourse}
+        onOpenPlatform={(data) => {
+          setIsEnrollmentOpen(false);
+          handleOpenPlatform('login', data?.rut || '');
+        }}
       />
 
       <ContactModal 
@@ -264,6 +272,7 @@ function App() {
       <PlatformModal 
         isOpen={isPlatformOpen} 
         initialMode={platformModalMode}
+        initialRut={platformInitialRut}
         onClose={() => setIsPlatformOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />

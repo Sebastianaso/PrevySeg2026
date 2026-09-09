@@ -11,8 +11,7 @@ import {
   ChevronRight,
   Shield,
   Wrench,
-  GraduationCap,
-  FileText
+  GraduationCap
 } from 'lucide-react';
 import gsap from 'gsap';
 
@@ -329,18 +328,6 @@ const Hero = ({
                 <ArrowRight size={17} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
             </ScrollLink>
-
-            {/* Botón 2: Abrir ventana con descripciones y temarios */}
-            <button 
-              type="button"
-              onClick={() => {
-                if (onOpenSchoolDetail) onOpenSchoolDetail(activeSchool);
-              }}
-              className="hero-cta-btn bg-[#071626]/90 hover:bg-[#0B2032] backdrop-blur-md text-white font-bold text-sm px-6 py-4 rounded-xl border border-white/20 transition-all duration-300 flex items-center gap-2 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-[#071626]/50"
-            >
-              <FileText size={16} className={isSecurity ? 'text-[#00C4D8]' : 'text-[#00FFE0]'} />
-              <span>Temarios Oficiales & Requisitos</span>
-            </button>
           </div>
 
           {/* Badges de Confianza / Garantías */}

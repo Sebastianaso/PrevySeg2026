@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -249,16 +249,34 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
 };
 
 // 2. Modal Plataforma Virtual & Registro de Postulantes
-export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = 'login' }) => {
+export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = 'login', initialRut = '' }) => {
   const [authMode, setAuthMode] = useState(initialMode || 'login'); // 'login' | 'register'
   
   // Login State
-  const [rut, setRut] = useState('');
+  const [rut, setRut] = useState(initialRut || '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // Sincronizar RUT inicial cuando se reciba por prop o evento
+  useEffect(() => {
+    if (initialRut) {
+      setRut(initialRut);
+    }
+  }, [initialRut, isOpen]);
+
+  useEffect(() => {
+    const handlePlatformEvent = (e) => {
+      if (e?.detail?.rut) {
+        setRut(e.detail.rut);
+        setAuthMode('login');
+      }
+    };
+    window.addEventListener('open-platform-login', handlePlatformEvent);
+    return () => window.removeEventListener('open-platform-login', handlePlatformEvent);
+  }, []);
 
   // Register State
   const [regData, setRegData] = useState({
@@ -528,10 +546,10 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
               </div>
             </div>
 
-            {/* Quick Demo Credentials for the 4 Roles */}
+            {/* Demo Credentials for Administration and Employers */}
             <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-[11px] space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500 font-bold block uppercase text-[10px] tracking-wider">Demostración de los 4 Roles:</span>
+                <span className="text-slate-500 font-bold block uppercase text-[10px] tracking-wider">Demostración de Roles Disponibles:</span>
                 <span className="text-[9px] bg-sky-100 text-[#0284c7] font-bold px-1.5 py-0.5 rounded">1-Click Login</span>
               </div>
               <div className="flex flex-col gap-1.5 text-slate-700">
@@ -540,7 +558,7 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
                 <button
                   type="button"
                   onClick={() => handleFillDemo('15692858-5', '15692858')}
-                  className="text-left text-purple-700 hover:text-purple-900 flex justify-between items-center cursor-pointer p-1.5 rounded-lg hover:bg-purple-50 border border-purple-200 transition-colors"
+                  className="text-left text-purple-700 hover:text-purple-900 flex justify-between items-center cursor-pointer p-2 rounded-lg hover:bg-purple-50 border border-purple-200 transition-colors"
                 >
                   <span className="font-semibold">👑 Ashley Adaros (ADMINISTRADOR OTEC)</span>
                   <span className="font-mono text-slate-500 text-[10px]">15.692.858-5</span>
@@ -550,30 +568,10 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
                 <button
                   type="button"
                   onClick={() => handleFillDemo('76543210-K', 'prevyseg2026')}
-                  className="text-left text-amber-700 hover:text-amber-900 flex justify-between items-center cursor-pointer p-1.5 rounded-lg hover:bg-amber-50 border border-amber-200 transition-colors"
+                  className="text-left text-amber-700 hover:text-amber-900 flex justify-between items-center cursor-pointer p-2 rounded-lg hover:bg-amber-50 border border-amber-200 transition-colors"
                 >
                   <span className="font-semibold">🏢 Minería & Logística del Norte (EMPRESA / EMPLEADOR)</span>
                   <span className="font-mono text-slate-500 text-[10px]">76.543.210-K</span>
-                </button>
-
-                {/* 3. Profesor / Docente */}
-                <button
-                  type="button"
-                  onClick={() => handleFillDemo('21778425-5', '21778425')}
-                  className="text-left text-sky-700 hover:text-sky-900 flex justify-between items-center cursor-pointer p-1.5 rounded-lg hover:bg-sky-50 border border-sky-200 transition-colors"
-                >
-                  <span className="font-semibold">👨‍🏫 Sebastián Araya (PROFESOR / DOCENTE)</span>
-                  <span className="font-mono text-slate-500 text-[10px]">21.778.425-5</span>
-                </button>
-
-                {/* 4. Estudiante */}
-                <button
-                  type="button"
-                  onClick={() => handleFillDemo('21778425-6', '21778425')}
-                  className="text-left text-teal-700 hover:text-teal-900 flex justify-between items-center cursor-pointer p-1.5 rounded-lg hover:bg-teal-50 border border-teal-200 transition-colors"
-                >
-                  <span className="font-semibold">🎓 Matías Silva (ESTUDIANTE / ALUMNO)</span>
-                  <span className="font-mono text-slate-500 text-[10px]">21.778.425-6</span>
                 </button>
 
               </div>
@@ -962,7 +960,7 @@ export const ArticleModal = ({ article, onClose, onOpenContact }) => {
 // 5. Modal Ficha de Inscripción & Abono 50% (Pop-up directo)
 import EnrollmentForm from './EnrollmentForm';
 
-export const EnrollmentModal = ({ isOpen, onClose, defaultCourse = '' }) => {
+export const EnrollmentModal = ({ isOpen, onClose, defaultCourse = '', onOpenPlatform }) => {
   if (!isOpen) return null;
 
   return (
@@ -986,7 +984,7 @@ export const EnrollmentModal = ({ isOpen, onClose, defaultCourse = '' }) => {
         </motion.button>
 
         <div className="-mt-12">
-          <EnrollmentForm defaultCourseName={defaultCourse} onFinished={onClose} />
+          <EnrollmentForm defaultCourseName={defaultCourse} onFinished={onClose} onOpenPlatform={onOpenPlatform} />
         </div>
       </motion.div>
     </div>

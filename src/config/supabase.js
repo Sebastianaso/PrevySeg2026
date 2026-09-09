@@ -397,3 +397,61 @@ export const enrollStudentInSchool = async ({
 
   return data;
 };
+
+/**
+ * Procesa la inscripción oficial y abono del 50% de forma atómica en PostgreSQL.
+ * Crea o actualiza la cuenta en auth.users, public.users, matricula en escuela_oficio o escuela_seguridad
+ * y sincroniza con public.enrollments.
+ */
+export const processEnrollmentRegistration = async ({
+  rut,
+  nombre,
+  email,
+  telefono,
+  domicilio,
+  password,
+  courseId,
+  courseName,
+  modalidad,
+  horas,
+  totalAmount,
+  cuota50,
+  school,
+}) => {
+  const cleanR = cleanRut(rut);
+  const formattedRut = formatRut(cleanR) || rut;
+
+  const { data, error } = await supabase.rpc('process_enrollment_registration', {
+    p_rut: formattedRut,
+    p_nombre: String(nombre || '').trim(),
+    p_email: email ? String(email).trim() : '',
+    p_telefono: telefono ? String(telefono).trim() : '',
+    p_domicilio: domicilio ? String(domicilio).trim() : 'Arica, Chile',
+    p_password: String(password || cleanR).trim(),
+    p_course_id: String(courseId || 'general'),
+    p_course_name: String(courseName || ''),
+    p_modalidad: String(modalidad || ''),
+    p_horas: String(horas || ''),
+    p_total_amount: Number(totalAmount) || 0,
+    p_cuota50: Number(cuota50) || 0,
+    p_school: school === 'oficios' ? 'oficios' : 'seguridad',
+  });
+
+  if (error) {
+    throw new Error(error.message || 'Error al procesar la inscripción en la base de datos.');
+  }
+
+  // Iniciar sesión en background para que el alumno quede autenticado
+  try {
+    const authEmail = rutToEmail(cleanR);
+    await supabase.auth.signInWithPassword({
+      email: authEmail,
+      password: String(password || cleanR).trim(),
+    });
+  } catch (signErr) {
+    console.warn('Auto sign in notice:', signErr);
+  }
+
+  return data;
+};
+

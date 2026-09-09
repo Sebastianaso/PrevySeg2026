@@ -30,16 +30,23 @@ import {
   FileCheck,
   Zap,
   ArrowRight,
-  BadgeAlert
+  BadgeAlert,
+  Eye,
+  EyeOff,
+  Key,
+  LogIn
 } from 'lucide-react';
 import { 
   supabase, 
   adminCreateUser, 
+  registerStudent,
+  changeUserPassword,
+  processEnrollmentRegistration,
   formatRut, 
   cleanRut, 
   validateRut, 
   validateEmail, 
-  validatePhone,
+  validatePhone, 
   checkStudentSingleCourse,
   enrollStudentInSchool
 } from '../config/supabase';
@@ -427,7 +434,7 @@ export const findMatchingCourse = (query) => {
   return OFFICIAL_COURSES[0];
 };
 
-const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
+const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) => {
   // 1. Selector de Curso con sincronización reactiva
   const [selectedCourseId, setSelectedCourseId] = useState(() => {
     return findMatchingCourse(defaultCourseName).id;
@@ -450,7 +457,7 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
   const isSpdCourse = currentCourse.school === 'seguridad';
   const courseFullName = currentCourse.name;
 
-  // 2. Datos del Alumno (Alumno Dependiente)
+  // 2. Datos del Alumno (Alumno Dependiente) y Cuenta de Acceso
   const [formData, setFormData] = useState({
     nombre: '',
     rut: '',
@@ -459,11 +466,19 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
     telefono: '',
     domicilio: '',
     email: '',
+    password: '',
+    confirmPassword: '',
     lugarTrabajo: 'Particular',
     condicionLaboral: 'particular', // 'particular' | 'empresa'
     empresaNombre: '',
     observaciones: ''
   });
+
+  // Estados de contraseña
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [showCreatedPasswordInSuccess, setShowCreatedPasswordInSuccess] = useState(false);
 
   // 3. Abonos y Pagos
   const [paymentOption, setPaymentOption] = useState('cuota1'); // 'cuota1' (50%) | 'total' (100%)
@@ -497,6 +512,9 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
     if (name === 'rut') {
       setSingleCourseError(null);
       setFormData(prev => ({ ...prev, rut: formatRut(value) }));
+    } else if (name === 'password' || name === 'confirmPassword') {
+      setPasswordError('');
+      setFormData(prev => ({ ...prev, [name]: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -506,6 +524,19 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSingleCourseError(null);
+    setPasswordError('');
+
+    // Validar contraseña para la cuenta del aula virtual
+    if (!formData.password || formData.password.trim().length < 4) {
+      setPasswordError('Por favor define una contraseña de al menos 4 caracteres para tu cuenta del aula virtual.');
+      setIsSubmitting(false);
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError('Las contraseñas ingresadas no coinciden. Por favor verifícalas antes de continuar.');
+      setIsSubmitting(false);
+      return;
+    }
 
     const generatedCode = `PS-${Math.floor(100000 + Math.random() * 900000)}`;
     setEnrollmentCode(generatedCode);
@@ -515,110 +546,50 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
         const cleanR = cleanRut(formData.rut);
         const formattedRut = formatRut(cleanR) || formData.rut.trim();
 
-        // 1. REGLA ESTRICTA: 1 ESTUDIANTE = 1 SOLO CURSO ACTIVO
-        // Comprobar si este RUT ya está registrado con curso confirmado en EscuelaSeguridad o EscuelaOficio
-        const existingEnrollment = await checkStudentSingleCourse(formattedRut);
-        if (existingEnrollment?.enrolled && existingEnrollment.courseId !== currentCourse.id) {
-          setSingleCourseError({
-            rut: formattedRut,
-            courseName: existingEnrollment.courseName,
-            schoolName: existingEnrollment.schoolName
-          });
-          setIsSubmitting(false);
-          return;
-        }
-
-        // 2. Obtener curso id de la base de datos coincidente por título
-        let cId = null;
-        try {
-          const { data: matchedCourses } = await supabase
-            .from('courses')
-            .select('id')
-            .ilike('titulo', `%${currentCourse.name.slice(0, 20)}%`)
-            .limit(1);
-          cId = matchedCourses?.[0]?.id || null;
-        } catch (cErr) {
-          console.warn('Could not fetch exact course id:', cErr);
-        }
-
-        // 3. Verificar si el usuario ya existe en public.users
-        const { data: existingUser } = await supabase
-          .from('users')
-          .select('id')
-          .eq('rut', formattedRut)
-          .maybeSingle();
-
-        let userIdToUse = existingUser?.id;
-
-        if (!existingUser) {
-          // Crear usuario nuevo con contraseña encriptada (Bcrypt) mediante RPC
-          const createdRes = await adminCreateUser({
-            rut: formattedRut,
-            nombre: formData.nombre.trim() || 'Postulante PrevySeg',
-            email: formData.email.trim() || `${cleanR}@prevyseg.cl`,
-            rol: 'STUDENT',
-            telefono: formData.telefono.trim(),
-            password: cleanR, // Clave inicial por defecto: RUT limpio (encriptada con Bcrypt)
-            courseId: cId,
-          });
-          userIdToUse = createdRes?.id;
-        }
-
-        // 4. Determinar escuela de destino (oficios o seguridad)
+        // 1. Determinar escuela de destino (oficios o seguridad)
         const targetSchool = currentCourse.school === 'oficios' ? 'oficios' : 'seguridad';
         setRegisteredSchool(targetSchool);
 
-        // 5. Insertar o actualizar en la tabla especializada de la escuela (escuela_seguridad o escuela_oficio)
-        if (userIdToUse) {
-          await enrollStudentInSchool({
-            userId: userIdToUse,
-            rut: formattedRut,
-            nombre: formData.nombre.trim() || 'Postulante PrevySeg',
-            email: formData.email.trim() || `${cleanR}@prevyseg.cl`,
-            telefono: formData.telefono.trim(),
-            courseId: currentCourse.id,
-            courseName: currentCourse.name,
-            modalidad: currentCourse.modality,
-            horas: currentCourse.hours,
-            totalAmount,
-            cuota50: amountToPayNow,
-            school: targetSchool
-          });
-        }
+        // 2. Procesar registro de usuario y matrícula en la base de datos de forma atómica en PostgreSQL
+        const result = await processEnrollmentRegistration({
+          rut: formattedRut,
+          nombre: formData.nombre.trim() || 'Postulante PrevySeg',
+          email: formData.email.trim(),
+          telefono: formData.telefono.trim(),
+          domicilio: formData.domicilio.trim() || 'Arica, Chile',
+          password: formData.password.trim(),
+          courseId: currentCourse.id,
+          courseName: currentCourse.name,
+          modalidad: currentCourse.modality,
+          horas: currentCourse.hours,
+          totalAmount,
+          cuota50: amountToPayNow,
+          school: targetSchool,
+        });
 
-        // 6. Registrar en public.enrollments para mantener sincronizada el aula LMS
-        if (userIdToUse && cId) {
-          await supabase
-            .from('enrollments')
-            .upsert({
-              user_id: userIdToUse,
-              course_id: cId,
-              estado: 'PENDIENTE',
-              progreso: 0,
-              abono_inicial: amountToPayNow,
-              documentos_validados: false,
-            }, { onConflict: 'user_id,course_id' })
-            .select()
-            .maybeSingle();
+        if (result?.school) {
+          setRegisteredSchool(result.school);
         }
       }
+
+      setIsSubmitting(false);
+      setPaymentCompleted(true);
+      setShowSuccessScreen(true);
     } catch (err) {
-      console.warn('Enrollment db persist notice:', err);
-      // Si el error fue por restricción de curso único en base de datos
+      console.error('Enrollment registration error:', err);
+      setIsSubmitting(false);
+
       if (err.message && (err.message.includes('matrícula activa') || err.message.includes('solo puede pertenecer a un curso'))) {
         setSingleCourseError({
           rut: formData.rut,
           courseName: 'Curso Previamente Asignado',
-          schoolName: 'PrevySeg'
+          schoolName: currentCourse.school === 'oficios' ? 'Escuela de Seguridad' : 'Escuela de Oficios'
         });
-        setIsSubmitting(false);
-        return;
+      } else {
+        setPasswordError(err.message || 'Error al guardar la matrícula en la base de datos. Por favor intenta nuevamente.');
       }
+      return;
     }
-
-    setIsSubmitting(false);
-    setPaymentCompleted(true);
-    setShowSuccessScreen(true);
   };
 
   const handlePrint = () => {
@@ -636,9 +607,10 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
     `*Escuela:* ${currentCourse.school === 'seguridad' ? 'Escuela de Seguridad Privada' : 'Escuela de Oficios y Habilidades'}\n` +
     `*Modalidad:* ${currentCourse.modality} (${currentCourse.hours})\n` +
     `*Tipo Certificación:* ${isSpdCourse ? 'Capacitación Preparatoria Examen SPD' : 'Certificación Directa OTEC PrevySeg'}\n\n` +
-    `*👤 DATOS DEL ALUMNO:*\n` +
+    `*👤 DATOS DEL ALUMNO Y CUENTA:*\n` +
     `• *Nombre:* ${formData.nombre || 'No especificado'}\n` +
-    `• *RUT:* ${formData.rut || 'No especificado'}\n` +
+    `• *RUT (Usuario de Aula):* ${formData.rut || 'No especificado'}\n` +
+    `• *Contraseña de Acceso:* [Configurada por el Alumno]\n` +
     `• *Fecha Nacimiento:* ${formData.fechaNacimiento || 'No especificada'} (${formData.pais})\n` +
     `• *Teléfono:* ${formData.telefono || 'No especificado'}\n` +
     `• *Domicilio:* ${formData.domicilio || 'No especificado'}\n` +
@@ -709,6 +681,67 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
                 <span className="text-slate-500">Saldo Pendiente (Cuota N°2 al iniciar):</span>
                 <span className="font-bold text-amber-700">${pendingAmount.toLocaleString('es-CL')} CLP</span>
               </div>
+            </div>
+
+            {/* CREDENCIALES DE ACCESO AL AULA VIRTUAL */}
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 border-2 border-sky-400 text-white max-w-lg mx-auto text-left space-y-4 shadow-xl">
+              <div className="flex items-center justify-between border-b border-sky-800/80 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center border border-sky-400/30">
+                    <Lock size={18} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-sky-300 tracking-wider block">Cuenta Creada con Éxito</span>
+                    <h4 className="text-sm sm:text-base font-black text-white">Tus Credenciales de Aula Virtual</h4>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-500/40">
+                  Activa ✓
+                </span>
+              </div>
+
+              <div className="space-y-2.5 text-xs font-mono">
+                <div className="flex items-center justify-between bg-slate-800/90 p-3 rounded-xl border border-slate-700">
+                  <span className="text-slate-400">Usuario (RUT):</span>
+                  <span className="text-sky-300 font-bold text-sm">{formData.rut || 'RUT Registrado'}</span>
+                </div>
+                <div className="flex items-center justify-between bg-slate-800/90 p-3 rounded-xl border border-slate-700">
+                  <span className="text-slate-400">Contraseña:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-300 font-bold text-sm">
+                      {showCreatedPasswordInSuccess ? (formData.password || cleanRut(formData.rut)) : '••••••••'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowCreatedPasswordInSuccess(prev => !prev)}
+                      className="text-slate-400 hover:text-white transition-colors p-1 cursor-pointer"
+                      title={showCreatedPasswordInSuccess ? 'Ocultar contraseña' : 'Ver contraseña'}
+                    >
+                      {showCreatedPasswordInSuccess ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Tus datos han quedado vinculados. Puedes usar este botón para ir directo a la <strong>Plataforma Virtual</strong> con tu usuario y contraseña.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onOpenPlatform) {
+                    onOpenPlatform({ rut: formData.rut });
+                  } else {
+                    window.dispatchEvent(new CustomEvent('open-platform-login', { detail: { rut: formData.rut } }));
+                  }
+                  if (onFinished) onFinished();
+                }}
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 via-[#0284c7] to-[#00c2b2] hover:from-sky-600 hover:to-teal-600 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all"
+              >
+                <LogIn size={16} />
+                <span>Ingresar a la Plataforma Virtual Ahora</span>
+              </button>
             </div>
 
             {/* AVISO IMPORTANTE DE CONTACTO POR WHATSAPP */}
@@ -1159,6 +1192,120 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished }) => {
               </div>
 
             </div>
+          </div>
+
+          {/* ================= 2.1.- CREACIÓN DE CUENTA DE ACCESO AL AULA VIRTUAL ================= */}
+          <div className="space-y-4 border-t border-slate-200 pt-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-xl bg-teal-50 text-[#00A896] flex items-center justify-center text-xs font-black border border-teal-200">
+                  <Lock size={14} />
+                </span>
+                <span>CREAR CUENTA DE ACCESO AL AULA VIRTUAL</span>
+              </h2>
+              <span className="text-xs text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 font-bold flex items-center gap-1.5 w-fit">
+                <Sparkles size={13} className="text-emerald-600" />
+                Acceso Inmediato al Registrarte
+              </span>
+            </div>
+
+            {/* Tarjeta orientadora con el RUT como usuario */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-sky-50 via-teal-50/50 to-slate-50 border border-sky-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-black text-slate-800">
+                  <User size={15} className="text-[#0284c7]" />
+                  <span>TU USUARIO SERÁ TU RUT:</span>
+                  <span className="font-mono bg-white px-2.5 py-0.5 rounded-lg border border-sky-300 text-[#0284c7] font-bold text-sm">
+                    {formData.rut || 'Ingresa tu RUT en la sección anterior'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Con este RUT y la contraseña que crees a continuación, tus datos quedarán guardados de forma segura en la base de datos y podrás ingresar de inmediato a la plataforma virtual para ver tu curso, clases y avances.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              
+              {/* Contraseña */}
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Key size={14} className="text-[#0284c7]" />
+                    <span>CREAR CONTRASEÑA *</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal">(mínimo 4 caracteres)</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    name="password"
+                    placeholder="Escribe tu contraseña secreta..."
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-11 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition-colors"
+                    title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirmar Contraseña */}
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-emerald-600" />
+                    <span>CONFIRMAR CONTRASEÑA *</span>
+                  </span>
+                  {formData.password && formData.confirmPassword && (
+                    formData.password === formData.confirmPassword ? (
+                      <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                        <Check size={12} /> Coinciden
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold text-rose-500">
+                        No coinciden
+                      </span>
+                    )
+                  )}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    name="confirmPassword"
+                    placeholder="Repite tu contraseña..."
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-11 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(prev => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition-colors"
+                    title={showConfirmPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  >
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Error de contraseña si no coincide o es muy corta */}
+            {passwordError && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
+                <AlertCircle size={16} className="text-rose-600 flex-shrink-0" />
+                <span>{passwordError}</span>
+              </div>
+            )}
           </div>
 
           {/* ================= 3.- ABONOS (50% CUOTA INICIAL) & PASARELA DE PAGO ================= */}
