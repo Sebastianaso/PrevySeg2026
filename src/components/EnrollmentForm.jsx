@@ -34,7 +34,9 @@ import {
   Eye,
   EyeOff,
   Key,
-  LogIn
+  LogIn,
+  Globe,
+  Laptop
 } from 'lucide-react';
 import { 
   supabase, 
@@ -51,7 +53,26 @@ import {
   enrollStudentInSchool
 } from '../config/supabase';
 
-// ================= LISTA OFICIAL DE CURSOS DE LA FICHA PREVYSEG =================
+// ================= LISTADO OFICIAL DE REGIONES Y CIUDADES DE CHILE =================
+export const REGIONES_CHILE = [
+  { id: 'arica', name: 'Región de Arica y Parinacota (XV)', isArica: true, cities: ['Arica', 'Valle de Azapa', 'Valle de Lluta', 'Putre', 'Camarones', 'General Lagos'] },
+  { id: 'tarapaca', name: 'Región de Tarapacá (I)', isArica: false, cities: ['Iquique', 'Alto Hospicio', 'Pozo Almonte', 'Pica', 'Huara', 'Camiña', 'Colchane'] },
+  { id: 'antofagasta', name: 'Región de Antofagasta (II)', isArica: false, cities: ['Antofagasta', 'Calama', 'Tocopilla', 'Mejillones', 'Taltal', 'San Pedro de Atacama', 'Sierra Gorda', 'María Elena'] },
+  { id: 'atacama', name: 'Región de Atacama (III)', isArica: false, cities: ['Copiapó', 'Vallenar', 'Caldera', 'Chañaral', 'Huasco'] },
+  { id: 'coquimbo', name: 'Región de Coquimbo (IV)', isArica: false, cities: ['La Serena', 'Coquimbo', 'Ovalle', 'Illapel', 'Vicuña'] },
+  { id: 'valparaiso', name: 'Región de Valparaíso (V)', isArica: false, cities: ['Valparaíso', 'Viña del Mar', 'Quilpué', 'Villa Alemana', 'San Antonio', 'Quillota', 'Los Andes', 'San Felipe'] },
+  { id: 'metropolitana', name: 'Región Metropolitana (Santiago)', isArica: false, cities: ['Santiago', 'Puente Alto', 'Maipú', 'La Florida', 'San Bernardo', 'Providencia', 'Las Condes'] },
+  { id: 'ohiggins', name: "Región de O'Higgins (VI)", isArica: false, cities: ['Rancagua', 'Machalí', 'Rengo', 'San Fernando'] },
+  { id: 'maule', name: 'Región del Maule (VII)', isArica: false, cities: ['Talca', 'Curicó', 'Linares', 'Constitución'] },
+  { id: 'nuble', name: 'Región de Ñuble (XVI)', isArica: false, cities: ['Chillán', 'San Carlos', 'Chillán Viejo'] },
+  { id: 'biobio', name: 'Región del Biobío (VIII)', isArica: false, cities: ['Concepción', 'Talcahuano', 'San Pedro de la Paz', 'Los Ángeles', 'Coronel'] },
+  { id: 'araucania', name: 'Región de La Araucanía (IX)', isArica: false, cities: ['Temuco', 'Padre Las Casas', 'Villarrica', 'Pucón', 'Angol'] },
+  { id: 'los_rios', name: 'Región de Los Ríos (XIV)', isArica: false, cities: ['Valdivia', 'La Unión', 'Río Bueno'] },
+  { id: 'los_lagos', name: 'Región de Los Lagos (X)', isArica: false, cities: ['Puerto Montt', 'Puerto Varas', 'Osorno', 'Castro', 'Ancud'] },
+  { id: 'aysen', name: 'Región de Aysén (XI)', isArica: false, cities: ['Coyhaique', 'Puerto Aysén'] },
+  { id: 'magallanes', name: 'Región de Magallanes (XII)', isArica: false, cities: ['Punta Arenas', 'Puerto Natales', 'Porvenir'] }
+];
+
 // ================= LISTA OFICIAL DE CURSOS DE LA FICHA PREVYSEG =================
 export const OFFICIAL_COURSES = [
   // --- ESCUELA DE SEGURIDAD PRIVADA ---
@@ -463,6 +484,9 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
     rut: '',
     fechaNacimiento: '',
     pais: 'Chile',
+    region: 'Región de Arica y Parinacota (XV)',
+    ciudad: 'Arica',
+    modalidadPreferencia: 'presencial_virtual', // 'presencial_virtual' | 'virtual_total'
     telefono: '',
     domicilio: '',
     email: '',
@@ -473,6 +497,29 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
     empresaNombre: '',
     observaciones: ''
   });
+
+  const [otherCityName, setOtherCityName] = useState('');
+
+  // Ciudad efectiva (si seleccionó 'OTRA', usamos lo que escribió)
+  const effectiveCity = formData.ciudad === 'OTRA' ? (otherCityName.trim() || 'Otra Localidad') : formData.ciudad;
+
+  // Detección automática de procedencia: Arica (presencial/virtual) vs Otras Regiones (100% virtual)
+  const isFromArica = React.useMemo(() => {
+    const reg = (formData.region || '').toLowerCase();
+    const ciu = (effectiveCity || '').toLowerCase();
+    const dom = (formData.domicilio || '').toLowerCase();
+    return reg.includes('arica') || ciu.includes('arica') || ciu.includes('azapa') || ciu.includes('lluta') || dom.includes('arica') || ciu.includes('parinacota');
+  }, [formData.region, effectiveCity, formData.domicilio]);
+
+  // Modalidad calculada en base a la ciudad/región del estudiante
+  const computedModality = React.useMemo(() => {
+    if (isFromArica) {
+      return formData.modalidadPreferencia === 'virtual_total'
+        ? '100% Virtual Online (Opción a Distancia Arica)'
+        : 'Presencial y Virtual (Sede Central Arica Blanco Encalada 666)';
+    }
+    return `Totalmente Virtual (100% Online - Clases Sincrónicas Zoom)`;
+  }, [isFromArica, formData.modalidadPreferencia]);
 
   // Estados de contraseña
   const [showPassword, setShowPassword] = useState(false);
@@ -551,16 +598,17 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
         setRegisteredSchool(targetSchool);
 
         // 2. Procesar registro de usuario y matrícula en la base de datos de forma atómica en PostgreSQL
+        const fullAddress = `${formData.domicilio.trim() || 'Dirección Particular'}, ${effectiveCity}, ${formData.region}, Chile`;
         const result = await processEnrollmentRegistration({
           rut: formattedRut,
           nombre: formData.nombre.trim() || 'Postulante PrevySeg',
           email: formData.email.trim(),
           telefono: formData.telefono.trim(),
-          domicilio: formData.domicilio.trim() || 'Arica, Chile',
+          domicilio: fullAddress,
           password: formData.password.trim(),
           courseId: currentCourse.id,
           courseName: currentCourse.name,
-          modalidad: currentCourse.modality,
+          modalidad: computedModality,
           horas: currentCourse.hours,
           totalAmount,
           cuota50: amountToPayNow,
@@ -605,15 +653,15 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
     `----------------------------------------\n` +
     `*🎓 CURSO:* ${courseFullName}\n` +
     `*Escuela:* ${currentCourse.school === 'seguridad' ? 'Escuela de Seguridad Privada' : 'Escuela de Oficios y Habilidades'}\n` +
-    `*Modalidad:* ${currentCourse.modality} (${currentCourse.hours})\n` +
+    `*Modalidad Asignada:* ${computedModality}\n` +
+    `*Duración:* ${currentCourse.hours}\n` +
     `*Tipo Certificación:* ${isSpdCourse ? 'Capacitación Preparatoria Examen SPD' : 'Certificación Directa OTEC PrevySeg'}\n\n` +
     `*👤 DATOS DEL ALUMNO Y CUENTA:*\n` +
     `• *Nombre:* ${formData.nombre || 'No especificado'}\n` +
     `• *RUT (Usuario de Aula):* ${formData.rut || 'No especificado'}\n` +
-    `• *Contraseña de Acceso:* [Configurada por el Alumno]\n` +
-    `• *Fecha Nacimiento:* ${formData.fechaNacimiento || 'No especificada'} (${formData.pais})\n` +
-    `• *Teléfono:* ${formData.telefono || 'No especificado'}\n` +
+    `• *Ciudad / Región:* ${effectiveCity}, ${formData.region}\n` +
     `• *Domicilio:* ${formData.domicilio || 'No especificado'}\n` +
+    `• *Teléfono:* ${formData.telefono || 'No especificado'}\n` +
     `• *Correo:* ${formData.email || 'No especificado'}\n` +
     `• *Condición:* ${formData.condicionLaboral === 'particular' ? 'Particular' : `Empresa: ${formData.empresaNombre}`}\n\n` +
     `*💳 PLAN DE ABONO (50%):*\n` +
@@ -666,6 +714,16 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">RUT:</span>
                 <span className="font-bold text-slate-900">{formData.rut || 'No informado'}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-200 pb-2">
+                <span className="text-slate-500">Ciudad y Región:</span>
+                <span className="font-bold text-slate-900">{effectiveCity}, {formData.region}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-200 pb-2">
+                <span className="text-slate-500">Modalidad Asignada:</span>
+                <span className="font-black text-emerald-800 text-xs text-right">
+                  {computedModality}
+                </span>
               </div>
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500">Escuela Asignada:</span>
@@ -1119,27 +1177,10 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
                 />
               </div>
 
-              {/* Domicilio */}
-              <div className="space-y-1.5 sm:col-span-2">
-                <label className="font-bold text-slate-700 flex items-center gap-1.5">
-                  <MapPin size={14} className="text-rose-500" />
-                  <span>DOMICILIO COMPLETO *</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  name="domicilio"
-                  placeholder="Ej. Av. Robinson Rojas #4616, Arica"
-                  value={formData.domicilio}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-400"
-                />
-              </div>
-
               {/* Correo Electrónico */}
               <div className="space-y-1.5">
                 <label className="font-bold text-slate-700 flex items-center gap-1.5">
-                  <Mail size={14} className="text-amber-600" />
+                  <Mail size={14} className="text-[#0284c7]" />
                   <span>CORREO ELECTRÓNICO *</span>
                 </label>
                 <input
@@ -1149,8 +1190,171 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
                   placeholder="nahuelqueo.marco@gmail.com"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]"
                 />
+              </div>
+
+              {/* Región de Residencia (100% Seleccionable) */}
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin size={14} className="text-rose-500" />
+                    <span>REGIÓN DE RESIDENCIA *</span>
+                  </span>
+                  <span className="text-[10px] bg-sky-50 text-[#0284c7] font-black px-2 py-0.5 rounded-md border border-sky-200">
+                    16 Regiones
+                  </span>
+                </label>
+                <select
+                  name="region"
+                  value={formData.region}
+                  onChange={(e) => {
+                    const selRegion = REGIONES_CHILE.find(r => r.name === e.target.value);
+                    const newCity = selRegion?.cities[0] || 'Arica';
+                    setFormData(prev => ({
+                      ...prev,
+                      region: e.target.value,
+                      ciudad: newCity
+                    }));
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7] cursor-pointer font-medium"
+                >
+                  {REGIONES_CHILE.map(r => (
+                    <option key={r.id} value={r.name}>{r.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Ciudad / Comuna (100% Seleccionable) */}
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Building2 size={14} className="text-[#0284c7]" />
+                    <span>CIUDAD / COMUNA *</span>
+                  </span>
+                  <span className="text-[10px] bg-emerald-50 text-emerald-700 font-black px-2 py-0.5 rounded-md border border-emerald-200">
+                    Seleccionable
+                  </span>
+                </label>
+                <select
+                  name="ciudad"
+                  value={formData.ciudad}
+                  onChange={(e) => setFormData(prev => ({ ...prev, ciudad: e.target.value }))}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7] cursor-pointer font-medium"
+                >
+                  {(REGIONES_CHILE.find(r => r.name === formData.region)?.cities || ['Arica']).map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                  <option value="OTRA">➕ Otra ciudad, pueblo o localidad...</option>
+                </select>
+
+                {formData.ciudad === 'OTRA' && (
+                  <input
+                    type="text"
+                    required
+                    placeholder="Escribe el nombre de tu ciudad o pueblo..."
+                    value={otherCityName}
+                    onChange={(e) => setOtherCityName(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-slate-900 mt-2 focus:outline-none focus:ring-2 focus:ring-[#0284c7]"
+                  />
+                )}
+              </div>
+
+              {/* Domicilio Completo (Calle y Número) */}
+              <div className="space-y-1.5 sm:col-span-2 lg:col-span-3">
+                <label className="font-bold text-slate-700 flex items-center gap-1.5">
+                  <MapPin size={14} className="text-slate-400" />
+                  <span>DOMICILIO COMPLETO (CALLE, NÚMERO, DEPTO / POBLACIÓN) *</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  name="domicilio"
+                  placeholder="Ej. Av. Robinson Rojas #4616, Población Cardenal Silva Henríquez"
+                  value={formData.domicilio}
+                  onChange={handleInputChange}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]"
+                />
+              </div>
+
+              {/* BANNER DINÁMICO DE MODALIDAD SEGÚN UBICACIÓN GEOGRÁFICA */}
+              <div className="sm:col-span-2 lg:col-span-3">
+                {isFromArica ? (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 border-2 border-emerald-300 shadow-xs space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black flex-shrink-0">
+                          <Building2 size={18} />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">
+                            ✓ Ubicación Sede Central Detectada ({effectiveCity})
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-black text-emerald-950">
+                            Modalidad Habilitada: Presencial y Virtual
+                          </h4>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-600 text-white shadow-xs self-start sm:self-auto">
+                        Sede Arica + Aula Virtual
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-emerald-900 leading-relaxed">
+                      Como resides en la ciudad de <strong>Arica</strong>, tienes derecho a realizar tus clases en modalidad <strong>Presencial</strong> en nuestra sede (Blanco Encalada N°666, 2do Piso, Arica) con acceso simultáneo al <strong>Aula Virtual</strong>.
+                    </p>
+
+                    {/* Selector de preferencia para el alumno de Arica */}
+                    <div className="pt-1 flex flex-wrap items-center gap-3 text-xs text-emerald-950 font-medium">
+                      <span className="text-slate-600 text-[11px] font-bold">Tu modalidad de estudio:</span>
+                      <label className="flex items-center gap-1.5 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-300 shadow-2xs">
+                        <input
+                          type="radio"
+                          name="modalidadPreferencia"
+                          value="presencial_virtual"
+                          checked={formData.modalidadPreferencia !== 'virtual_total'}
+                          onChange={() => setFormData(prev => ({ ...prev, modalidadPreferencia: 'presencial_virtual' }))}
+                        />
+                        <span className="font-bold text-emerald-900">Presencial en Sede Arica + Aula Virtual (Recomendada)</span>
+                      </label>
+                      <label className="flex items-center gap-1.5 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
+                        <input
+                          type="radio"
+                          name="modalidadPreferencia"
+                          value="virtual_total"
+                          checked={formData.modalidadPreferencia === 'virtual_total'}
+                          onChange={() => setFormData(prev => ({ ...prev, modalidadPreferencia: 'virtual_total' }))}
+                        />
+                        <span>100% Virtual Online (Si no puedes asistir a sede)</span>
+                      </label>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50 border-2 border-sky-300 shadow-xs space-y-2.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-[#0284c7] text-white flex items-center justify-center font-black flex-shrink-0">
+                          <Globe size={18} />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-sky-800 tracking-wider block">
+                            ✓ Ubicación Regional Detectada ({effectiveCity}, {formData.region})
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-black text-sky-950">
+                            Modalidad Asignada: Totalmente Virtual (100% Online)
+                          </h4>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-[#0284c7] text-white shadow-xs self-start sm:self-auto">
+                        100% Online Sincrónico Zoom
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-sky-900 leading-relaxed">
+                      Por encontrarte fuera de Arica en <strong>{effectiveCity}</strong>, tu programa se imparte en modalidad <strong>Totalmente Virtual</strong>: asistes a clases sincrónicas en vivo transmitidas vía Zoom con tu profesor y accedes al Aula Virtual SENCE 24/7 sin necesidad de trasladarte ni costear viajes.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Lugar de Trabajo / Condición */}

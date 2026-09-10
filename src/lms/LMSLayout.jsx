@@ -590,7 +590,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                   <SiteAdminView currentUser={currentUser} />
                 )}
                 {activeNavTab === 'configuracion' && (
-                  <SettingsView isEditMode={isEditMode} />
+                  <SettingsView isEditMode={isEditMode} currentUser={currentUser} />
                 )}
                 {activeNavTab === 'participantes' && (
                   <ParticipantsView isEditMode={isEditMode} />

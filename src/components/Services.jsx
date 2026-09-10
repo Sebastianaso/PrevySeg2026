@@ -229,7 +229,8 @@ const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'segurida
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           <AnimatePresence mode="popLayout">
             {finalCourses.map((course) => {
-              const isAvailable = course.disponible && course.cupos > 0;
+              const isProx = Boolean(course.proximamente);
+              const isAvailable = !isProx && course.disponible && course.cupos > 0;
 
               return (
                 <motion.div
@@ -325,7 +326,12 @@ const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'segurida
 
                       {/* Disponibilidad y Cupos Restantes */}
                       <div className="flex flex-wrap items-center gap-2 pt-1">
-                        {isAvailable ? (
+                        {isProx ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs">
+                            <Clock size={12} className="text-amber-700 animate-pulse" />
+                            <span>PRÓXIMAMENTE • Apertura Próxima</span>
+                          </span>
+                        ) : isAvailable ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span>DISPONIBLE • {course.cupos} vacantes restantes</span>
@@ -369,26 +375,39 @@ const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'segurida
                       </div>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: isAvailable ? 1.04 : 1 }}
-                      whileTap={{ scale: isAvailable ? 0.96 : 1 }}
-                      disabled={!isAvailable}
-                      onClick={() => {
-                        if (isAvailable) {
-                          onSelectCourse(course.title);
-                        }
-                      }}
-                      className={`text-white text-xs font-black py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 flex-shrink-0 transition-all ${
-                        !isAvailable
-                          ? 'bg-slate-300 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none'
-                          : course.school === 'seguridad'
-                          ? 'bg-gradient-to-r from-[#071626] to-[#0A7D8C] hover:from-[#0B2032] hover:to-[#009688] shadow-[#071626]/30 border border-[#00C4D8]/30 cursor-pointer'
-                          : 'bg-gradient-to-r from-[#071626] to-[#00A896] hover:from-[#0B2032] hover:to-[#0A7D8C] shadow-[#071626]/30 border border-[#00A896]/40 cursor-pointer'
-                      }`}
-                    >
-                      <span>{isAvailable ? 'Inscribirme' : 'Sin Cupos'}</span>
-                      <ArrowRight size={14} />
-                    </motion.button>
+                    {isProx ? (
+                      <motion.button
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => onSelectCourse(course.title)}
+                        className="text-white text-xs font-black py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 flex-shrink-0 transition-all bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-700 hover:to-amber-600 shadow-amber-600/30 border border-amber-300/40 cursor-pointer"
+                        title="Consultar fecha y preinscribirse"
+                      >
+                        <Clock size={14} />
+                        <span>PRÓXIMAMENTE</span>
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: isAvailable ? 1.04 : 1 }}
+                        whileTap={{ scale: isAvailable ? 0.96 : 1 }}
+                        disabled={!isAvailable}
+                        onClick={() => {
+                          if (isAvailable) {
+                            onSelectCourse(course.title);
+                          }
+                        }}
+                        className={`text-white text-xs font-black py-2.5 px-4 rounded-xl shadow-md flex items-center gap-1.5 flex-shrink-0 transition-all ${
+                          !isAvailable
+                            ? 'bg-slate-300 text-slate-500 cursor-not-allowed border border-slate-300 shadow-none'
+                            : course.school === 'seguridad'
+                            ? 'bg-gradient-to-r from-[#071626] to-[#0A7D8C] hover:from-[#0B2032] hover:to-[#009688] shadow-[#071626]/30 border border-[#00C4D8]/30 cursor-pointer'
+                            : 'bg-gradient-to-r from-[#071626] to-[#00A896] hover:from-[#0B2032] hover:to-[#0A7D8C] shadow-[#071626]/30 border border-[#00A896]/40 cursor-pointer'
+                        }`}
+                      >
+                        <span>{isAvailable ? 'Inscribirme' : 'Sin Cupos'}</span>
+                        <ArrowRight size={14} />
+                      </motion.button>
+                    )}
                   </div>
                 </motion.div>
               );

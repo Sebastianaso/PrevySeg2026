@@ -451,6 +451,7 @@ export function getSavedCourses() {
       return {
         ...defCourse,
         disponible: typeof match.disponible === 'boolean' ? match.disponible : defCourse.disponible,
+        proximamente: typeof match.proximamente === 'boolean' ? match.proximamente : Boolean(defCourse.proximamente),
         cupos: typeof match.cupos === 'number' ? match.cupos : (parseInt(match.cupos, 10) || defCourse.cupos),
         fecha_inicio: match.fecha_inicio || defCourse.fecha_inicio,
         fecha_termino: match.fecha_termino || defCourse.fecha_termino,

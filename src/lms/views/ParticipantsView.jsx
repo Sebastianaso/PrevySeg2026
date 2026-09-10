@@ -125,6 +125,10 @@ const ParticipantsView = ({ isEditMode }) => {
         const firstName = parts[0];
         const lastName = parts.slice(1).join(' ') || '';
 
+        const domicilio = u.domicilio || '';
+        const isAricaResident = domicilio.toLowerCase().includes('arica') || domicilio.toLowerCase().includes('azapa') || domicilio.toLowerCase().includes('lluta') || !domicilio;
+        const modalidadEstudiante = isAricaResident ? 'Presencial y Virtual (Sede Arica)' : '100% Virtual Online (Regiones)';
+
         return {
           id: u.id,
           rawUser: u,
@@ -133,6 +137,9 @@ const ParticipantsView = ({ isEditMode }) => {
           fullName: u.nombre,
           email: u.email,
           rut: u.rut || 'Sin RUT',
+          domicilio: domicilio,
+          isAricaResident,
+          modalidadEstudiante,
           rol: u.rol === 'ADMIN' 
             ? 'Administrador' 
             : (u.rol === 'EMPRESA' || u.rol === 'EMPLOYER' || u.rol === 'EMPLEADOR') 
@@ -519,8 +526,17 @@ const ParticipantsView = ({ isEditMode }) => {
                             <div className="font-bold text-slate-900 hover:text-[#00c2b2] cursor-pointer transition-colors">
                               {p.fullName}
                             </div>
-                            <div className="text-[10px] text-slate-500 font-mono">
-                              RUT: {p.rut}
+                            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500 font-mono">
+                              <span>RUT: {p.rut}</span>
+                              {p.rawRole === 'STUDENT' && (
+                                <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-sans text-[9px] font-bold ${
+                                  p.isAricaResident
+                                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                    : 'bg-sky-50 text-sky-800 border border-sky-200'
+                                }`}>
+                                  {p.isAricaResident ? '📍 Arica (Presencial/Virtual)' : '🌐 Región (100% Virtual)'}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>

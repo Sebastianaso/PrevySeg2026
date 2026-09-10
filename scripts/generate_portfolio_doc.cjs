@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const { 
-  Document, 
-  Packer, 
-  Paragraph, 
-  TextRun, 
-  AlignmentType, 
-  HeadingLevel, 
+const {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  AlignmentType,
+  HeadingLevel,
   Header,
   Footer,
   PageNumber,
@@ -195,29 +195,39 @@ async function generatePortfolioCompleteDocx() {
         // ==========================================
         // PÁGINA 1: PORTADA FORMAL SANTO TOMÁS
         // ==========================================
-        new Paragraph({ spacing: { before: 300, after: 100 }, alignment: AlignmentType.CENTER, children: [
-          new TextRun({ text: "INSTITUTO PROFESIONAL Y CENTRO DE FORMACIÓN TÉCNICA SANTO TOMÁS", bold: true, size: 22, color: COLOR_ST_GREEN, font: "Calibri" })
-        ]}),
-        new Paragraph({ spacing: { after: 100 }, alignment: AlignmentType.CENTER, children: [
-          new TextRun({ text: "VICERRECTORÍA ACADÉMICA — DIRECCIÓN DE DESARROLLO CURRICULAR", bold: true, size: 16, color: COLOR_MUTED, font: "Calibri" })
-        ]}),
-        new Paragraph({ spacing: { after: 260 }, alignment: AlignmentType.CENTER, children: [
-          new TextRun({ text: "PRÁCTICA PROFESIONAL — EVIDENCIA: PORTAFOLIO REFLEXIVO", bold: true, size: 26, color: COLOR_NAVY, font: "Calibri" })
-        ]}),
+        new Paragraph({
+          spacing: { before: 300, after: 100 }, alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: "INSTITUTO PROFESIONAL Y CENTRO DE FORMACIÓN TÉCNICA SANTO TOMÁS", bold: true, size: 22, color: COLOR_ST_GREEN, font: "Calibri" })
+          ]
+        }),
+        new Paragraph({
+          spacing: { after: 100 }, alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: "VICERRECTORÍA ACADÉMICA — DIRECCIÓN DE DESARROLLO CURRICULAR", bold: true, size: 16, color: COLOR_MUTED, font: "Calibri" })
+          ]
+        }),
+        new Paragraph({
+          spacing: { after: 260 }, alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: "PRÁCTICA PROFESIONAL — EVIDENCIA: PORTAFOLIO REFLEXIVO", bold: true, size: 26, color: COLOR_NAVY, font: "Calibri" })
+          ]
+        }),
 
-        new Paragraph({ spacing: { before: 180, after: 180 }, alignment: AlignmentType.CENTER, children: [
-          new TextRun({ 
-            text: "“SISTEMA INTEGRAL DE GESTIÓN ACADÉMICA, MATRÍCULA ATÓMICA Y CAMPUS VIRTUAL LMS PARA OTEC PREVYSEG SPA”", 
-            bold: true, 
-            size: 22, 
-            color: COLOR_DARK_SLATE, 
-            font: "Calibri" 
-          })
-        ]}),
+        new Paragraph({
+          spacing: { before: 180, after: 180 }, alignment: AlignmentType.CENTER, children: [
+            new TextRun({
+              text: "“SISTEMA INTEGRAL DE GESTIÓN ACADÉMICA, MATRÍCULA ATÓMICA Y CAMPUS VIRTUAL LMS PARA OTEC PREVYSEG SPA”",
+              bold: true,
+              size: 22,
+              color: COLOR_DARK_SLATE,
+              font: "Calibri"
+            })
+          ]
+        }),
 
-        new Paragraph({ spacing: { after: 360 }, alignment: AlignmentType.CENTER, children: [
-          new TextRun({ text: "Bitácora Técnica Integral y Portafolio de Competencias Profesionales", italic: true, size: 18, color: COLOR_CYAN, font: "Calibri" })
-        ]}),
+        new Paragraph({
+          spacing: { after: 360 }, alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: "Bitácora Técnica Integral y Portafolio de Competencias Profesionales", italic: true, size: 18, color: COLOR_CYAN, font: "Calibri" })
+          ]
+        }),
 
         createHeading2("DATOS INSTITUCIONALES Y DE IDENTIFICACIÓN:"),
         createBullet("Estudiante:", "Alumno en Práctica Profesional Santo Tomás"),
@@ -253,7 +263,7 @@ async function generatePortfolioCompleteDocx() {
         // ==========================================
         createHeading1("3. DOCUMENTO ACUERDO DE DESEMPEÑO"),
         createParagraph("En el marco de la Práctica Profesional formalizada entre Santo Tomás y OTEC PrevySeg SpA, se establecieron los siguientes compromisos y competencias clave a desempeñar en el centro de práctica:"),
-        
+
         createHeading2("Área 1: Arquitectura Frontend e Interfaz SPA"),
         createBullet("Competencias y Tareas Asignadas:", "Diseñar e implementar la interfaz responsiva con React 19, Vite, TailwindCSS v4 y Framer Motion. Integrar el Switcher conmutable entre la Escuela de Seguridad y la Escuela de Oficios, y desplegar el catálogo oficial de 20 cursos."),
         createBullet("Criterio de Evaluación y Entrega:", "Carga veloz (< 1.5s), 0 errores de compilación con Vite, interfaz adaptativa mobile/desktop y navegación fluida por scroll."),
@@ -315,7 +325,7 @@ async function generatePortfolioCompleteDocx() {
         createParagraph("Nombre de la Evidencia: Arquitectura de Interfaz SPA, Switcher de Escuelas y Catálogo Dinámico de 20 Cursos.", { bold: true }),
         createParagraph("Descripción Técnica de la Evidencia:"),
         createParagraph("Se diseñó y construyó la arquitectura frontend mediante una Single Page Application (SPA) en React 19 y Vite. La aplicación incorpora un canvas interactivo en HTML5 (`NetworkBackground.jsx`) que dibuja partículas y nodos en tiempo real simulando una red digital segura. En la barra superior (`Header.jsx`) y en la sección Hero (`Hero.jsx`) se integró el Switcher Conmutable de Escuelas, el cual conmuta el estado global `activeSchool` entre 'seguridad' y 'oficios'. Al conmutar, se actualiza reactivamente la paleta visual (Azul Marino institucional vs Teal Esmeralda), los títulos y se filtran dinámicamente los 20 cursos oficiales estructurados en `src/data/coursesData.js` (10 para Escuela de Oficios y 10 para Escuela de Seguridad Privada), cada uno con horas cronológicas, modalidad, cupos en tiempo real, arancel total y abono del 50%."),
-        
+
         createHeading3("B. Evidencia Escrita"),
         createParagraph("Nombre de la Evidencia: Implementación Modular de Componentes React 19 y Estado Reactivo.", { bold: true }),
         createBullet("Contexto:", "Plataforma web oficial de OTEC PrevySeg desplegada en entorno web moderno, orientada a usuarios de la Macro Zona Norte con diversos niveles de alfabetización digital y navegación preferente desde smartphones."),
@@ -325,22 +335,22 @@ async function generatePortfolioCompleteDocx() {
 
         createHeading3("C. Reflexiones en Torno a la Evidencia (Anexo N° 2)"),
         ...createReflectionItem(
-          "1", 
+          "1",
           "¿Qué conocimientos, habilidades, destrezas y actitudes he puesto en juego para desarrollar este trabajo?",
           "Apliqué conocimientos de JavaScript moderno (ES2024), ciclo de vida de React 19, física de partículas en Canvas 2D y diseño utilitario con TailwindCSS v4. Puse en juego destrezas de diseño UI/UX centrado en el usuario, adaptabilidad a la identidad corporativa de OTEC PrevySeg y una actitud de rigor técnico en la legibilidad tipográfica y responsividad móvil."
         ),
         ...createReflectionItem(
-          "2", 
+          "2",
           "¿Cuáles son las competencias de mi perfil de egreso que he puesto en juego?",
           "Puse en juego la competencia de 'Diseño y Desarrollo de Soluciones Web Interactivas', aplicando buenas prácticas de arquitectura frontend, modularización de componentes reutilizables, patrones de diseño de interfaz de usuario y optimización del rendimiento de carga en el navegador cliente."
         ),
         ...createReflectionItem(
-          "3", 
+          "3",
           "¿Qué nuevos conocimientos, habilidades, destrezas y actitudes reforcé o aprendí al realizar este trabajo?",
           "Aprendí a integrar TailwindCSS v4 con el compilador Vite para optimizar los tiempos de compilación a menos de 1 segundo. Aprendí a gestionar microinteracciones con Framer Motion sin degradar la tasa de cuadros por segundo (FPS) y reforcé mi capacidad para diseñar flujos de usuario simplificados que reducen la fricción."
         ),
         ...createReflectionItem(
-          "4", 
+          "4",
           "¿Qué desafíos personales me planteo?",
           "Me planteo el desafío de profundizar en micro-frontends y arquitecturas web guiadas por accesibilidad universal (norma WCAG 2.2 nivel AAA), logrando que plataformas educativas complejas sean plenamente utilizables por cualquier persona, incluyendo usuarios con discapacidades visuales o motrices."
         ),
@@ -363,22 +373,22 @@ async function generatePortfolioCompleteDocx() {
 
         createHeading3("C. Reflexiones en Torno a la Evidencia (Anexo N° 2)"),
         ...createReflectionItem(
-          "1", 
+          "1",
           "¿Qué conocimientos, habilidades, destrezas y actitudes he puesto en juego para desarrollar este trabajo?",
           "Apliqué fundamentos de bases de datos relacionales: normalización en Tercera Forma Normal (3FN), transaccionalidad ACID, triggers PL/pgSQL y procedimientos almacenados con privilegios SECURITY DEFINER. Desarrollé destrezas para depurar políticas de seguridad RLS y resolver colisiones en restricciones de clave primaria y foránea."
         ),
         ...createReflectionItem(
-          "2", 
+          "2",
           "¿Cuáles son las competencias de mi perfil de egreso que he puesto en juego?",
           "Puse en práctica la competencia de 'Diseño e Implementación de Bases de Datos Corporativas', asegurando la consistencia, integridad referencial y alta disponibilidad de los registros académicos y financieros del organismo técnico de capacitación."
         ),
         ...createReflectionItem(
-          "3", 
+          "3",
           "¿Qué nuevos conocimientos, habilidades, destrezas y actitudes reforcé o aprendí al realizar este trabajo?",
           "Comprendí a fondo la interacción interna entre el motor GoTrue de Supabase y las tablas de datos públicas en PostgreSQL. Reforcé la actitud de anticipar fallos de red diseñando Stored Procedures que garantizan que las operaciones se completen íntegramente o se reviertan por completo (ROLLBACK)."
         ),
         ...createReflectionItem(
-          "4", 
+          "4",
           "¿Qué desafíos personales me planteo?",
           "Me planteo como desafío profesional dominar técnicas avanzadas de optimización de consultas SQL (EXPLAIN ANALYZE), particionamiento horizontal de tablas para millones de registros y replicación multirregión con tolerancia a fallos para infraestructuras críticas."
         ),
@@ -401,22 +411,22 @@ async function generatePortfolioCompleteDocx() {
 
         createHeading3("C. Reflexiones en Torno a la Evidencia (Anexo N° 2)"),
         ...createReflectionItem(
-          "1", 
+          "1",
           "¿Qué conocimientos, habilidades, destrezas y actitudes he puesto en juego para desarrollar este trabajo?",
           "Apliqué principios de seguridad por diseño (Security by Design), criptografía asimétrica y hashing con salting (Bcrypt), gestión de tokens JWT (JSON Web Tokens) y diseño de matrices de autorización RBAC. Puse en juego destrezas analíticas para prevenir vulnerabilidades comunes del OWASP Top 10."
         ),
         ...createReflectionItem(
-          "2", 
+          "2",
           "¿Cuáles son las competencias de mi perfil de egreso que he puesto en juego?",
           "Puse en juego la competencia de 'Implementación de Protocolos de Seguridad y Control de Acceso', protegiendo la confidencialidad, autenticidad y trazabilidad de las acciones de los usuarios en el sistema de información corporativo."
         ),
         ...createReflectionItem(
-          "3", 
+          "3",
           "¿Qué nuevos conocimientos, habilidades, destrezas y actitudes reforcé o aprendí al realizar este trabajo?",
           "Aprendí a integrar autenticación basada en identidades nacionales (RUT) sobre motores estándar de correo electrónico, sin descuidar los estándares de GoTrue. Reforcé una actitud vigilante frente al manejo de datos confidenciales y contraseñas de alumnos."
         ),
         ...createReflectionItem(
-          "4", 
+          "4",
           "¿Qué desafíos personales me planteo?",
           "Me planteo el desafío de profundizar en arquitecturas de seguridad Zero-Trust, autenticación multifactor (MFA / WebAuthn con biometría FIDO2) y auditorías automatizadas de código estático para entornos en la nube."
         ),
@@ -439,22 +449,22 @@ async function generatePortfolioCompleteDocx() {
 
         createHeading3("C. Reflexiones en Torno a la Evidencia (Anexo N° 2)"),
         ...createReflectionItem(
-          "1", 
+          "1",
           "¿Qué conocimientos, habilidades, destrezas y actitudes he puesto en juego para desarrollar este trabajo?",
           "Puse en juego habilidades de resolución analítica de problemas, depuración sistemática de software, control de versiones colaborativo con Git y planificación estructurada con WBS. Mantuve una actitud proactiva, orientada a resultados y capaz de trabajar bajo presión respetando los plazos de entrega."
         ),
         ...createReflectionItem(
-          "2", 
+          "2",
           "¿Cuáles son las competencias de mi perfil de egreso que he puesto en juego?",
           "Demostré la competencia de 'Gestión Ágil de Proyectos de Software y Resolución de Incidentes Críticos', coordinando plazos, versionamiento en Git y entregables documentados bajo estándares de la industria."
         ),
         ...createReflectionItem(
-          "3", 
+          "3",
           "¿Qué nuevos conocimientos, habilidades, destrezas y actitudes reforcé o aprendí al realizar este trabajo?",
           "Aprendí a interpretar y traducir solicitudes de negocio no técnicas en arquitecturas de software escalables. Reforcé mi tolerancia a la frustración y mi capacidad de negociar soluciones óptimas frente a restricciones de tiempo y tecnología."
         ),
         ...createReflectionItem(
-          "4", 
+          "4",
           "¿Qué desafíos personales me planteo?",
           "Me planteo como desafío perfeccionar el liderazgo de equipos de desarrollo bajo marcos Scrum/Kanban, obteniendo certificaciones de gestión técnica como PMP o Scrum Master para liderar proyectos de gran envergadura en la industria TI."
         ),
@@ -477,22 +487,22 @@ async function generatePortfolioCompleteDocx() {
 
         createHeading3("C. Reflexiones en Torno a la Evidencia (Anexo N° 2)"),
         ...createReflectionItem(
-          "1", 
+          "1",
           "¿Qué conocimientos, habilidades, destrezas y actitudes he puesto en juego para desarrollar este trabajo?",
           "Apliqué conocimientos de legislación informática (Ley 19.628, Ley 21.659 y Ley 19.518 de SENCE), implementando algoritmos transparentes de cálculo financiero y mecanismos de verificación criptográfica. Mostré destreza para diseñar interfaces honestas y una actitud de respeto hacia la confianza del estudiante."
         ),
         ...createReflectionItem(
-          "2", 
+          "2",
           "¿Cuáles son las competencias de mi perfil de egreso que he puesto en juego?",
           "Puse en juego la competencia de 'Actuación Ética y Responsabilidad Social Profesional', asegurando que el software desarrollado no solo sea técnicamente eficiente, sino un instrumento de confianza y beneficio para la comunidad de trabajadores de Arica."
         ),
         ...createReflectionItem(
-          "3", 
+          "3",
           "¿Qué nuevos conocimientos, habilidades, destrezas y actitudes reforcé o aprendí al realizar este trabajo?",
           "Comprendí el rol trascendental del informático como custodio de la verdad digital y protector de la fe pública mediante herramientas antifraude como los códigos QR. Reforcé la convicción de que el código debe ser accesible, veraz y transparente."
         ),
         ...createReflectionItem(
-          "4", 
+          "4",
           "¿Qué desafíos personales me planteo?",
           "Me planteo el desafío ético permanente de diseñar sistemas con principios de equidad algorítmica, protegiendo la soberanía de los datos de los usuarios y contribuyendo activamente a la transformación digital ética y solidaria del país."
         ),
@@ -586,9 +596,11 @@ async function generatePortfolioCompleteDocx() {
         createParagraph("El desarrollo de las actividades mantuvo una correspondencia exacta con los acuerdos formalizados en el Acuerdo Formativo de Aprendizaje (IBASEPE). Las brechas identificadas al inicio de la práctica —vinculadas a la persistencia transaccional en PostgreSQL, el manejo seguro de identidades y contraseñas con Bcrypt y la adaptación a normativas de capacitación— fueron superadas con creces."),
         createParagraph("El sistema hoy en día opera con cero registros huérfanos, autenticación blindada basada en RUT, un catálogo oficial de 20 cursos depurados y un Campus Virtual operativo que genera valor real para OTEC PrevySeg y la comunidad de la Región de Arica y Parinacota. Esta experiencia no solo afianzó mis capacidades técnicas como informático, sino que reafirmó mi compromiso ético con la verdad, la probidad y el servicio a la sociedad, sello distintivo de mi formación en Santo Tomás."),
 
-        new Paragraph({ spacing: { before: 400, after: 120 }, alignment: AlignmentType.CENTER, children: [
-          new TextRun({ text: "— FIN DEL PORTAFOLIO REFLEXIVO DE PRÁCTICA PROFESIONAL —", bold: true, size: 18, color: COLOR_ST_GREEN, font: "Calibri" })
-        ]})
+        new Paragraph({
+          spacing: { before: 400, after: 120 }, alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: "— FIN DEL PORTAFOLIO REFLEXIVO DE PRÁCTICA PROFESIONAL —", bold: true, size: 18, color: COLOR_ST_GREEN, font: "Calibri" })
+          ]
+        })
       ]
     }]
   });

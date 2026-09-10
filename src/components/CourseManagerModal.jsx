@@ -13,7 +13,8 @@ import {
   Save,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  MapPin
 } from 'lucide-react';
 import { getSavedCourses, updateCourseItem, resetCoursesToDefault } from '../data/coursesData';
 
@@ -23,6 +24,7 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({
     disponible: true,
+    proximamente: false,
     cupos: 20,
     fecha_inicio: '',
     fecha_termino: ''
@@ -46,6 +48,7 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
     setEditingId(course.id);
     setEditForm({
       disponible: course.disponible,
+      proximamente: Boolean(course.proximamente),
       cupos: course.cupos,
       fecha_inicio: course.fecha_inicio || '',
       fecha_termino: course.fecha_termino || ''
@@ -55,6 +58,7 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
   const handleSave = (courseId) => {
     const updated = updateCourseItem(courseId, {
       disponible: editForm.disponible,
+      proximamente: Boolean(editForm.proximamente),
       cupos: Number(editForm.cupos),
       fecha_inicio: editForm.fecha_inicio.trim(),
       fecha_termino: editForm.fecha_termino.trim()
@@ -68,10 +72,22 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
 
   const handleQuickToggleAvailability = (course) => {
     const newStatus = !course.disponible;
-    const updated = updateCourseItem(course.id, { disponible: newStatus });
+    const updated = updateCourseItem(course.id, { disponible: newStatus, proximamente: false });
     if (updated) {
       setCourses(updated);
       showToast(`Estado cambiado a: ${newStatus ? 'Disponible' : 'No Disponible'}`);
+    }
+  };
+
+  const handleQuickToggleProximamente = (course) => {
+    const nextProx = !course.proximamente;
+    const updated = updateCourseItem(course.id, { 
+      proximamente: nextProx, 
+      disponible: nextProx ? false : course.disponible 
+    });
+    if (updated) {
+      setCourses(updated);
+      showToast(`Estado cambiado a: ${nextProx ? 'PRÓXIMAMENTE' : 'Estado Normal'}`);
     }
   };
 
@@ -182,6 +198,10 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
                       <span className="text-[11px] font-semibold text-slate-500">
                         {course.duration}
                       </span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200">
+                        <MapPin size={10} className="text-rose-500" />
+                        <span>Arica: Presencial/Virtual • Regiones: 100% Virtual</span>
+                      </span>
                     </div>
 
                     <h4 className="text-sm font-bold text-slate-900 leading-snug">
@@ -189,25 +209,51 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
                     </h4>
 
                     {/* Current Badges */}
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+                    <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
                       {/* Estado */}
+                      {course.proximamente ? (
+                        <button
+                          onClick={() => handleQuickToggleProximamente(course)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black cursor-pointer bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs hover:bg-amber-200 transition-all"
+                          title="Haz clic para alternar estado Próximamente"
+                        >
+                          <Clock size={12} className="text-amber-700 animate-pulse" />
+                          <span>PRÓXIMAMENTE</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleQuickToggleAvailability(course)}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black cursor-pointer transition-transform hover:scale-105 ${
+                            course.disponible
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-rose-100 text-rose-800 border border-rose-300'
+                          }`}
+                          title="Haz clic para cambiar disponibilidad"
+                        >
+                          <span className={`w-2 h-2 rounded-full ${course.disponible ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                          <span>{course.disponible ? 'DISPONIBLE' : 'NO DISPONIBLE'}</span>
+                        </button>
+                      )}
+
+                      {/* Botón rápido para marcar PRÓXIMAMENTE */}
                       <button
-                        onClick={() => handleQuickToggleAvailability(course)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black cursor-pointer transition-transform hover:scale-105 ${
-                          course.disponible
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                            : 'bg-rose-100 text-rose-800 border border-rose-300'
+                        type="button"
+                        onClick={() => handleQuickToggleProximamente(course)}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer flex items-center gap-1 ${
+                          course.proximamente
+                            ? 'bg-amber-500 text-white border-amber-500 hover:bg-amber-600'
+                            : 'bg-white text-slate-600 border-slate-300 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-300'
                         }`}
-                        title="Haz clic para cambiar disponibilidad"
+                        title="Alternar botón PRÓXIMAMENTE"
                       >
-                        <span className={`w-2 h-2 rounded-full ${course.disponible ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                        <span>{course.disponible ? 'DISPONIBLE' : 'NO DISPONIBLE'}</span>
+                        <Clock size={10} />
+                        <span>{course.proximamente ? 'Quitar Pronto' : '+ Pronto'}</span>
                       </button>
 
                       {/* Cupos */}
                       <span className="inline-flex items-center gap-1 text-slate-600 font-semibold">
                         <Users size={13} className="text-sky-600" />
-                        <span><strong>{course.cupos}</strong> cupos restantes</span>
+                        <span><strong>{course.cupos}</strong> cupos</span>
                       </span>
 
                       {/* Fechas */}
@@ -240,23 +286,36 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
                     >
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         
-                        {/* 1. Disponibilidad */}
+                        {/* 1. Disponibilidad & Próximamente */}
                         <div className="space-y-1">
                           <label className="text-[11px] font-bold text-slate-700 uppercase">
                             Estado de Matrícula:
                           </label>
-                          <div className="flex items-center gap-2 pt-1">
+                          <div className="flex flex-col gap-1.5 pt-1">
                             <button
                               type="button"
-                              onClick={() => setEditForm({ ...editForm, disponible: !editForm.disponible })}
-                              className={`w-full py-2 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                                editForm.disponible
+                              onClick={() => setEditForm({ ...editForm, disponible: !editForm.disponible, proximamente: false })}
+                              className={`w-full py-1.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                                editForm.disponible && !editForm.proximamente
                                   ? 'bg-emerald-600 text-white shadow-xs'
-                                  : 'bg-rose-600 text-white shadow-xs'
+                                  : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
                               }`}
                             >
                               <Check size={14} />
-                              <span>{editForm.disponible ? 'Disponible' : 'No Disponible'}</span>
+                              <span>{editForm.disponible && !editForm.proximamente ? 'Disponible' : 'Marcar Disponible'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setEditForm({ ...editForm, proximamente: !editForm.proximamente, disponible: editForm.proximamente ? true : false })}
+                              className={`w-full py-1.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                                editForm.proximamente
+                                  ? 'bg-amber-500 text-white shadow-xs ring-2 ring-amber-400/40'
+                                  : 'bg-slate-200 text-slate-700 hover:bg-amber-100'
+                              }`}
+                            >
+                              <Clock size={14} />
+                              <span>{editForm.proximamente ? '✓ PRÓXIMAMENTE' : 'Marcar Próximamente'}</span>
                             </button>
                           </div>
                         </div>
