@@ -1,34 +1,36 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  ChevronDown, 
-  ChevronRight, 
-  Shield, 
-  Bot, 
-  BarChart3, 
-  Award, 
-  Sparkles, 
-  FileText, 
-  MapPin, 
-  Globe, 
-  MessageSquare, 
-  CreditCard, 
-  Home, 
-  Smartphone, 
-  Share2, 
-  Lock, 
-  CheckCircle2, 
-  Sliders, 
-  HelpCircle, 
-  X, 
+import {
+  Search,
+  ChevronDown,
+  ChevronRight,
+  Shield,
+  Bot,
+  BarChart3,
+  Award,
+  Sparkles,
+  FileText,
+  MapPin,
+  Globe,
+  MessageSquare,
+  CreditCard,
+  Home,
+  Smartphone,
+  Share2,
+  Lock,
+  CheckCircle2,
+  Sliders,
+  HelpCircle,
+  X,
   Settings,
   ExternalLink,
   ChevronUp
 } from 'lucide-react';
+import CourseManagerModal from '../../components/CourseManagerModal';
 
 const SiteAdminView = ({ currentUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     general: true,
     ia: true,
@@ -236,10 +238,10 @@ const SiteAdminView = ({ currentUser }) => {
 
   // Filtrado reactivo en vivo por búsqueda
   const filteredCategories = adminCategories.map(cat => {
-    const matchesCategoryTitle = cat.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                 cat.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchedItems = cat.items.filter(item => 
+    const matchesCategoryTitle = cat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cat.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchedItems = cat.items.filter(item =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.desc.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -274,7 +276,7 @@ const SiteAdminView = ({ currentUser }) => {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      
+
       {/* 1. Header con Título "Administración del sitio" y Buscador con botón azul como en la captura */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
         <div>
@@ -291,24 +293,36 @@ const SiteAdminView = ({ currentUser }) => {
           </p>
         </div>
 
-        {/* Buscador superior derecho con botón azul como en Screenshot 1 */}
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="relative flex-1 md:w-72">
-            <input
-              type="text"
-              placeholder="Buscar"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 rounded-l-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0284c7] focus:bg-white"
-            />
-          </div>
+        {/* Acciones y Buscador superior derecho */}
+        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
           <button
-            onClick={() => {}}
-            className="bg-[#0284c7] hover:bg-[#0369a1] text-white p-2.5 rounded-r-xl transition-colors cursor-pointer flex items-center justify-center shadow"
-            title="Buscar ajuste"
+            type="button"
+            onClick={() => setIsManagerOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-300 hover:border-[#0A4DA2] text-slate-700 hover:text-[#0A4DA2] text-xs font-bold shadow-2xs hover:shadow-md transition-all cursor-pointer group"
+            title="Abrir gestor para modificar cupos, fechas y disponibilidad de cursos"
           >
-            <Search size={15} />
+            <Sliders size={15} className="text-[#0A4DA2] group-hover:rotate-90 transition-transform duration-300" />
+            <span>⚙️ Modificar Disponibilidad, Cupos y Fechas</span>
           </button>
+
+          <div className="flex items-center gap-2 flex-1 md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <input
+                type="text"
+                placeholder="Buscar ajuste..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-l-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0284c7] focus:bg-white"
+              />
+            </div>
+            <button
+              onClick={() => { }}
+              className="bg-[#0284c7] hover:bg-[#0369a1] text-white p-2.5 rounded-r-xl transition-colors cursor-pointer flex items-center justify-center shadow"
+              title="Buscar ajuste"
+            >
+              <Search size={15} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -370,11 +384,10 @@ const SiteAdminView = ({ currentUser }) => {
                         {cat.title}
                       </h3>
                       {cat.badge && (
-                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                          cat.badge === 'Crítico' 
-                            ? 'bg-red-50 text-red-700 border border-red-200' 
-                            : 'bg-teal-50 text-teal-700 border border-teal-200'
-                        }`}>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${cat.badge === 'Crítico'
+                          ? 'bg-red-50 text-red-700 border border-red-200'
+                          : 'bg-teal-50 text-teal-700 border border-teal-200'
+                          }`}>
                           {cat.badge}
                         </span>
                       )}
@@ -398,7 +411,7 @@ const SiteAdminView = ({ currentUser }) => {
               {/* Contenido Expandible con AnimatePresence */}
               <AnimatePresence>
                 {isExpanded && (
-                  <motion.div 
+                  <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -441,7 +454,7 @@ const SiteAdminView = ({ currentUser }) => {
       <AnimatePresence>
         {selectedSetting && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.92, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 15 }}
@@ -518,6 +531,12 @@ const SiteAdminView = ({ currentUser }) => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Modal Gestor de Disponibilidad, Cupos y Fechas */}
+      <CourseManagerModal
+        isOpen={isManagerOpen}
+        onClose={() => setIsManagerOpen(false)}
+      />
 
     </div>
   );

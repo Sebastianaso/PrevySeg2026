@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { 
-  Save, 
-  RotateCcw, 
-  Bold, 
-  Italic, 
-  Underline, 
-  List, 
-  ListOrdered, 
-  Link as LinkIcon, 
-  Image as ImageIcon, 
-  Code, 
-  AlignLeft, 
-  AlignCenter, 
-  AlignRight, 
-  ChevronDown, 
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import {
+  Save,
+  RotateCcw,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Code,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  ChevronDown,
   ChevronRight,
   HelpCircle,
   CheckCircle2,
@@ -29,10 +29,12 @@ import {
   Globe,
   Building2,
   Laptop,
-  Compass
+  Compass,
+  Sliders
 } from 'lucide-react';
 import { supabase } from '../../config/supabase';
 import { getSavedCourses, updateCourseItem } from '../../data/coursesData';
+import CourseManagerModal from '../../components/CourseManagerModal';
 
 // =========================================================================
 // CATEGORÍAS COMPLETAS IMPLEMENTADAS (SEGURIDAD Y OFICIOS)
@@ -61,12 +63,18 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const selectedCourseIdRef = useRef(null);
   const [activeSchoolFilter, setActiveSchoolFilter] = useState('all'); // 'all' | 'seguridad' | 'oficios'
   const [searchQuery, setSearchQuery] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [testCity, setTestCity] = useState('Arica');
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
+
+  useEffect(() => {
+    selectedCourseIdRef.current = selectedCourseId;
+  }, [selectedCourseId]);
 
   // Comprobar en tiempo real si una ciudad pertenece a Arica o valles
   const isAricaTest = useMemo(() => {
@@ -88,6 +96,8 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
     precio: 120000,
     duracion: '90 Horas',
     modalidad: 'Presencial / Semipresencial',
+    permitePresencial: true,
+    permiteVirtual: true,
     fechaInicio: '2026-10-14',
     fechaFin: '2026-11-20',
     idSence: 'OS10-FORM-01',
@@ -120,6 +130,8 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
       precio: course.precio || 0,
       duracion: course.duracion || course.duration || '40 Horas',
       modalidad: course.modalidad || course.modality || 'Presencial',
+      permitePresencial: course.permitePresencial !== false && course.permite_presencial !== false,
+      permiteVirtual: course.permiteVirtual !== false && course.permite_virtual !== false,
       fechaInicio: course.fecha_inicio || '',
       fechaFin: course.fecha_termino || '',
       idSence: course.codigo_sence || '',
@@ -145,26 +157,64 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
       if (error) throw error;
 
+      const localSaved = getSavedCourses();
+
+      let mappedCourses = [];
       if (data && data.length > 0) {
-        setCourses(data);
-        if (!selectedCourseId) {
-          const first = data[0];
-          setSelectedCourseId(first.id);
-          populateForm(first);
-        } else {
-          const match = data.find(c => c.id === selectedCourseId);
-          if (match) populateForm(match);
-        }
+        mappedCourses = data.map(dbCourse => {
+          const localMatch = localSaved.find(l => l.id === dbCourse.id || l.title === dbCourse.titulo || l.codigo_sence === dbCourse.codigo_sence);
+          const pres = typeof dbCourse.permite_presencial === 'boolean'
+            ? dbCourse.permite_presencial
+            : (localMatch && typeof localMatch.permitePresencial === 'boolean' ? localMatch.permitePresencial : true);
+          const virt = typeof dbCourse.permite_virtual === 'boolean'
+            ? dbCourse.permite_virtual
+            : (localMatch && typeof localMatch.permiteVirtual === 'boolean' ? localMatch.permiteVirtual : true);
+          const prox = typeof dbCourse.proximamente === 'boolean'
+            ? dbCourse.proximamente
+            : (localMatch && typeof localMatch.proximamente === 'boolean' ? localMatch.proximamente : false);
+
+          return {
+            ...dbCourse,
+            titulo: dbCourse.titulo || (localMatch ? localMatch.title : ''),
+            title: dbCourse.titulo || (localMatch ? localMatch.title : ''),
+            category: dbCourse.category || (localMatch ? localMatch.category : 'General'),
+            school: dbCourse.school || (localMatch ? localMatch.school : 'seguridad'),
+            codigo_sence: dbCourse.codigo_sence || (localMatch ? localMatch.codigo_sence : `SENCE-${dbCourse.id}`),
+            modalidad: dbCourse.modalidad || (localMatch ? localMatch.modality : 'Presencial'),
+            modality: dbCourse.modalidad || (localMatch ? localMatch.modality : 'Presencial'),
+            duracion: dbCourse.duracion || (localMatch ? localMatch.duration : '40 Horas'),
+            duration: dbCourse.duracion || (localMatch ? localMatch.duration : '40 Horas'),
+            precio: dbCourse.precio !== undefined ? dbCourse.precio : (localMatch ? localMatch.price : 95000),
+            cupos: dbCourse.cupos !== undefined ? dbCourse.cupos : (localMatch ? localMatch.cupos : 20),
+            fecha_inicio: dbCourse.fecha_inicio || (localMatch ? localMatch.fecha_inicio : '2026-10-15'),
+            fecha_termino: dbCourse.fecha_termino || (localMatch ? localMatch.fecha_termino : '2026-11-15'),
+            descripcion: dbCourse.descripcion || (localMatch ? localMatch.description : ''),
+            description: dbCourse.descripcion || (localMatch ? localMatch.description : ''),
+            disponible: dbCourse.disponible !== false,
+            proximamente: prox,
+            permitePresencial: pres,
+            permiteVirtual: virt,
+            permite_presencial: pres,
+            permite_virtual: virt,
+            activo: dbCourse.activo !== false,
+          };
+        });
       } else {
-        const local = getSavedCourses();
-        const mapped = local.map((c, idx) => ({
+        mappedCourses = localSaved.map((c, idx) => ({
           id: c.id || `local-${idx}`,
           titulo: c.title,
+          title: c.title,
           school: c.school || 'seguridad',
           category: c.category || 'General',
           codigo_sence: c.codigo_sence || `SENCE-${c.id}`,
           modalidad: c.modality || 'Presencial',
+          modality: c.modality || 'Presencial',
+          permitePresencial: c.permitePresencial !== false,
+          permiteVirtual: c.permiteVirtual !== false,
+          permite_presencial: c.permitePresencial !== false,
+          permite_virtual: c.permiteVirtual !== false,
           duracion: c.duration || '40 Horas',
+          duration: c.duration || '40 Horas',
           precio: c.price || 95000,
           disponible: c.disponible !== false,
           proximamente: Boolean(c.proximamente),
@@ -172,13 +222,18 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
           fecha_inicio: c.fecha_inicio || '2026-10-15',
           fecha_termino: c.fecha_termino || '2026-11-15',
           descripcion: c.description || '',
+          description: c.description || '',
           activo: true,
         }));
-        setCourses(mapped);
-        if (mapped.length > 0) {
-          setSelectedCourseId(mapped[0].id);
-          populateForm(mapped[0]);
-        }
+      }
+
+      setCourses(mappedCourses);
+
+      const currentId = selectedCourseIdRef.current;
+      const targetCourse = currentId ? mappedCourses.find(c => c.id === currentId) : mappedCourses[0];
+      if (targetCourse) {
+        setSelectedCourseId(targetCourse.id);
+        populateForm(targetCourse);
       }
     } catch (err) {
       console.warn('Fallo consulta a Supabase courses, usando datos locales:', err);
@@ -186,11 +241,18 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
       const mapped = local.map((c, idx) => ({
         id: c.id || `local-${idx}`,
         titulo: c.title,
+        title: c.title,
         school: c.school || 'seguridad',
         category: c.category || 'General',
         codigo_sence: c.codigo_sence || `SENCE-${c.id}`,
         modalidad: c.modality || 'Presencial',
+        modality: c.modality || 'Presencial',
+        permitePresencial: c.permitePresencial !== false,
+        permiteVirtual: c.permiteVirtual !== false,
+        permite_presencial: c.permitePresencial !== false,
+        permite_virtual: c.permiteVirtual !== false,
         duracion: c.duration || '40 Horas',
+        duration: c.duration || '40 Horas',
         precio: c.price || 95000,
         disponible: c.disponible !== false,
         proximamente: Boolean(c.proximamente),
@@ -198,20 +260,36 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
         fecha_inicio: c.fecha_inicio || '2026-10-15',
         fecha_termino: c.fecha_termino || '2026-11-15',
         descripcion: c.description || '',
+        description: c.description || '',
         activo: true,
       }));
       setCourses(mapped);
-      if (mapped.length > 0) {
-        setSelectedCourseId(mapped[0].id);
-        populateForm(mapped[0]);
+      const currentId = selectedCourseIdRef.current;
+      const targetCourse = currentId ? mapped.find(c => c.id === currentId) : mapped[0];
+      if (targetCourse) {
+        setSelectedCourseId(targetCourse.id);
+        populateForm(targetCourse);
       }
     } finally {
       setLoading(false);
     }
-  }, [selectedCourseId, populateForm]);
+  }, [populateForm]);
 
   useEffect(() => {
     fetchCourses();
+  }, [fetchCourses]);
+
+  // Escuchar eventos globales de actualización de cursos
+  useEffect(() => {
+    const handleCoursesUpdated = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        setCourses(e.detail);
+      } else {
+        fetchCourses();
+      }
+    };
+    window.addEventListener('prevyseg-courses-updated', handleCoursesUpdated);
+    return () => window.removeEventListener('prevyseg-courses-updated', handleCoursesUpdated);
   }, [fetchCourses]);
 
   // Cambio de curso seleccionado
@@ -225,38 +303,98 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
     if (e) e.stopPropagation();
     const nextVal = !course.proximamente;
     const isUUID = typeof course.id === 'string' && course.id.length > 20 && course.id.includes('-');
-    
+
     try {
       if (isUUID) {
         await supabase
           .from('courses')
-          .update({ 
+          .update({
             proximamente: nextVal,
-            disponible: nextVal ? false : course.disponible 
+            disponible: nextVal ? false : course.disponible
           })
           .eq('id', course.id);
       }
-      
-      updateCourseItem(course.id, { 
+
+      updateCourseItem(course.id, {
         proximamente: nextVal,
-        disponible: nextVal ? false : course.disponible 
+        disponible: nextVal ? false : course.disponible
       });
 
-      setCourses(prev => prev.map(c => c.id === course.id ? { 
-        ...c, 
+      setCourses(prev => prev.map(c => c.id === course.id ? {
+        ...c,
         proximamente: nextVal,
-        disponible: nextVal ? false : c.disponible 
+        disponible: nextVal ? false : c.disponible
       } : c));
 
       if (formData.id === course.id) {
-        setFormData(prev => ({ 
-          ...prev, 
+        setFormData(prev => ({
+          ...prev,
           proximamente: nextVal,
-          disponible: nextVal ? false : prev.disponible 
+          disponible: nextVal ? false : prev.disponible
         }));
       }
     } catch (err) {
       console.error('Error alternando proximamente:', err);
+    }
+  };
+
+  // Conmutador rápido de Presencial en 1 clic con persistencia permanente en PostgreSQL
+  const handleQuickTogglePresencial = async (course, e) => {
+    if (e) e.stopPropagation();
+    const currentP = course.permitePresencial !== false;
+    const currentV = course.permiteVirtual !== false;
+    const nextP = !currentP;
+    if (!nextP && !currentV) return; // Mantener al menos una activa
+
+    setCourses(prev => prev.map(c => c.id === course.id ? { ...c, permitePresencial: nextP } : c));
+    if (formData.id === course.id) {
+      setFormData(prev => ({ ...prev, permitePresencial: nextP }));
+    }
+
+    updateCourseItem(course.id, {
+      title: course.titulo || course.title,
+      permitePresencial: nextP
+    });
+
+    try {
+      const isUUID = typeof course.id === 'string' && course.id.length > 20 && course.id.includes('-');
+      if (isUUID) {
+        await supabase.from('courses').update({ permite_presencial: nextP }).eq('id', course.id);
+      } else {
+        await supabase.from('courses').update({ permite_presencial: nextP }).ilike('titulo', `%${course.titulo || course.title}%`);
+      }
+    } catch (err) {
+      console.warn('Error sincronizando presencial en PostgreSQL:', err);
+    }
+  };
+
+  // Conmutador rápido de Virtual en 1 clic con persistencia permanente en PostgreSQL
+  const handleQuickToggleVirtual = async (course, e) => {
+    if (e) e.stopPropagation();
+    const currentP = course.permitePresencial !== false;
+    const currentV = course.permiteVirtual !== false;
+    const nextV = !currentV;
+    if (!nextV && !currentP) return; // Mantener al menos una activa
+
+    setCourses(prev => prev.map(c => c.id === course.id ? { ...c, permiteVirtual: nextV } : c));
+    if (formData.id === course.id) {
+      setFormData(prev => ({ ...prev, permiteVirtual: nextV }));
+    }
+
+    updateCourseItem(course.id, {
+      title: course.titulo || course.title,
+      permiteVirtual: nextV
+    });
+
+    try {
+      const isUUID = typeof course.id === 'string' && course.id.length > 20 && course.id.includes('-');
+      if (isUUID) {
+        await supabase.from('courses').update({ permite_virtual: nextV }).eq('id', course.id);
+      } else {
+        await supabase.from('courses').update({ permite_virtual: nextV }).ilike('titulo', `%${course.titulo || course.title}%`);
+      }
+    } catch (err) {
+      console.warn('Error sincronizando virtual en PostgreSQL:', err);
     }
   };
 
@@ -288,7 +426,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
     return { seg, ofi, prox, total: courses.length };
   }, [courses]);
 
-  // Guardar Cambios en Supabase y localmente
+  // Guardar Cambios en Supabase PostgreSQL y localmente
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
@@ -297,13 +435,15 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
     try {
       const isUUID = typeof formData.id === 'string' && formData.id.length > 20 && formData.id.includes('-');
-      
+
       const payload = {
         titulo: formData.nombreCompleto,
         codigo_sence: formData.idSence || formData.nombreCorto,
         school: formData.school,
         category: formData.categoria,
         modalidad: formData.modalidad,
+        permite_presencial: formData.permitePresencial,
+        permite_virtual: formData.permiteVirtual,
         duracion: formData.duracion,
         precio: parseFloat(formData.precio) || 0,
         activo: formData.visibilidad === 'Mostrar',
@@ -322,6 +462,13 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
           .eq('id', formData.id);
 
         if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('courses')
+          .update(payload)
+          .ilike('titulo', `%${formData.nombreCompleto}%`);
+
+        if (error) console.warn('Supabase update by title error:', error);
       }
 
       // Sincronizar catálogo local para actualización reactiva en la app
@@ -337,12 +484,19 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
         fecha_termino: formData.fechaFin,
         duration: formData.duracion,
         modality: formData.modalidad,
+        permitePresencial: formData.permitePresencial,
+        permiteVirtual: formData.permiteVirtual,
         description: formData.resumen,
         price: typeof formData.precio === 'number' ? `$${formData.precio.toLocaleString('es-CL')} CLP` : formData.precio,
       });
 
       // Actualizar estado local de la lista
-      setCourses(prev => prev.map(c => c.id === formData.id ? { ...c, ...payload } : c));
+      setCourses(prev => prev.map(c => c.id === formData.id ? {
+        ...c,
+        ...payload,
+        permitePresencial: formData.permitePresencial,
+        permiteVirtual: formData.permiteVirtual
+      } : c));
 
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 4000);
@@ -358,7 +512,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      
+
       {/* 1. ENCABEZADO Y RESUMEN GENERAL */}
       <div className="bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white p-6 sm:p-7 rounded-3xl border border-slate-700 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-2">
@@ -395,6 +549,16 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
           <button
             type="button"
+            onClick={() => setIsManagerOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-[#0A4DA2] text-slate-700 hover:text-[#0A4DA2] text-xs font-bold shadow-2xs hover:shadow-md transition-all cursor-pointer group"
+            title="Abrir gestor para modificar cupos, fechas y disponibilidad de cursos"
+          >
+            <Sliders size={15} className="text-[#0A4DA2] group-hover:rotate-90 transition-transform duration-300" />
+            <span>⚙️ Modificar Disponibilidad, Cupos y Fechas</span>
+          </button>
+
+          <button
+            type="button"
             onClick={fetchCourses}
             disabled={loading}
             className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition-all flex items-center gap-2 cursor-pointer"
@@ -408,18 +572,17 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
       {/* 2. BARRA DE SEPARACIÓN Y SELECTOR DE CURSOS POR ESCUELA */}
       <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        
+
         {/* Pestañas de Escuela: Separación de Seguridad con Oficios */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setActiveSchoolFilter('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                activeSchoolFilter === 'all'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeSchoolFilter === 'all'
                   ? 'bg-slate-900 text-white shadow-md scale-102'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
+                }`}
             >
               <Layers size={14} />
               <span>Todos los Cursos</span>
@@ -431,11 +594,10 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
             <button
               type="button"
               onClick={() => setActiveSchoolFilter('seguridad')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                activeSchoolFilter === 'seguridad'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeSchoolFilter === 'seguridad'
                   ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20 scale-102'
                   : 'bg-sky-50 text-sky-800 hover:bg-sky-100 border border-sky-200'
-              }`}
+                }`}
             >
               <Shield size={14} />
               <span>Escuela de Seguridad Privada</span>
@@ -447,11 +609,10 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
             <button
               type="button"
               onClick={() => setActiveSchoolFilter('oficios')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                activeSchoolFilter === 'oficios'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeSchoolFilter === 'oficios'
                   ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20 scale-102'
                   : 'bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200'
-              }`}
+                }`}
             >
               <Wrench size={14} />
               <span>Escuela de Oficios</span>
@@ -498,20 +659,18 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                   key={course.id}
                   type="button"
                   onClick={() => handleSelectCourse(course)}
-                  className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 relative ${
-                    isSelected
+                  className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 relative ${isSelected
                       ? isSeg
                         ? 'bg-sky-50/90 border-sky-500 shadow-md ring-2 ring-sky-400/30'
                         : 'bg-amber-50/90 border-amber-500 shadow-md ring-2 ring-amber-400/30'
                       : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-100/60'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
-                      isSeg 
-                        ? 'bg-sky-100 text-sky-800 border border-sky-200' 
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md ${isSeg
+                        ? 'bg-sky-100 text-sky-800 border border-sky-200'
                         : 'bg-amber-100 text-amber-900 border border-amber-200'
-                    }`}>
+                      }`}>
                       {isSeg ? <Shield size={10} /> : <Wrench size={10} />}
                       <span>{isSeg ? 'Seguridad' : 'Oficios'}</span>
                     </span>
@@ -529,11 +688,41 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                     )}
                   </div>
 
-                  <h4 className={`text-xs font-bold line-clamp-2 leading-tight ${
-                    isSelected ? (isSeg ? 'text-sky-950' : 'text-amber-950') : 'text-slate-800'
-                  }`}>
+                  <h4 className={`text-xs font-bold line-clamp-2 leading-tight ${isSelected ? (isSeg ? 'text-sky-950' : 'text-amber-950') : 'text-slate-800'
+                    }`}>
                     {course.titulo}
                   </h4>
+
+                  {/* Etiquetas de Modalidad Asignadas con conmutación en 1 clic */}
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => handleQuickTogglePresencial(course, e)}
+                      title="Alternar modalidad Presencial en 1 clic"
+                      className={`inline-flex items-center gap-0.5 text-[9px] font-black px-1.5 py-0.5 rounded border transition-all cursor-pointer ${course.permitePresencial !== false
+                          ? 'bg-emerald-100 text-emerald-900 border-emerald-300 hover:bg-emerald-200'
+                          : 'bg-slate-100 text-slate-400 border-slate-200 line-through opacity-70 hover:opacity-100'
+                        }`}
+                    >
+                      <Building2 size={9} className={course.permitePresencial !== false ? 'text-emerald-700' : 'text-slate-400'} />
+                      <span>Presencial {course.permitePresencial !== false ? '✓' : ''}</span>
+                    </span>
+
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => handleQuickToggleVirtual(course, e)}
+                      title="Alternar modalidad Virtual en 1 clic"
+                      className={`inline-flex items-center gap-0.5 text-[9px] font-black px-1.5 py-0.5 rounded border transition-all cursor-pointer ${course.permiteVirtual !== false
+                          ? 'bg-sky-100 text-[#0284c7] border-sky-300 hover:bg-sky-200'
+                          : 'bg-slate-100 text-slate-400 border-slate-200 line-through opacity-70 hover:opacity-100'
+                        }`}
+                    >
+                      <Laptop size={9} className={course.permiteVirtual !== false ? 'text-[#0284c7]' : 'text-slate-400'} />
+                      <span>Virtual {course.permiteVirtual !== false ? '✓' : ''}</span>
+                    </span>
+                  </div>
 
                   {/* Etiqueta de Cobertura Regional */}
                   <div className="flex items-center gap-1 text-[9.5px] font-semibold text-slate-600 bg-slate-100/90 px-2 py-1 rounded-lg border border-slate-200/60">
@@ -547,7 +736,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                     <span className="truncate max-w-[130px] font-medium text-slate-600">
                       {course.category}
                     </span>
-                    
+
                     <div className="flex items-center gap-1.5">
                       {isProx ? (
                         <span className="font-extrabold px-1.5 py-0.5 rounded text-[9px] bg-amber-100 text-amber-900 border border-amber-300">
@@ -568,11 +757,10 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                         role="button"
                         tabIndex={0}
                         onClick={(e) => handleQuickToggleProximamente(course, e)}
-                        className={`text-[9px] font-black px-1.5 py-0.5 rounded border transition-colors cursor-pointer ${
-                          isProx
+                        className={`text-[9px] font-black px-1.5 py-0.5 rounded border transition-colors cursor-pointer ${isProx
                             ? 'bg-amber-600 hover:bg-amber-700 text-white border-amber-600'
                             : 'bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-900 border-slate-200'
-                        }`}
+                          }`}
                         title="Alternar estado PRÓXIMAMENTE para este curso"
                       >
                         {isProx ? 'PRONTO' : '+ Pronto'}
@@ -614,24 +802,22 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
       {/* 4. FORMULARIO PRINCIPAL DE EDICIÓN DEL CURSO */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        
+
         {/* Banner de Curso en Edición */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className={`p-3 rounded-2xl ${
-              formData.school === 'seguridad' 
-                ? 'bg-sky-100 text-sky-700 border border-sky-200' 
+            <div className={`p-3 rounded-2xl ${formData.school === 'seguridad'
+                ? 'bg-sky-100 text-sky-700 border border-sky-200'
                 : 'bg-amber-100 text-amber-800 border border-amber-200'
-            }`}>
+              }`}>
               {formData.school === 'seguridad' ? <Shield size={24} /> : <Wrench size={24} />}
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
-                  formData.school === 'seguridad' 
-                    ? 'bg-sky-100 text-sky-800' 
+                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${formData.school === 'seguridad'
+                    ? 'bg-sky-100 text-sky-800'
                     : 'bg-amber-100 text-amber-800'
-                }`}>
+                  }`}>
                   {formData.school === 'seguridad' ? 'Escuela de Seguridad Privada' : 'Escuela de Oficios'}
                 </span>
 
@@ -679,7 +865,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
           {openSections.general && (
             <div className="p-6 sm:p-8 space-y-6 divide-y divide-slate-100">
-              
+
               {/* Campo: Nombre Completo */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                 <label className="md:col-span-4 text-xs font-bold text-slate-700 flex items-center gap-1.5">
@@ -708,17 +894,16 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      setFormData({ 
-                        ...formData, 
+                      setFormData({
+                        ...formData,
                         school: 'seguridad',
                         categoria: CATEGORIAS_SEGURIDAD[0]
                       });
                     }}
-                    className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                      formData.school === 'seguridad'
+                    className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${formData.school === 'seguridad'
                         ? 'bg-sky-50 border-sky-500 ring-2 ring-sky-400/20 text-sky-950 font-bold'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                    }`}
+                      }`}
                   >
                     <Shield size={18} className={formData.school === 'seguridad' ? 'text-sky-600' : 'text-slate-400'} />
                     <div>
@@ -730,17 +915,16 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      setFormData({ 
-                        ...formData, 
+                      setFormData({
+                        ...formData,
                         school: 'oficios',
                         categoria: CATEGORIAS_OFICIOS[0]
                       });
                     }}
-                    className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                      formData.school === 'oficios'
+                    className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${formData.school === 'oficios'
                         ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-400/20 text-amber-950 font-bold'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                    }`}
+                      }`}
                   >
                     <Wrench size={18} className={formData.school === 'oficios' ? 'text-amber-600' : 'text-slate-400'} />
                     <div>
@@ -788,11 +972,10 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
                   <div className="flex items-center gap-2 text-[11px]">
                     <span className="text-slate-500">Categoría seleccionada:</span>
-                    <span className={`font-bold px-2 py-0.5 rounded-full ${
-                      formData.school === 'seguridad' 
-                        ? 'bg-sky-100 text-sky-800' 
+                    <span className={`font-bold px-2 py-0.5 rounded-full ${formData.school === 'seguridad'
+                        ? 'bg-sky-100 text-sky-800'
                         : 'bg-amber-100 text-amber-800'
-                    }`}>
+                      }`}>
                       {formData.categoria}
                     </span>
                   </div>
@@ -878,7 +1061,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                         <span>Botón "PRÓXIMAMENTE / PRONTO":</span>
                       </span>
                       <p className="text-[11px] text-slate-500">
-                        {formData.proximamente 
+                        {formData.proximamente
                           ? 'Activado: Los estudiantes verán el botón y etiqueta "PRÓXIMAMENTE" para cursos en preparación.'
                           : 'Desactivado: El curso muestra disponibilidad normal para inscripción inmediata.'}
                       </p>
@@ -888,17 +1071,16 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                       type="button"
                       onClick={() => {
                         const next = !formData.proximamente;
-                        setFormData({ 
-                          ...formData, 
+                        setFormData({
+                          ...formData,
                           proximamente: next,
-                          disponible: next ? false : formData.disponible 
+                          disponible: next ? false : formData.disponible
                         });
                       }}
-                      className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs flex-shrink-0 ${
-                        formData.proximamente
+                      className={`px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-xs flex-shrink-0 ${formData.proximamente
                           ? 'bg-amber-500 hover:bg-amber-600 text-white ring-2 ring-amber-400/40 shadow-amber-500/20'
                           : 'bg-white hover:bg-amber-50 text-slate-700 hover:text-amber-900 border border-slate-300'
-                      }`}
+                        }`}
                     >
                       <Clock size={13} className={formData.proximamente ? 'text-white animate-pulse' : 'text-amber-600'} />
                       <span>{formData.proximamente ? '✓ BOTÓN: PRÓXIMAMENTE' : '+ Habilitar PRÓXIMAMENTE'}</span>
@@ -935,7 +1117,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
 
                 {/* Dos Tarjetas Paralelas: Arica vs Regiones */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                  
+
                   {/* Tarjeta 1: Arica */}
                   <div className="p-4 rounded-2xl border-2 border-emerald-300 bg-emerald-50/50 space-y-2.5 relative overflow-hidden shadow-xs">
                     <div className="flex items-center justify-between">
@@ -994,6 +1176,94 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                     </div>
                   </div>
 
+                </div>
+
+                {/* Asignación de Etiquetas de Modalidad: Presencial y/o Virtual */}
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border-2 border-slate-200 shadow-xs space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <label className="text-xs font-black text-slate-900 uppercase flex items-center gap-1.5">
+                      <Sliders size={14} className="text-[#0284c7]" />
+                      <span>Etiquetas de Modalidad Asignadas a esta Capacitación:</span>
+                    </label>
+                    <span className="text-[11px] text-slate-500 font-medium">
+                      Modifica si el curso tendrá etiqueta "Presencial", "Virtual" o ambas
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Botón Switch Presencial */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = !formData.permitePresencial;
+                        if (!next && !formData.permiteVirtual) return;
+                        setFormData({ ...formData, permitePresencial: next });
+                      }}
+                      className={`p-3.5 rounded-xl border-2 text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${formData.permitePresencial
+                          ? 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-xs ring-2 ring-emerald-400/20'
+                          : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black ${formData.permitePresencial ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500'
+                          }`}>
+                          <Building2 size={18} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-black">Etiqueta "Presencial"</div>
+                          <div className="text-[10px] text-slate-500 font-normal">Habilitado para Sede Central Arica / Talleres</div>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg ${formData.permitePresencial ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+                        }`}>
+                        {formData.permitePresencial ? 'ACTIVADA ✓' : 'INACTIVA'}
+                      </span>
+                    </button>
+
+                    {/* Botón Switch Virtual */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = !formData.permiteVirtual;
+                        if (!next && !formData.permitePresencial) return;
+                        setFormData({ ...formData, permiteVirtual: next });
+                      }}
+                      className={`p-3.5 rounded-xl border-2 text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${formData.permiteVirtual
+                          ? 'bg-sky-50 border-[#0284c7] text-sky-950 shadow-xs ring-2 ring-sky-400/20'
+                          : 'bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black ${formData.permiteVirtual ? 'bg-[#0284c7] text-white' : 'bg-slate-200 text-slate-500'
+                          }`}>
+                          <Laptop size={18} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-black">Etiqueta "Virtual"</div>
+                          <div className="text-[10px] text-slate-500 font-normal">Habilitado para Aula Virtual 24/7 y Zoom</div>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg ${formData.permiteVirtual ? 'bg-[#0284c7] text-white' : 'bg-slate-200 text-slate-600'
+                        }`}>
+                        {formData.permiteVirtual ? 'ACTIVADA ✓' : 'INACTIVA'}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Vista previa en vivo */}
+                  <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-600 font-medium border-t border-slate-100">
+                    <span className="font-bold text-slate-700">Etiquetas visibles en catálogo:</span>
+                    {formData.permitePresencial && (
+                      <span className="inline-flex items-center gap-1 font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded text-[11px]">
+                        <Building2 size={11} /> Presencial
+                      </span>
+                    )}
+                    {formData.permiteVirtual && (
+                      <span className="inline-flex items-center gap-1 font-bold text-[#0284c7] bg-sky-100 border border-sky-300 px-2.5 py-0.5 rounded text-[11px]">
+                        <Laptop size={11} /> Virtual
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Campos de configuración editables para el curso */}
@@ -1062,11 +1332,10 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                         key={btn.name}
                         type="button"
                         onClick={() => setTestCity(btn.name)}
-                        className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
-                          testCity === btn.name
+                        className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${testCity === btn.name
                             ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
                             : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-                        }`}
+                          }`}
                       >
                         {btn.label}
                       </button>
@@ -1195,7 +1464,7 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
                 <label className="md:col-span-3 text-xs font-bold text-slate-700 pt-2">
                   Resumen y temario
                 </label>
-                
+
                 {/* Simulador TinyMCE */}
                 <div className="md:col-span-9 bg-white border border-slate-300 rounded-xl overflow-hidden shadow-sm">
                   {/* TinyMCE Toolbar */}
@@ -1351,6 +1620,12 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
         </div>
 
       </form>
+
+      {/* Modal Gestor de Disponibilidad, Cupos y Fechas */}
+      <CourseManagerModal
+        isOpen={isManagerOpen}
+        onClose={() => setIsManagerOpen(false)}
+      />
     </div>
   );
 };

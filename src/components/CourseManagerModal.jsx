@@ -14,7 +14,9 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  MapPin
+  MapPin,
+  Building2,
+  Laptop
 } from 'lucide-react';
 import { getSavedCourses, updateCourseItem, resetCoursesToDefault } from '../data/coursesData';
 
@@ -27,7 +29,9 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
     proximamente: false,
     cupos: 20,
     fecha_inicio: '',
-    fecha_termino: ''
+    fecha_termino: '',
+    permitePresencial: true,
+    permiteVirtual: true
   });
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -51,22 +55,32 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
       proximamente: Boolean(course.proximamente),
       cupos: course.cupos,
       fecha_inicio: course.fecha_inicio || '',
-      fecha_termino: course.fecha_termino || ''
+      fecha_termino: course.fecha_termino || '',
+      permitePresencial: course.permitePresencial !== false,
+      permiteVirtual: course.permiteVirtual !== false
     });
   };
 
   const handleSave = (courseId) => {
+    let pres = editForm.permitePresencial;
+    let virt = editForm.permiteVirtual;
+    if (!pres && !virt) {
+      pres = true;
+      virt = true;
+    }
     const updated = updateCourseItem(courseId, {
       disponible: editForm.disponible,
       proximamente: Boolean(editForm.proximamente),
       cupos: Number(editForm.cupos),
       fecha_inicio: editForm.fecha_inicio.trim(),
-      fecha_termino: editForm.fecha_termino.trim()
+      fecha_termino: editForm.fecha_termino.trim(),
+      permitePresencial: pres,
+      permiteVirtual: virt
     });
     if (updated) {
       setCourses(updated);
       setEditingId(null);
-      showToast('¡Curso actualizado exitosamente!');
+      showToast('¡Curso y etiquetas de modalidad actualizados exitosamente!');
     }
   };
 
@@ -88,6 +102,38 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
     if (updated) {
       setCourses(updated);
       showToast(`Estado cambiado a: ${nextProx ? 'PRÓXIMAMENTE' : 'Estado Normal'}`);
+    }
+  };
+
+  // Conmutación rápida directa de etiqueta Presencial
+  const handleTogglePresencial = (course) => {
+    const currentPres = course.permitePresencial !== false;
+    const currentVirt = course.permiteVirtual !== false;
+    const nextVal = !currentPres;
+    if (!nextVal && !currentVirt) {
+      showToast('El curso debe tener al menos una modalidad activa (Presencial o Virtual)');
+      return;
+    }
+    const updated = updateCourseItem(course.id, { permitePresencial: nextVal });
+    if (updated) {
+      setCourses(updated);
+      showToast(`Etiqueta "Presencial" ${nextVal ? 'ACTIVADA' : 'DESACTIVADA'}`);
+    }
+  };
+
+  // Conmutación rápida directa de etiqueta Virtual
+  const handleToggleVirtual = (course) => {
+    const currentPres = course.permitePresencial !== false;
+    const currentVirt = course.permiteVirtual !== false;
+    const nextVal = !currentVirt;
+    if (!nextVal && !currentPres) {
+      showToast('El curso debe tener al menos una modalidad activa (Presencial o Virtual)');
+      return;
+    }
+    const updated = updateCourseItem(course.id, { permiteVirtual: nextVal });
+    if (updated) {
+      setCourses(updated);
+      showToast(`Etiqueta "Virtual" ${nextVal ? 'ACTIVADA' : 'DESACTIVADA'}`);
     }
   };
 
@@ -262,6 +308,47 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
                         <span>{course.fecha_inicio} al {course.fecha_termino}</span>
                       </span>
                     </div>
+
+                    {/* Etiquetas de Modalidad Modificables: Presencial y/o Virtual */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60 mt-1">
+                      <span className="text-[10px] font-black uppercase text-slate-400">Modalidad:</span>
+                      
+                      {/* Botón rápido Presencial */}
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePresencial(course)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer shadow-2xs ${
+                          course.permitePresencial !== false
+                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 hover:bg-emerald-200'
+                            : 'bg-slate-100 text-slate-400 border border-slate-200 line-through opacity-60 hover:opacity-100 hover:bg-slate-200'
+                        }`}
+                        title={course.permitePresencial !== false ? 'Presencial ACTIVA (Haz clic para desactivar)' : 'Presencial INACTIVA (Haz clic para activar)'}
+                      >
+                        <Building2 size={12} className={course.permitePresencial !== false ? 'text-emerald-700' : 'text-slate-400'} />
+                        <span>Presencial</span>
+                        {course.permitePresencial !== false && <span className="text-emerald-600 font-bold ml-0.5">✓</span>}
+                      </button>
+
+                      {/* Botón rápido Virtual */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleVirtual(course)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer shadow-2xs ${
+                          course.permiteVirtual !== false
+                            ? 'bg-sky-100 text-[#0284c7] border border-sky-300 hover:bg-sky-200'
+                            : 'bg-slate-100 text-slate-400 border border-slate-200 line-through opacity-60 hover:opacity-100 hover:bg-slate-200'
+                        }`}
+                        title={course.permiteVirtual !== false ? 'Virtual ACTIVA (Haz clic para desactivar)' : 'Virtual INACTIVA (Haz clic para activar)'}
+                      >
+                        <Laptop size={12} className={course.permiteVirtual !== false ? 'text-[#0284c7]' : 'text-slate-400'} />
+                        <span>Virtual</span>
+                        {course.permiteVirtual !== false && <span className="text-[#0284c7] font-bold ml-0.5">✓</span>}
+                      </button>
+
+                      <span className="text-[10px] text-slate-400 hidden sm:inline italic">
+                        (Haz clic en los botones para alternar Presencial y/o Virtual)
+                      </span>
+                    </div>
                   </div>
 
                   {/* Right: Actions */}
@@ -284,6 +371,106 @@ const CourseManagerModal = ({ isOpen, onClose }) => {
                       exit={{ opacity: 0, height: 0 }}
                       className="mt-3 p-5 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-4 overflow-hidden"
                     >
+                      {/* SECCIÓN DE ETIQUETAS DE MODALIDAD: PRESENCIAL Y/O VIRTUAL */}
+                      <div className="bg-white p-4 rounded-xl border border-blue-200 shadow-2xs space-y-2.5">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <label className="text-xs font-black text-slate-800 uppercase flex items-center gap-1.5">
+                            <Sliders size={14} className="text-[#0A4DA2]" />
+                            <span>Etiquetas de Modalidad Asignadas (Presencial y/o Virtual):</span>
+                          </label>
+                          <span className="text-[10px] text-slate-500 font-medium">
+                            Puedes activar Presencial, Virtual, o ambas modalidades simultáneamente
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* Opción Presencial */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = !editForm.permitePresencial;
+                              if (!next && !editForm.permiteVirtual) {
+                                showToast('El curso debe tener al menos una modalidad activa');
+                                return;
+                              }
+                              setEditForm({ ...editForm, permitePresencial: next });
+                            }}
+                            className={`p-3 rounded-xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${
+                              editForm.permitePresencial
+                                ? 'bg-emerald-50/90 border-emerald-400 ring-2 ring-emerald-400/30 text-emerald-950 font-bold'
+                                : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black ${
+                                editForm.permitePresencial ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500'
+                              }`}>
+                                <Building2 size={16} />
+                              </div>
+                              <div>
+                                <div className="text-xs font-black">Etiqueta "Presencial"</div>
+                                <div className="text-[10px] font-normal text-slate-600">Sede Central Arica / Talleres / Terreno</div>
+                              </div>
+                            </div>
+                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-md ${
+                              editForm.permitePresencial ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-200 text-slate-600'
+                            }`}>
+                              {editForm.permitePresencial ? 'ACTIVADA ✓' : 'INACTIVA'}
+                            </span>
+                          </button>
+
+                          {/* Opción Virtual */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = !editForm.permiteVirtual;
+                              if (!next && !editForm.permitePresencial) {
+                                showToast('El curso debe tener al menos una modalidad activa');
+                                return;
+                              }
+                              setEditForm({ ...editForm, permiteVirtual: next });
+                            }}
+                            className={`p-3 rounded-xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${
+                              editForm.permiteVirtual
+                                ? 'bg-sky-50/90 border-sky-400 ring-2 ring-sky-400/30 text-sky-950 font-bold'
+                                : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black ${
+                                editForm.permiteVirtual ? 'bg-[#0284c7] text-white' : 'bg-slate-200 text-slate-500'
+                              }`}>
+                                <Laptop size={16} />
+                              </div>
+                              <div>
+                                <div className="text-xs font-black">Etiqueta "Virtual"</div>
+                                <div className="text-[10px] font-normal text-slate-600">Aula Virtual 24/7 / Zoom Sincrónico</div>
+                              </div>
+                            </div>
+                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-md ${
+                              editForm.permiteVirtual ? 'bg-[#0284c7] text-white shadow-xs' : 'bg-slate-200 text-slate-600'
+                            }`}>
+                              {editForm.permiteVirtual ? 'ACTIVADA ✓' : 'INACTIVA'}
+                            </span>
+                          </button>
+                        </div>
+
+                        {/* Vista previa en tiempo real de las etiquetas */}
+                        <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-600 font-medium">
+                          <span>Vista previa de etiquetas:</span>
+                          {editForm.permitePresencial && (
+                            <span className="inline-flex items-center gap-1 font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded text-[10px]">
+                              <Building2 size={10} /> Presencial
+                            </span>
+                          )}
+                          {editForm.permiteVirtual && (
+                            <span className="inline-flex items-center gap-1 font-bold text-[#0284c7] bg-sky-100 border border-sky-300 px-2 py-0.5 rounded text-[10px]">
+                              <Laptop size={10} /> Virtual
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         
                         {/* 1. Disponibilidad & Próximamente */}

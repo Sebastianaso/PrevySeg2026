@@ -10,9 +10,10 @@ import {
   Award,
   Calendar,
   Users,
-  Sliders,
   Check,
-  ChevronRight
+  ChevronRight,
+  Building2,
+  Laptop
 } from 'lucide-react';
 import { 
   SecuritySchoolLogo, 
@@ -23,7 +24,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SenceTramosSection from './SenceTramosSection';
 import { DEFAULT_COURSES, getSavedCourses } from '../data/coursesData';
-import CourseManagerModal from './CourseManagerModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,7 +33,6 @@ export const COURSES_DATA = DEFAULT_COURSES;
 const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'seguridad', onSwitchSchool }) => {
   const [coursesList, setCoursesList] = useState(getSavedCourses());
   const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const [isManagerOpen, setIsManagerOpen] = useState(false);
   const sectionRef = useRef(null);
 
   // Escuchar actualizaciones en tiempo real de cupos, fechas y disponibilidad
@@ -119,18 +118,6 @@ const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'segurida
               ? 'Capacitaciones autorizadas y reguladas por la Subsecretaría de Prevención del Delito (SPD / Carabineros OS-10) bajo la Ley 21.659. Selecciona tu curso para abrir la Ficha de Admisión Oficial con abono del 50%.'
               : 'Capacitaciones prácticas en talleres y aula virtual con certificación directa OTEC PrevySeg bajo la Norma NCh 2728:2015 SGS y código SENCE. Selecciona tu curso para abrir la Ficha de Admisión Oficial con abono del 50%.'}
           </p>
-
-          {/* Botón Gestor de Cupos y Fechas */}
-          <div className="pt-2 flex items-center justify-center">
-            <button
-              onClick={() => setIsManagerOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-300 hover:border-[#0A4DA2] text-slate-700 hover:text-[#0A4DA2] text-xs font-bold shadow-2xs hover:shadow-md transition-all cursor-pointer group"
-              title="Abrir gestor para modificar cupos, fechas y disponibilidad de cursos"
-            >
-              <Sliders size={15} className="text-[#0A4DA2] group-hover:rotate-90 transition-transform duration-300" />
-              <span>⚙️ Modificar Disponibilidad, Cupos y Fechas</span>
-            </button>
-          </div>
         </div>
 
         {/* =========================================================================
@@ -324,6 +311,22 @@ const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'segurida
                         {course.title}
                       </h3>
 
+                      {/* Etiquetas de Modalidad: Presencial y/o Virtual */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        {course.permitePresencial !== false && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">
+                            <Building2 size={11} className="text-emerald-700" />
+                            <span>Presencial</span>
+                          </span>
+                        )}
+                        {course.permiteVirtual !== false && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-sky-100 text-[#0284c7] border border-sky-300 shadow-2xs">
+                            <Laptop size={11} className="text-[#0284c7]" />
+                            <span>Virtual</span>
+                          </span>
+                        )}
+                      </div>
+
                       {/* Disponibilidad y Cupos Restantes */}
                       <div className="flex flex-wrap items-center gap-2 pt-1">
                         {isProx ? (
@@ -421,12 +424,6 @@ const Services = ({ onSelectCourse, onOpenSchoolDetail, activeSchool = 'segurida
         <SenceTramosSection />
 
       </div>
-
-      {/* Modal Gestor de Disponibilidad, Cupos y Fechas */}
-      <CourseManagerModal
-        isOpen={isManagerOpen}
-        onClose={() => setIsManagerOpen(false)}
-      />
     </section>
   );
 };

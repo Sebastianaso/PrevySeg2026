@@ -10,6 +10,7 @@ import securityGuardsImg from '../assets/images/security_guards.jpg';
 import securitySupervisorImg from '../assets/images/security_supervisor.jpg';
 import cctvOperatorImg from '../assets/images/cctv_operator.jpg';
 import cyberImg from '../assets/images/course_cybersecurity_1788545064007.jpg';
+import { supabase } from '../config/supabase';
 
 // =========================================================================
 // CATÁLOGO OFICIAL EXCLUSIVO DE PREVYSEG
@@ -30,6 +31,8 @@ export const DEFAULT_COURSES = [
     title: 'Resolución de conflictos y manejo de situaciones difíciles',
     duration: '40 Horas Online Asíncrona',
     modality: 'Online Asíncrona (Plataforma 24/7)',
+    permitePresencial: false,
+    permiteVirtual: true,
     price: '$95.000 CLP',
     depositPrice: '$47.500 CLP (50%)',
     priceDetail: 'Código SENCE Franquicia Tributaria',
@@ -49,6 +52,8 @@ export const DEFAULT_COURSES = [
     title: 'Técnicas de manejo de resolución de conflictos',
     duration: '8 Horas Presencial',
     modality: 'Presencial Intensivo en Sede',
+    permitePresencial: true,
+    permiteVirtual: false,
     price: '$55.000 CLP',
     depositPrice: '$27.500 CLP (50%)',
     priceDetail: 'Taller Práctico Dinámico',
@@ -70,6 +75,8 @@ export const DEFAULT_COURSES = [
     title: 'Manejo y uso de plaguicidas agrícolas',
     duration: '40 Horas',
     modality: 'Semipresencial (Teoría + Campo)',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$120.000 CLP',
     depositPrice: '$60.000 CLP (50%)',
     priceDetail: 'Normativa SAG & Seremi de Salud',
@@ -91,6 +98,8 @@ export const DEFAULT_COURSES = [
     title: 'Operaciones básicas de carga, descarga y protocolos de seguridad en recintos portuarios',
     duration: '50 Horas',
     modality: 'Semipresencial con Terreno Portuario',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$140.000 CLP',
     depositPrice: '$70.000 CLP (50%)',
     priceDetail: 'Normativa Portuaria Directemar / TPA',
@@ -112,6 +121,8 @@ export const DEFAULT_COURSES = [
     title: 'Procedimientos de higiene, seguridad y prevención de riesgos en procesos de manipulación de alimentos',
     duration: '40 Horas',
     modality: 'Online + Taller Higiénico',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$85.000 CLP',
     depositPrice: '$42.500 CLP (50%)',
     priceDetail: 'Acreditación Sanitaria Seremi de Salud',
@@ -133,6 +144,8 @@ export const DEFAULT_COURSES = [
     title: 'Técnicas de depilación con cera miel',
     duration: '30 Horas Prácticas',
     modality: 'Presencial en Taller Estético',
+    permitePresencial: true,
+    permiteVirtual: false,
     price: '$90.000 CLP',
     depositPrice: '$45.000 CLP (50%)',
     priceDetail: 'Incluye Set de Insumos Prácticos',
@@ -152,6 +165,8 @@ export const DEFAULT_COURSES = [
     title: 'Técnicas de manicure',
     duration: '35 Horas Prácticas',
     modality: 'Presencial en Taller Estético',
+    permitePresencial: true,
+    permiteVirtual: false,
     price: '$95.000 CLP',
     depositPrice: '$47.500 CLP (50%)',
     priceDetail: 'Esmaltado Permanente & Limpieza',
@@ -171,6 +186,8 @@ export const DEFAULT_COURSES = [
     title: 'Técnicas de maquillaje carnaval',
     duration: '30 Horas Prácticas',
     modality: 'Presencial Especializado',
+    permitePresencial: true,
+    permiteVirtual: false,
     price: '$90.000 CLP',
     depositPrice: '$45.000 CLP (50%)',
     priceDetail: 'Pigmentos, Glitter & Fijación',
@@ -192,6 +209,8 @@ export const DEFAULT_COURSES = [
     title: 'Cuidado adulto mayor y personas postradas',
     duration: '60 Horas Teórico-Prácticas',
     modality: 'Semipresencial con Prácticas Asistidas',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$130.000 CLP',
     depositPrice: '$65.000 CLP (50%)',
     priceDetail: 'Formación Asistencial y Ética',
@@ -213,6 +232,8 @@ export const DEFAULT_COURSES = [
     title: 'Cajero bancario, administración de condominios',
     duration: '50 Horas',
     modality: 'Online Sincrónico + Simulador',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$110.000 CLP',
     depositPrice: '$55.000 CLP (50%)',
     priceDetail: 'Simulador de Cajas & Ley de Copropiedad',
@@ -238,6 +259,8 @@ export const DEFAULT_COURSES = [
     title: 'Formación de guardias de seguridad',
     duration: '90 Horas Cronológicas',
     modality: 'Presencial y Práctica en Terreno',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$120.000 CLP',
     depositPrice: '$60.000 CLP (50%)',
     priceDetail: 'Examen Oficial SPD / Carabineros OS-10',
@@ -257,6 +280,8 @@ export const DEFAULT_COURSES = [
     title: 'Formación de vigilantes privados',
     duration: '100 Horas',
     modality: 'Presencial con Instrucción de Tiro',
+    permitePresencial: true,
+    permiteVirtual: false,
     price: '$190.000 CLP',
     depositPrice: '$95.000 CLP (50%)',
     priceDetail: 'Instrucción con Porte de Armas Regulado',
@@ -276,6 +301,8 @@ export const DEFAULT_COURSES = [
     title: 'Formación de guardia de seguridad marítimo portuario',
     duration: '90 Horas',
     modality: 'Presencial / Recintos Portuarios',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$130.000 CLP',
     depositPrice: '$65.000 CLP (50%)',
     priceDetail: 'Código PBIP y Directemar',
@@ -295,6 +322,8 @@ export const DEFAULT_COURSES = [
     title: 'Formación para porteros, nocheros, rondines u otro de similar carácter',
     duration: '50 Horas',
     modality: 'Online Asíncrono + Prácticas',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$95.000 CLP',
     depositPrice: '$47.500 CLP (50%)',
     priceDetail: 'Acreditación SENCE & Certificación OTEC',
@@ -316,6 +345,8 @@ export const DEFAULT_COURSES = [
     title: 'Perfeccionamiento de guardias de seguridad',
     duration: '36 Horas',
     modality: 'Semipresencial (Reentrenamiento Trienal)',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$90.000 CLP',
     depositPrice: '$45.000 CLP (50%)',
     priceDetail: 'Revalidación Oficial Trienal SPD',
@@ -335,6 +366,8 @@ export const DEFAULT_COURSES = [
     title: 'Perfeccionamiento de guardia de seguridad marítimo portuario',
     duration: '40 Horas',
     modality: 'Presencial / Código PBIP',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$100.000 CLP',
     depositPrice: '$50.000 CLP (50%)',
     priceDetail: 'Revalidación Directemar',
@@ -354,6 +387,8 @@ export const DEFAULT_COURSES = [
     title: 'Perfeccionamiento para porteros, nocheros, rondines u otro de similar carácter',
     duration: '30 Horas',
     modality: 'Online Flexible',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$75.000 CLP',
     depositPrice: '$37.500 CLP (50%)',
     priceDetail: 'Certificación OTEC Continua',
@@ -375,6 +410,8 @@ export const DEFAULT_COURSES = [
     title: 'Técnicas de operación de circuitos cerrados de televisión (CCTV codificado por SENCE)',
     duration: '60 Horas',
     modality: 'Online Sincrónico + Software VMS',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$140.000 CLP',
     depositPrice: '$70.000 CLP (50%)',
     priceDetail: 'Codificación SENCE Oficial',
@@ -394,6 +431,8 @@ export const DEFAULT_COURSES = [
     title: 'Técnicas de operación CCTV y alarmas de seguridad privada',
     duration: '65 Horas',
     modality: 'Semipresencial con Paneles de Alarma',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$150.000 CLP',
     depositPrice: '$75.000 CLP (50%)',
     priceDetail: 'Sistemas Electrónicos Integrados',
@@ -413,6 +452,8 @@ export const DEFAULT_COURSES = [
     title: 'Supervisor de seguridad privada',
     duration: '120 Horas',
     modality: '100% Online Aula Virtual',
+    permitePresencial: true,
+    permiteVirtual: true,
     price: '$180.000 CLP',
     depositPrice: '$90.000 CLP (50%)',
     priceDetail: 'Liderazgo & Directivas SPD',
@@ -429,6 +470,15 @@ export const DEFAULT_COURSES = [
 
 const STORAGE_KEY = 'prevyseg_custom_courses_v2';
 
+// Helper oficial para obtener y verificar las modalidades de un curso
+export function getCourseModalities(course) {
+  if (!course) return { permitePresencial: true, permiteVirtual: true };
+  const p = typeof course.permitePresencial === 'boolean' ? course.permitePresencial : true;
+  const v = typeof course.permiteVirtual === 'boolean' ? course.permiteVirtual : true;
+  if (!p && !v) return { permitePresencial: true, permiteVirtual: true };
+  return { permitePresencial: p, permiteVirtual: v };
+}
+
 // Cargar cursos desde localStorage o fallback a los oficiales
 export function getSavedCourses() {
   if (typeof window === 'undefined') return DEFAULT_COURSES;
@@ -444,10 +494,14 @@ export function getSavedCourses() {
       return DEFAULT_COURSES;
     }
 
-    // Merge con datos por defecto para preservar imágenes y campos requeridos
+    // Merge con datos por defecto para preservar imágenes, modalidades y campos requeridos
     return DEFAULT_COURSES.map(defCourse => {
       const match = parsed.find(p => p.id === defCourse.id || p.title === defCourse.title);
-      if (!match) return defCourse;
+      if (!match) return {
+        ...defCourse,
+        permitePresencial: typeof defCourse.permitePresencial === 'boolean' ? defCourse.permitePresencial : true,
+        permiteVirtual: typeof defCourse.permiteVirtual === 'boolean' ? defCourse.permiteVirtual : true,
+      };
       return {
         ...defCourse,
         disponible: typeof match.disponible === 'boolean' ? match.disponible : defCourse.disponible,
@@ -457,6 +511,12 @@ export function getSavedCourses() {
         fecha_termino: match.fecha_termino || defCourse.fecha_termino,
         price: match.price || defCourse.price,
         depositPrice: match.depositPrice || defCourse.depositPrice,
+        permitePresencial: typeof match.permitePresencial === 'boolean' 
+          ? match.permitePresencial 
+          : (typeof defCourse.permitePresencial === 'boolean' ? defCourse.permitePresencial : true),
+        permiteVirtual: typeof match.permiteVirtual === 'boolean' 
+          ? match.permiteVirtual 
+          : (typeof defCourse.permiteVirtual === 'boolean' ? defCourse.permiteVirtual : true),
       };
     });
   } catch (e) {
@@ -465,23 +525,132 @@ export function getSavedCourses() {
   }
 }
 
-// Guardar actualizaciones de un curso
+// Guardar actualizaciones de un curso permanentemente en LocalStorage y Supabase PostgreSQL
 export function updateCourseItem(courseId, updates) {
   if (typeof window === 'undefined') return;
   try {
     const current = getSavedCourses();
+    let updatedTarget = null;
+
     const updated = current.map(c => {
-      if (c.id === courseId) {
-        return { ...c, ...updates };
+      const matchById = c.id === courseId;
+      const matchByTitle = updates.title && (c.title === updates.title || c.titulo === updates.title);
+      const matchByTitulo = updates.titulo && (c.title === updates.titulo || c.titulo === updates.titulo);
+      if (matchById || matchByTitle || matchByTitulo) {
+        updatedTarget = { ...c, ...updates };
+        return updatedTarget;
       }
       return c;
     });
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent('prevyseg-courses-updated', { detail: updated }));
+
+    // Persistir asíncronamente en PostgreSQL en Supabase
+    if (supabase) {
+      const dbPayload = {};
+      if (typeof updates.permitePresencial === 'boolean') {
+        dbPayload.permite_presencial = updates.permitePresencial;
+      }
+      if (typeof updates.permiteVirtual === 'boolean') {
+        dbPayload.permite_virtual = updates.permiteVirtual;
+      }
+      if (typeof updates.disponible === 'boolean') {
+        dbPayload.disponible = updates.disponible;
+      }
+      if (typeof updates.proximamente === 'boolean') {
+        dbPayload.proximamente = updates.proximamente;
+      }
+      if (typeof updates.cupos === 'number') {
+        dbPayload.cupos = updates.cupos;
+      }
+      if (updates.fecha_inicio) {
+        dbPayload.fecha_inicio = updates.fecha_inicio;
+      }
+      if (updates.fecha_termino) {
+        dbPayload.fecha_termino = updates.fecha_termino;
+      }
+
+      if (Object.keys(dbPayload).length > 0) {
+        const isUUID = typeof courseId === 'string' && courseId.length > 20 && courseId.includes('-');
+        if (isUUID) {
+          supabase.from('courses').update(dbPayload).eq('id', courseId).then(({ error }) => {
+            if (error) console.warn('Error sincronizando curso con Supabase:', error);
+          });
+        } else if (updatedTarget && updatedTarget.title) {
+          supabase.from('courses').update(dbPayload).ilike('titulo', `%${updatedTarget.title}%`).then(({ error }) => {
+            if (error) console.warn('Error sincronizando curso con Supabase:', error);
+          });
+        }
+      }
+    }
+
     return updated;
   } catch (e) {
     console.error('Error guardando curso:', e);
   }
+}
+
+// Sincronizar catálogo local con Supabase al iniciar la aplicación
+export async function syncCoursesWithDatabase() {
+  if (typeof window === 'undefined' || !supabase) return;
+  try {
+    const { data, error } = await supabase.from('courses').select('*');
+    if (error || !data || data.length === 0) return;
+
+    const current = getSavedCourses();
+    let hasChanges = false;
+
+    const merged = current.map(localCourse => {
+      const dbMatch = data.find(d => 
+        d.id === localCourse.id || 
+        d.titulo === localCourse.title || 
+        (d.codigo_sence && d.codigo_sence === localCourse.codigo_sence)
+      );
+      if (!dbMatch) return localCourse;
+
+      const p = typeof dbMatch.permite_presencial === 'boolean' 
+        ? dbMatch.permite_presencial 
+        : localCourse.permitePresencial;
+      const v = typeof dbMatch.permite_virtual === 'boolean' 
+        ? dbMatch.permite_virtual 
+        : localCourse.permiteVirtual;
+      const prox = typeof dbMatch.proximamente === 'boolean' 
+        ? dbMatch.proximamente 
+        : localCourse.proximamente;
+      const disp = typeof dbMatch.disponible === 'boolean' 
+        ? dbMatch.disponible 
+        : localCourse.disponible;
+
+      if (p !== localCourse.permitePresencial || v !== localCourse.permiteVirtual || prox !== localCourse.proximamente || disp !== localCourse.disponible) {
+        hasChanges = true;
+      }
+
+      return {
+        ...localCourse,
+        permitePresencial: p !== undefined ? p : true,
+        permiteVirtual: v !== undefined ? v : true,
+        proximamente: prox !== undefined ? prox : false,
+        disponible: disp !== undefined ? disp : true,
+        cupos: typeof dbMatch.cupos === 'number' ? dbMatch.cupos : localCourse.cupos,
+        fecha_inicio: dbMatch.fecha_inicio || localCourse.fecha_inicio,
+        fecha_termino: dbMatch.fecha_termino || localCourse.fecha_termino,
+      };
+    });
+
+    if (hasChanges) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      window.dispatchEvent(new CustomEvent('prevyseg-courses-updated', { detail: merged }));
+    }
+    return merged;
+  } catch (e) {
+    console.warn('Error en syncCoursesWithDatabase:', e);
+  }
+}
+
+// Iniciar sincronización en segundo plano automáticamente en el navegador
+if (typeof window !== 'undefined') {
+  syncCoursesWithDatabase();
 }
 
 // Restablecer valores de fábrica

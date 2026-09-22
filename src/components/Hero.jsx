@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
-import { 
-  ArrowRight, 
-  ShieldCheck, 
-  Award, 
-  Sparkles, 
-  CheckCircle2, 
+import {
+  ArrowRight,
+  ShieldCheck,
+  Award,
+  Sparkles,
+  CheckCircle2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -49,12 +49,12 @@ const TRADES_SLIDES = [
   { img: bankCashierImg, title: 'Cajero Bancario y Administración de Condominios', tag: 'Área Administración' }
 ];
 
-const Hero = ({ 
-  onOpenContact, 
-  onOpenEnrollment, 
+const Hero = ({
+  onOpenContact,
+  onOpenEnrollment,
   onOpenSchoolDetail,
   activeSchool = 'seguridad',
-  onSwitchSchool 
+  onSwitchSchool
 }) => {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
@@ -62,7 +62,7 @@ const Hero = ({
   const ctaRef = useRef(null);
   const badgesRef = useRef(null);
   const overlayRef = useRef(null);
-  
+
   const [currentBg, setCurrentBg] = useState(0);
 
   const activeSlides = activeSchool === 'seguridad' ? SECURITY_SLIDES : TRADES_SLIDES;
@@ -139,9 +139,8 @@ const Hero = ({
         {activeSlides.map((slide, idx) => (
           <div
             key={slide.title}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              idx === currentBg ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentBg ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+              }`}
             style={{
               backgroundImage: `url(${slide.img})`,
               backgroundPosition: 'center',
@@ -198,7 +197,7 @@ const Hero = ({
               1. BOTONES INTERCAMBIABLES DE SELECCIÓN DE ESCUELA (SOLICITUD EXPLÍCITA)
           ========================================================================= */}
           <div className="hero-switcher-box mb-6 inline-flex p-1.5 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/25 shadow-2xl gap-1.5">
-            
+
             {/* Botón Escuela de Seguridad */}
             <button
               type="button"
@@ -206,17 +205,15 @@ const Hero = ({
                 if (onSwitchSchool) onSwitchSchool('seguridad');
                 window.dispatchEvent(new CustomEvent('switch-school', { detail: 'seguridad' }));
               }}
-              className={`flex items-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 cursor-pointer ${
-                isSecurity
+              className={`flex items-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 cursor-pointer ${isSecurity
                   ? 'bg-gradient-to-r from-[#00C4D8] to-[#0A7D8C] text-[#071626] shadow-xl shadow-[#00C4D8]/30 scale-[1.03] ring-2 ring-white/40'
                   : 'text-white/70 hover:text-white hover:bg-white/10'
-              }`}
+                }`}
             >
               <Shield size={18} className={isSecurity ? 'text-[#071626]' : 'text-[#00C4D8]'} />
               <span>Escuela de Seguridad Privada</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase ${
-                isSecurity ? 'bg-black/20 text-[#071626]' : 'bg-white/10 text-white/60'
-              }`}>
+              <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase ${isSecurity ? 'bg-black/20 text-[#071626]' : 'bg-white/10 text-white/60'
+                }`}>
                 SPD
               </span>
             </button>
@@ -228,17 +225,15 @@ const Hero = ({
                 if (onSwitchSchool) onSwitchSchool('oficios');
                 window.dispatchEvent(new CustomEvent('switch-school', { detail: 'oficios' }));
               }}
-              className={`flex items-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 cursor-pointer ${
-                !isSecurity
+              className={`flex items-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 cursor-pointer ${!isSecurity
                   ? 'bg-gradient-to-r from-[#00FFE0] to-[#00A896] text-[#071626] shadow-xl shadow-[#00FFE0]/30 scale-[1.03] ring-2 ring-white/40'
                   : 'text-white/70 hover:text-white hover:bg-white/10'
-              }`}
+                }`}
             >
               <Wrench size={18} className={!isSecurity ? 'text-[#071626]' : 'text-[#00FFE0]'} />
               <span>Escuela de Oficios SENCE</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase ${
-                !isSecurity ? 'bg-black/20 text-[#071626]' : 'bg-white/10 text-white/60'
-              }`}>
+              <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase ${!isSecurity ? 'bg-black/20 text-[#071626]' : 'bg-white/10 text-white/60'
+                }`}>
                 NCh 2728
               </span>
             </button>
@@ -263,7 +258,7 @@ const Hero = ({
             {isSecurity ? (
               <>
                 <span>Escuela de</span>{' '}
-                <span 
+                <span
                   className="text-transparent bg-clip-text"
                   style={{
                     backgroundImage: 'linear-gradient(90deg, #00C4D8, #00FFE0, #00C4D8)',
@@ -275,7 +270,7 @@ const Hero = ({
             ) : (
               <>
                 <span>Escuela de</span>{' '}
-                <span 
+                <span
                   className="text-transparent bg-clip-text"
                   style={{
                     backgroundImage: 'linear-gradient(90deg, #00FFE0, #00A896, #00FFE0)',
@@ -306,23 +301,22 @@ const Hero = ({
 
           {/* Botones de Acción (Call to Action) */}
           <div ref={ctaRef} className="flex flex-wrap items-center gap-3.5 mb-10">
-            
+
             {/* Botón 1: Ver catálogo de capacitaciones de esta escuela */}
-            <ScrollLink 
-              to="servicios" 
-              spy 
-              smooth 
-              offset={-80} 
+            <ScrollLink
+              to="servicios"
+              spy
+              smooth
+              offset={-80}
               duration={500}
               className="group"
             >
-              <button 
+              <button
                 type="button"
-                className={`hero-cta-btn font-black text-sm px-7 py-4 rounded-xl shadow-2xl transition-all duration-300 flex items-center gap-2.5 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
-                  isSecurity
+                className={`hero-cta-btn font-black text-sm px-7 py-4 rounded-xl shadow-2xl transition-all duration-300 flex items-center gap-2.5 cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${isSecurity
                     ? 'bg-gradient-to-r from-[#00C4D8] to-[#0A7D8C] text-[#071626] hover:brightness-110 shadow-[#00C4D8]/40'
                     : 'bg-gradient-to-r from-[#00FFE0] to-[#00A896] text-[#071626] hover:brightness-110 shadow-[#00FFE0]/40'
-                }`}
+                  }`}
               >
                 <span>{isSecurity ? 'Ver Capacitaciones de Seguridad' : 'Ver Capacitaciones de Oficios'}</span>
                 <ArrowRight size={17} className="group-hover:translate-x-1.5 transition-transform duration-300" />

@@ -52,6 +52,7 @@ import {
   checkStudentSingleCourse,
   enrollStudentInSchool
 } from '../config/supabase';
+import { getSavedCourses, getCourseModalities } from '../data/coursesData';
 
 // ================= LISTADO OFICIAL DE REGIONES Y CIUDADES DE CHILE =================
 export const REGIONES_CHILE = [
@@ -473,8 +474,28 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
     }
   }, [defaultCourseName]);
 
-  // Obtener curso actual
-  const currentCourse = OFFICIAL_COURSES.find(c => c.id === selectedCourseId) || OFFICIAL_COURSES[0];
+  // Sincronizar con cursos guardados y editados desde administración
+  const [customCourses, setCustomCourses] = useState(() => getSavedCourses());
+
+  useEffect(() => {
+    const handleCoursesUpdated = () => {
+      setCustomCourses(getSavedCourses());
+    };
+    window.addEventListener('prevyseg-courses-updated', handleCoursesUpdated);
+    return () => window.removeEventListener('prevyseg-courses-updated', handleCoursesUpdated);
+  }, []);
+
+  // Obtener curso actual con modalidades reactivas (Presencial y/o Virtual)
+  const baseCourse = OFFICIAL_COURSES.find(c => c.id === selectedCourseId) || OFFICIAL_COURSES[0];
+  const customCourseMatch = customCourses.find(c => c.id === selectedCourseId || c.title === baseCourse.name);
+  const courseModalities = getCourseModalities(customCourseMatch || baseCourse);
+  const currentCourse = {
+    ...baseCourse,
+    permitePresencial: courseModalities.permitePresencial,
+    permiteVirtual: courseModalities.permiteVirtual,
+    disponible: customCourseMatch ? customCourseMatch.disponible : baseCourse.disponible,
+    proximamente: customCourseMatch ? Boolean(customCourseMatch.proximamente) : false,
+  };
   const isSpdCourse = currentCourse.school === 'seguridad';
   const courseFullName = currentCourse.name;
 
@@ -511,15 +532,30 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
     return reg.includes('arica') || ciu.includes('arica') || ciu.includes('azapa') || ciu.includes('lluta') || dom.includes('arica') || ciu.includes('parinacota');
   }, [formData.region, effectiveCity, formData.domicilio]);
 
-  // Modalidad calculada en base a la ciudad/región del estudiante
+  // Modalidad calculada en base a las modalidades configuradas por el admin y la procedencia del estudiante
   const computedModality = React.useMemo(() => {
+    const { permitePresencial, permiteVirtual } = currentCourse;
+
+    // 1. Exclusivo Presencial
+    if (permitePresencial && !permiteVirtual) {
+      return isFromArica
+        ? 'Presencial (Sede Central Arica Blanco Encalada 666)'
+        : 'Presencial (Requiere asistencia presencial en Sede Central Arica)';
+    }
+
+    // 2. Exclusivo Virtual
+    if (!permitePresencial && permiteVirtual) {
+      return '100% Virtual Online (Aula Virtual 24/7 y Clases Zoom)';
+    }
+
+    // 3. Ambas modalidades habilitadas (Presencial y Virtual)
     if (isFromArica) {
       return formData.modalidadPreferencia === 'virtual_total'
         ? '100% Virtual Online (Opción a Distancia Arica)'
         : 'Presencial y Virtual (Sede Central Arica Blanco Encalada 666)';
     }
     return `Totalmente Virtual (100% Online - Clases Sincrónicas Zoom)`;
-  }, [isFromArica, formData.modalidadPreferencia]);
+  }, [currentCourse.permitePresencial, currentCourse.permiteVirtual, isFromArica, formData.modalidadPreferencia]);
 
   // Estados de contraseña
   const [showPassword, setShowPassword] = useState(false);
@@ -1012,6 +1048,18 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
                     <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 px-2.5 py-0.5 rounded-md border border-slate-200">
                       {currentCourse.category}
                     </span>
+                    {currentCourse.permitePresencial && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        <Building2 size={12} className="text-emerald-700" />
+                        <span>Presencial</span>
+                      </span>
+                    )}
+                    {currentCourse.permiteVirtual && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-800 border border-sky-300">
+                        <Laptop size={12} className="text-[#0284c7]" />
+                        <span>Virtual</span>
+                      </span>
+                    )}
                     <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 px-2.5 py-0.5 rounded-md border border-slate-200">
                       {currentCourse.modality} • {currentCourse.hours}
                     </span>
@@ -1277,9 +1325,64 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
                 />
               </div>
 
-              {/* BANNER DINÁMICO DE MODALIDAD SEGÚN UBICACIÓN GEOGRÁFICA */}
+              {/* BANNER DINÁMICO DE MODALIDAD SEGÚN UBICACIÓN GEOGRÁFICA Y CONFIGURACIÓN DEL CURSO */}
               <div className="sm:col-span-2 lg:col-span-3">
-                {isFromArica ? (
+                {currentCourse.permitePresencial && !currentCourse.permiteVirtual ? (
+                  // Caso 1: Curso Exclusivamente Presencial
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 border-2 border-emerald-300 shadow-xs space-y-2.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black flex-shrink-0">
+                          <Building2 size={18} />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">
+                            ✓ Modalidad Exclusiva del Curso
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-black text-emerald-950">
+                            Modalidad Asignada: 100% Presencial
+                          </h4>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-600 text-white shadow-xs self-start sm:self-auto">
+                        Sede Central Arica
+                      </span>
+                    </div>
+                    <p className="text-xs text-emerald-900 leading-relaxed">
+                      Este curso cuenta con instrucción práctica en terreno y se imparte exclusivamente en nuestra <strong>Sede Central PrevySeg</strong> (Blanco Encalada N°666, 2do Piso, Arica). {!isFromArica && (
+                        <span className="font-semibold text-amber-900 block mt-1">
+                          Nota: Al encontrarte registrado en {effectiveCity} ({formData.region}), recuerda que este programa requiere tu asistencia física a las clases en Arica.
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                ) : !currentCourse.permitePresencial && currentCourse.permiteVirtual ? (
+                  // Caso 2: Curso Exclusivamente Virtual
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50 border-2 border-sky-300 shadow-xs space-y-2.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-[#0284c7] text-white flex items-center justify-center font-black flex-shrink-0">
+                          <Laptop size={18} />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-sky-800 tracking-wider block">
+                            ✓ Modalidad Exclusiva del Curso
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-black text-sky-950">
+                            Modalidad Asignada: 100% Virtual Online
+                          </h4>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-[#0284c7] text-white shadow-xs self-start sm:self-auto">
+                        Aula Virtual + Zoom
+                      </span>
+                    </div>
+                    <p className="text-xs text-sky-900 leading-relaxed">
+                      Este programa está diseñado en formato <strong>100% Virtual Online</strong>. Te conectas desde <strong>{effectiveCity}</strong> ({formData.region}) a través de nuestra plataforma e-learning y clases sincrónicas en vivo por Zoom sin necesidad de desplazamientos.
+                    </p>
+                  </div>
+                ) : isFromArica ? (
+                  // Caso 3a: Ambas modalidades habilitadas y alumno en Arica
                   <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 border-2 border-emerald-300 shadow-xs space-y-3">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -1330,6 +1433,7 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
                     </div>
                   </div>
                 ) : (
+                  // Caso 3b: Ambas modalidades pero alumno fuera de Arica
                   <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50 border-2 border-sky-300 shadow-xs space-y-2.5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
