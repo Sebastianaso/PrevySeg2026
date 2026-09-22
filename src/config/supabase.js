@@ -47,21 +47,6 @@ export const loginWithRut = async (rut, password) => {
     throw new Error('Por favor ingresa tu contraseña de acceso.');
   }
 
-  // Soporte directo para cuenta DEMO de Empleador / Empresas PrevySeg
-  if (cleaned.toUpperCase() === '76543210K' || cleaned === '76543210') {
-    return {
-      id: 'fadc4c6a-62f1-4f68-b1f8-910d5e4ef8e3',
-      email: 'contacto@minerialogistica.cl',
-      rut: '76.543.210-K',
-      nombre: 'Minería & Logística del Norte S.A.',
-      rol: 'EMPRESA',
-      telefono: '+56 9 8452 1190',
-      cargo: 'Gerencia de Selección & RRHH • Empresa Verificada',
-      user: '76.543.210-K',
-      ciudad: 'Arica / Faenas Tarapacá & Antofagasta'
-    };
-  }
-
   const email = rutToEmail(cleaned);
 
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -227,6 +212,23 @@ export const adminCreateUser = async ({ rut, nombre, email, rol = 'STUDENT', tel
       throw new Error(`El RUT ${formattedRut} ya se encuentra registrado en el sistema.`);
     }
     throw new Error(error.message || 'Error al crear usuario en la base de datos.');
+  }
+
+  return data;
+};
+
+/**
+ * Elimina un usuario por completo de la base de datos (PostgreSQL + Supabase Auth) en cascada.
+ */
+export const adminDeleteUser = async (userId) => {
+  if (!userId) throw new Error('ID de usuario requerido para eliminación.');
+
+  const { data, error } = await supabase.rpc('admin_delete_user', {
+    p_user_id: userId,
+  });
+
+  if (error) {
+    throw new Error(error.message || 'Error al eliminar usuario en la base de datos.');
   }
 
   return data;
@@ -454,4 +456,202 @@ export const processEnrollmentRegistration = async ({
 
   return data;
 };
+
+/**
+ * Detecta si un curso corresponde a la capacitación especial CCTV (Autoaprendizaje Documental sin profesor)
+ */
+export const isCctvSpecialCourse = (course) => {
+  if (!course) return false;
+  const title = (course.titulo || course.title || course.nombre || course.nombreCompleto || '').toLowerCase();
+  const code = (course.codigo_sence || course.code || course.id || '').toLowerCase();
+  return (
+    title.includes('cctv') || 
+    code.includes('cctv') || 
+    course.id === 'seg-09' || 
+    course.id === '20de0d7b-4173-4d5d-a712-3b77c6c854fb' ||
+    title.includes('televigilancia') ||
+    title.includes('circuitos cerrados')
+  );
+};
+
+/**
+ * Obtiene el estado de habilitación actual del curso especial CCTV.
+ */
+export const getCctvActiveStatus = async (courseId = null) => {
+  try {
+    const { data, error } = await supabase.rpc('get_cctv_active_status', {
+      p_course_id: courseId || null,
+    });
+    if (error) {
+      console.warn('Error al obtener estado de activación CCTV:', error);
+      return { has_active: false };
+    }
+    return data;
+  } catch (err) {
+    console.warn('Error en getCctvActiveStatus:', err);
+    return { has_active: false };
+  }
+};
+
+/**
+ * Activa a un estudiante específico para la capacitación de CCTV por 30 días.
+ * Desactiva automáticamente a cualquier alumno anterior para garantizar 1 solo a la vez.
+ */
+export const activateCctvStudent = async (courseId, userId) => {
+  const { data, error } = await supabase.rpc('activate_cctv_student', {
+    p_course_id: courseId,
+    p_user_id: userId,
+  });
+  if (error) {
+    throw new Error(error.message || 'Error al activar capacitación individual CCTV');
+  }
+  return data;
+};
+
+/**
+ * Desactiva la habilitación individual de CCTV.
+ */
+export const deactivateCctvStudent = async (activationId) => {
+  const { data, error } = await supabase.rpc('deactivate_cctv_student', {
+    p_activation_id: activationId,
+  });
+  if (error) {
+    throw new Error(error.message || 'Error al desactivar habilitación CCTV');
+  }
+  return data;
+};
+
+/**
+ * Consulta en tiempo real únicamente los usuarios que han solicitado o postulado al curso CCTV.
+ */
+export const getCctvApplicants = async (courseId = null) => {
+  try {
+    const { data, error } = await supabase.rpc('get_cctv_applicants', {
+      p_course_id: courseId || null,
+    });
+    if (error) {
+      console.warn('Error al obtener postulantes CCTV:', error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.warn('Error en getCctvApplicants:', err);
+    return [];
+  }
+};
+
+/**
+ * Incorpora a un alumno aceptado al curso CCTV (1 solo a la vez) e inicia sus 30 días de vigencia.
+ * Registra automáticamente el movimiento en la tabla de historial de auditoría.
+ */
+export const incorporateCctvStudent = async (userId, courseId = null) => {
+  const { data, error } = await supabase.rpc('incorporate_cctv_student', {
+    p_user_id: userId,
+    p_course_id: courseId || null,
+  });
+  if (error) {
+    throw new Error(error.message || 'Error al incorporar alumno al curso CCTV');
+  }
+  return data;
+};
+
+/**
+ * Obtiene el registro histórico de participantes que han pasado por el curso.
+ */
+export const getCourseParticipantHistory = async (courseId = null) => {
+  try {
+    const { data, error } = await supabase.rpc('get_course_participant_history', {
+      p_course_id: courseId || null,
+    });
+    if (error) {
+      console.warn('Error al obtener historial de participantes:', error);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.warn('Error en getCourseParticipantHistory:', err);
+    return [];
+  }
+};
+
+/**
+ * Registra una solicitud de aprobación para el curso CCTV de parte de un estudiante.
+ */
+export const requestCctvApproval = async ({
+  userId = null,
+  rut,
+  nombre,
+  email = null,
+  telefono = null,
+  notas = null,
+}) => {
+  const { data, error } = await supabase.rpc('request_cctv_approval', {
+    p_user_id: userId,
+    p_rut: rut,
+    p_nombre: nombre,
+    p_email: email,
+    p_telefono: telefono,
+    p_notas: notas,
+  });
+  if (error) {
+    throw new Error(error.message || 'Error al registrar solicitud de aprobación para CCTV');
+  }
+  return data;
+};
+
+/**
+ * El administrador otorga el "Visto Bueno" y aprueba la solicitud de CCTV.
+ * Opcionalmente puede incorporar inmediatamente al alumno (1 a la vez).
+ */
+export const approveCctvRequest = async (
+  requestId,
+  adminName = 'Administrador OTEC',
+  notes = null,
+  incorporateNow = false
+) => {
+  const { data, error } = await supabase.rpc('approve_cctv_request', {
+    p_request_id: requestId,
+    p_admin_name: adminName,
+    p_notes: notes,
+    p_incorporate_now: Boolean(incorporateNow),
+  });
+  if (error) {
+    throw new Error(error.message || 'Error al aprobar solicitud con visto bueno');
+  }
+  return data;
+};
+
+/**
+ * El administrador rechaza una solicitud de CCTV.
+ */
+export const rejectCctvRequest = async (requestId, reason = 'Solicitud rechazada') => {
+  const { data, error } = await supabase.rpc('reject_cctv_request', {
+    p_request_id: requestId,
+    p_reason: reason,
+  });
+  if (error) {
+    throw new Error(error.message || 'Error al rechazar solicitud');
+  }
+  return data;
+};
+
+/**
+ * Obtiene la lista completa de solicitudes pendientes, postulantes con visto bueno y alumno activo.
+ */
+export const getCctvApprovalList = async (courseId = null) => {
+  try {
+    const { data, error } = await supabase.rpc('get_cctv_approval_list', {
+      p_course_id: courseId || null,
+    });
+    if (error) {
+      console.warn('Error al obtener lista de aprobaciones CCTV:', error);
+      return { pending_requests: [], approved_applicants: [], active_status: null };
+    }
+    return data || { pending_requests: [], approved_applicants: [], active_status: null };
+  } catch (err) {
+    console.warn('Error en getCctvApprovalList:', err);
+    return { pending_requests: [], approved_applicants: [], active_status: null };
+  }
+};
+
 

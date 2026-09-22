@@ -25,6 +25,7 @@ import {
 import { 
   supabase, 
   adminCreateUser, 
+  adminDeleteUser,
   changeUserPassword, 
   formatRut, 
   cleanRut, 
@@ -80,9 +81,6 @@ const ParticipantsView = ({ isEditMode }) => {
       
       if (coursesData) {
         setCourses(coursesData);
-        if (coursesData.length > 0 && !newParticipant.course_id) {
-          setNewParticipant(prev => ({ ...prev, course_id: coursesData[0].id }));
-        }
       }
 
       // 2. Fetch users with their enrollments and courses
@@ -116,9 +114,14 @@ const ParticipantsView = ({ isEditMode }) => {
 
       const formatted = (usersData || []).map(u => {
         const firstEnrollment = u.enrollments?.[0];
-        const courseTitle = firstEnrollment?.courses?.titulo || (u.rol === 'ADMIN' ? 'Administración OTEC' : u.rol === 'TEACHER' ? 'Cuerpo Docente' : 'Sin curso asignado');
-        const progreso = firstEnrollment?.progreso ?? (u.rol === 'ADMIN' || u.rol === 'TEACHER' ? 100 : 0);
-        const estado = firstEnrollment?.estado || (u.rol === 'ADMIN' || u.rol === 'TEACHER' ? 'ACTIVO' : 'PENDIENTE');
+        const courseTitle = firstEnrollment?.courses?.titulo || (
+          u.rol === 'ADMIN' ? 'Administración OTEC' : 
+          (u.rol === 'TEACHER' || u.rol === 'DOCENTE') ? 'Cuerpo Docente / Instructor' : 
+          (u.rol === 'EMPRESA' || u.rol === 'EMPLOYER') ? 'Empresa / Empleador' : 
+          'Sin curso asignado'
+        );
+        const progreso = firstEnrollment?.progreso ?? (u.rol === 'ADMIN' || u.rol === 'TEACHER' || u.rol === 'DOCENTE' ? 100 : 0);
+        const estado = firstEnrollment?.estado || (u.rol === 'ADMIN' || u.rol === 'TEACHER' || u.rol === 'DOCENTE' || u.rol === 'EMPRESA' ? 'ACTIVO' : 'PENDIENTE');
 
         // Split name into first and last
         const parts = (u.nombre || 'Usuario').split(' ');
@@ -250,15 +253,16 @@ const ParticipantsView = ({ isEditMode }) => {
       await adminCreateUser({
         rut: formatRut(newParticipant.rut) || newParticipant.rut,
         nombre: newParticipant.nombre.trim(),
-        email: newParticipant.email.trim(),
+        email: newParticipant.email ? newParticipant.email.trim() : '',
         rol: newParticipant.rol,
-        telefono: newParticipant.telefono.trim(),
+        telefono: newParticipant.telefono ? newParticipant.telefono.trim() : '',
         password: newParticipant.password.trim() || null, // null defaults to clean RUT
-        courseId: newParticipant.course_id || null,
+        courseId: newParticipant.course_id ? newParticipant.course_id : null,
       });
 
       setShowEnrollModal(false);
-      setToastSuccess(`Usuario ${newParticipant.nombre} creado y encriptado exitosamente.`);
+      const roleName = newParticipant.rol === 'TEACHER' ? 'Profesor / Docente' : newParticipant.rol === 'ADMIN' ? 'Administrador' : newParticipant.rol === 'EMPRESA' ? 'Empresa' : 'Estudiante';
+      setToastSuccess(`Usuario ${newParticipant.nombre} (${roleName}) creado exitosamente en PostgreSQL.`);
       setTimeout(() => setToastSuccess(''), 4000);
 
       setNewParticipant({
@@ -268,7 +272,7 @@ const ParticipantsView = ({ isEditMode }) => {
         telefono: '',
         rol: 'STUDENT',
         password: '',
-        course_id: courses[0]?.id || '',
+        course_id: '',
       });
       await fetchParticipantes();
     } catch (err) {
@@ -314,16 +318,19 @@ const ParticipantsView = ({ isEditMode }) => {
   };
 
   const handleDeleteUser = async (user) => {
-    if (!window.confirm(`¿Seguro que deseas desvincular a ${user.fullName} (${user.rut})?`)) return;
+    if (!window.confirm(`¿Seguro que deseas eliminar definitivamente a ${user.fullName} (${user.rut}) de la base de datos? Esta acción borrará todas sus matrículas y registros asociados.`)) return;
 
     try {
-      if (user.enrollmentId) {
-        await supabase.from('enrollments').delete().eq('id', user.enrollmentId);
-      }
-      await supabase.from('users').delete().eq('id', user.id);
+      setLoading(true);
+      await adminDeleteUser(user.id);
+      setToastSuccess(`Usuario ${user.fullName} (${user.rut}) eliminado correctamente de la base de datos.`);
+      setTimeout(() => setToastSuccess(''), 4000);
       await fetchParticipantes();
     } catch (err) {
-      alert('Error al desmatricular usuario: ' + err.message);
+      console.error('Error al eliminar usuario:', err);
+      alert('Error al eliminar usuario de la base de datos: ' + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -484,13 +491,13 @@ const ParticipantsView = ({ isEditMode }) => {
                 <th className="py-3.5 px-4">Programa Asignado</th>
                 <th className="py-3.5 px-4">Estado</th>
                 <th className="py-3.5 px-4 text-center">Progreso</th>
-                {isEditMode && <th className="py-3.5 px-4 text-right">Acciones</th>}
+                <th className="py-3.5 px-4 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs">
               {loading ? (
                 <tr>
-                  <td colSpan={isEditMode ? 8 : 7} className="py-12 text-center text-slate-400">
+                  <td colSpan={8} className="py-12 text-center text-slate-400">
                     <div className="inline-block w-6 h-6 border-2 border-[#0284c7] border-t-transparent rounded-full animate-spin mb-2"></div>
                     <div>Consultando PostgreSQL en Supabase...</div>
                   </td>
@@ -599,33 +606,31 @@ const ParticipantsView = ({ isEditMode }) => {
                         </div>
                       </td>
 
-                      {/* Acciones en Modo Edición */}
-                      {isEditMode && (
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => handleOpenPasswordModal(p)}
-                              className="p-1.5 text-slate-400 hover:text-[#0284c7] rounded-lg hover:bg-sky-50 cursor-pointer transition-colors"
-                              title="Cambiar / Restablecer Contraseña (Bcrypt)"
-                            >
-                              <Key size={14} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteUser(p)}
-                              className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors"
-                              title="Desmatricular / Eliminar"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </td>
-                      )}
+                      {/* Acciones para Administración (Cambiar Contraseña / Eliminar) */}
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => handleOpenPasswordModal(p)}
+                            className="p-1.5 text-slate-400 hover:text-[#0284c7] rounded-lg hover:bg-sky-50 cursor-pointer transition-colors"
+                            title="Cambiar / Restablecer Contraseña (Bcrypt)"
+                          >
+                            <Key size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(p)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors"
+                            title="Eliminar definitivamente de la Base de Datos"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan={isEditMode ? 8 : 7} className="py-12 text-center text-slate-400">
+                  <td colSpan={8} className="py-12 text-center text-slate-400">
                     No se encontraron participantes registrados con los criterios de búsqueda.
                   </td>
                 </tr>
@@ -728,28 +733,41 @@ const ParticipantsView = ({ isEditMode }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Rol</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Rol a Asignar *</label>
                   <select
                     value={newParticipant.rol}
-                    onChange={(e) => setNewParticipant({ ...newParticipant, rol: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#0284c7] focus:bg-white cursor-pointer"
+                    onChange={(e) => {
+                      const nextRol = e.target.value;
+                      setNewParticipant({ 
+                        ...newParticipant, 
+                        rol: nextRol,
+                        course_id: nextRol === 'STUDENT' ? (newParticipant.course_id || '') : ''
+                      });
+                    }}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-[#0284c7] focus:bg-white cursor-pointer"
                   >
-                    <option value="STUDENT">Estudiante</option>
-                    <option value="EMPRESA">Empresa / Empleador</option>
-                    <option value="TEACHER">Profesor / Docente</option>
-                    <option value="ADMIN">Administrador OTEC</option>
+                    <option value="STUDENT">🎓 Estudiante / Alumno Regular</option>
+                    <option value="TEACHER">👨‍🏫 Profesor / Docente Instructor</option>
+                    <option value="EMPRESA">🏢 Empresa / Empleador</option>
+                    <option value="ADMIN">👑 Administrador OTEC</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Curso a Matricular</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {newParticipant.rol === 'TEACHER' 
+                      ? 'Curso o Malla que Dicta (Opcional)' 
+                      : newParticipant.rol === 'STUDENT' 
+                      ? 'Curso a Matricular *' 
+                      : 'Programa Asignado (Opcional)'}
+                  </label>
                   <select
                     value={newParticipant.course_id}
                     onChange={(e) => setNewParticipant({ ...newParticipant, course_id: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#0284c7] focus:bg-white cursor-pointer"
                   >
-                    <option value="">-- Sin curso inicial --</option>
+                    <option value="">{newParticipant.rol === 'STUDENT' ? '-- Seleccionar curso --' : '-- Sin curso asignado --'}</option>
                     {courses.map(c => (
                       <option key={c.id} value={c.id}>{c.titulo}</option>
                     ))}

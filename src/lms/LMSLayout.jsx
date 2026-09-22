@@ -59,12 +59,11 @@ import StudentLiveClassesView from './views/StudentLiveClassesView';
 import EmployerPortalView from './views/EmployerPortalView';
 
 const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
-  // 1. Identificación estricta de Roles: Administrador, Empleador, Profesor y Estudiante
-  const userRole = (currentUser?.rol || '').toUpperCase();
+  // 1. Identificación 100% Dinámica de Roles basada en base de datos: Administrador, Empleador, Profesor y Estudiante
+  const userRole = (currentUser?.rol || '').toUpperCase().trim();
   
   const isRoleAdmin = userRole === 'ADMIN' || 
-                      currentUser?.rut?.includes('15692858') || 
-                      currentUser?.user === '15692858-5' || 
+                      userRole === 'ADMINISTRADOR' ||
                       currentUser?.cargo?.toLowerCase().includes('administrador') || 
                       currentUser?.cargo?.toLowerCase().includes('director');
 
@@ -75,16 +74,13 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
     currentUser?.cargo?.toLowerCase().includes('empleador') || 
     currentUser?.cargo?.toLowerCase().includes('empresa') || 
     currentUser?.cargo?.toLowerCase().includes('reclutador') ||
-    currentUser?.cargo?.toLowerCase().includes('rrhh') ||
-    currentUser?.rut?.includes('76543210') ||
-    currentUser?.rut?.includes('76.543.210')
+    currentUser?.cargo?.toLowerCase().includes('rrhh')
   );
 
   const isRoleTeacher = !isRoleAdmin && !isRoleEmployer && (
     userRole === 'TEACHER' || 
     userRole === 'DOCENTE' || 
     userRole === 'PROFESOR' || 
-    currentUser?.rut?.includes('21778425-5') || 
     currentUser?.cargo?.toLowerCase().includes('docente') || 
     currentUser?.cargo?.toLowerCase().includes('profesor')
   );

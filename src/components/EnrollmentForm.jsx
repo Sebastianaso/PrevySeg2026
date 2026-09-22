@@ -50,7 +50,9 @@ import {
   validateEmail, 
   validatePhone, 
   checkStudentSingleCourse,
-  enrollStudentInSchool
+  enrollStudentInSchool,
+  isCctvSpecialCourse,
+  requestCctvApproval
 } from '../config/supabase';
 import { getSavedCourses, getCourseModalities } from '../data/coursesData';
 
@@ -653,6 +655,22 @@ const EnrollmentForm = ({ defaultCourseName = '', onFinished, onOpenPlatform }) 
 
         if (result?.school) {
           setRegisteredSchool(result.school);
+        }
+
+        // Si el curso es CCTV, registrar automáticamente la solicitud de visto bueno en PostgreSQL
+        if (isCctvSpecialCourse(currentCourse)) {
+          try {
+            await requestCctvApproval({
+              userId: result?.user_id || null,
+              rut: formattedRut,
+              nombre: formData.nombre.trim(),
+              email: formData.email.trim(),
+              telefono: formData.telefono.trim(),
+              notas: 'Matrícula web completada. Pendiente de evaluación y visto bueno en Gestión de Cursos CCTV.'
+            });
+          } catch (cctvErr) {
+            console.warn('Aviso: Registro de solicitud CCTV:', cctvErr);
+          }
         }
       }
 

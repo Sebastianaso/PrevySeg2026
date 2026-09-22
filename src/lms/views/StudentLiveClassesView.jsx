@@ -27,10 +27,12 @@ import {
   Search,
   Filter,
   PhoneCall,
-  Info
+  Info,
+  Lock
 } from 'lucide-react';
-import { supabase } from '../../config/supabase';
+import { supabase, isCctvSpecialCourse, getCctvActiveStatus, requestCctvApproval } from '../../config/supabase';
 import { OFFICIAL_COURSES } from '../../components/EnrollmentForm';
+import CctvStudyPortal from '../components/CctvStudyPortal';
 
 export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
   // 1. Estados de selección de curso
@@ -39,7 +41,63 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
   const [attendanceMarked, setAttendanceMarked] = useState(false);
   const [activeMaterialTab, setActiveMaterialTab] = useState('todos');
   const [searchMaterial, setSearchMaterial] = useState('');
+  const [cctvStatus, setCctvStatus] = useState(null);
+  const [studentCctvRequest, setStudentCctvRequest] = useState(null);
+  const [requestingCctv, setRequestingCctv] = useState(false);
   
+  // Cargar estado de habilitación de CCTV
+  useEffect(() => {
+    let isMounted = true;
+    getCctvActiveStatus().then(status => {
+      if (isMounted) setCctvStatus(status);
+    });
+    return () => { isMounted = false; };
+  }, []);
+
+  // Cargar estado de solicitud de aprobación del alumno para CCTV
+  useEffect(() => {
+    if (!currentUser?.rut && !currentUser?.id) return;
+    let isMounted = true;
+    const fetchMyRequest = async () => {
+      try {
+        const { data } = await supabase
+          .from('cctv_approval_requests')
+          .select('*')
+          .or(`user_id.eq.${currentUser.id || '00000000-0000-0000-0000-000000000000'},rut.eq.${currentUser.rut || ''}`)
+          .maybeSingle();
+        if (isMounted) setStudentCctvRequest(data);
+      } catch (err) {
+        console.warn('Error al consultar estado de solicitud CCTV del alumno:', err);
+      }
+    };
+    fetchMyRequest();
+    return () => { isMounted = false; };
+  }, [currentUser]);
+
+  const handleStudentRequestCctv = async () => {
+    setRequestingCctv(true);
+    try {
+      await requestCctvApproval({
+        userId: currentUser?.id || null,
+        rut: currentUser?.rut || currentUser?.user || '11.111.111-1',
+        nombre: currentUser?.nombre || 'Estudiante PrevySeg',
+        email: currentUser?.email || null,
+        telefono: currentUser?.telefono || null,
+        notas: 'Solicitud enviada por el estudiante desde el aula virtual'
+      });
+      setStudentCctvRequest({
+        estado_aprobacion: 'PENDIENTE',
+        visto_bueno: false,
+        created_at: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error(err);
+      alert('Error al enviar solicitud: ' + (err.message || 'Error en el servidor'));
+    } finally {
+      setRequestingCctv(false);
+    }
+  };
+
   // Modal de previsualización de documento
   const [previewDoc, setPreviewDoc] = useState(null);
   // Modal de reproductor de clase grabada
@@ -296,102 +354,51 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
     },
     {
       id: 'cctv-online',
-      title: 'CCTV Operación Profesional de Cámaras de Televigilancia',
-      code: 'CCTV-ON-07',
-      senceCode: '1238009102',
-      category: 'Escuela de Oficios / Seguridad Electrónica',
-      type: 'oficio',
-      modality: 'Online Sincrónico',
-      totalHours: '40 Horas',
-      progress: 40,
+      title: 'Técnicas de operación CCTV y alarmas de seguridad privada',
+      code: 'CCTV-ALARM-09',
+      senceCode: 'CCTV-ALARM-09',
+      category: 'Escuela de Seguridad Privada • Tecnología y Sistemas',
+      type: 'seguridad',
+      modality: 'Autoaprendizaje Documental (30 Días)',
+      totalHours: '65 Horas',
+      progress: 0,
+      isSpecialCctv: true,
       instructor: {
-        name: 'Ing. Roberto Cáceres Pino',
-        role: 'Especialista en Telecomunicaciones y VMS',
-        phone: '+56 9 7869 1869',
-        email: 'docencia.cctv@prevyseg.cl'
+        name: 'Sin Profesor Docente Asignado',
+        role: 'Modalidad de Autoestudio Asincrónico con Manuales Técnicos',
+        phone: '+56 9 8231 2128',
+        email: 'soporte.alumnos@prevyseg.cl'
       },
       schedule: {
-        days: 'Martes y Jueves',
-        time: '19:30 - 22:00 hrs',
-        hoursPerSession: '2.5 hrs pedagógicas',
-        minAttendance: '80% Asistencia Obligatoria OTEC'
+        days: 'Acceso Continuo 24/7 (30 Días Corridos)',
+        time: 'Horario Libre / Autoformación',
+        hoursPerSession: 'Estudio de biblioteca técnica a ritmo individual',
+        minAttendance: 'Revisión y lectura del 100% de la documentación'
       },
       meetingLinks: {
-        zoomUrl: 'https://zoom.us/j/89104820194',
-        meetingId: '891 0482 0194',
-        passcode: 'CctvPrevy2026',
-        meetUrl: 'https://meet.google.com/cctv-prevyseg-2026',
-        jitsiUrl: 'https://meet.jit.si/PrevySeg-AulaCCTV-2026'
+        zoomUrl: '#',
+        meetingId: 'No Aplica',
+        passcode: 'No Aplica',
+        meetUrl: '#',
+        jitsiUrl: '#'
       },
       currentLiveStatus: {
         isLiveNow: false,
-        title: 'Clase N° 4: Configuración de Redes IP y Cámaras PTZ',
-        module: 'Módulo 2: Topología y Protocolos ONVIF',
-        connectedStudents: 0,
-        startTime: 'Mañana 19:30 hrs',
-        endTime: '22:00 hrs'
+        title: 'Módulo de Autoestudio: Documentación Técnica de CCTV y Alarmas',
+        module: 'Capacitación Individual sin Clases Sincrónicas',
+        connectedStudents: 1,
+        startTime: 'Acceso Continuo',
+        endTime: 'Vence en 30 días'
       },
-      upcomingSessions: [
-        {
-          num: 4,
-          date: 'Mañana Martes',
-          fullDate: '08 Septiembre, 2026',
-          time: '19:30 - 22:00 hrs',
-          title: 'Configuración de Redes IP, NVR y Protocolos ONVIF',
-          instructor: 'Ing. Roberto Cáceres',
-          status: 'upcoming'
-        },
-        {
-          num: 5,
-          date: 'Jueves',
-          fullDate: '10 Septiembre, 2026',
-          time: '19:30 - 22:00 hrs',
-          title: 'Analítica de Video con Inteligencia Artificial y Detección Facial',
-          instructor: 'Ing. Roberto Cáceres',
-          status: 'upcoming'
-        }
-      ],
-      materials: [
-        {
-          id: 'mat-cctv-01',
-          category: 'manuales',
-          title: 'Manual de Instalación y Operación de Sistemas CCTV IP',
-          filename: 'Manual_Operador_CCTV_PrevySeg.pdf',
-          size: '9.2 MB',
-          type: 'PDF',
-          updatedAt: '01 Septiembre, 2026',
-          author: 'Ing. Roberto Cáceres',
-          description: 'Guía práctica para operadores de centrales de monitoreo, switches PoE y grabación en disco NVR.',
-          downloadUrl: '#'
-        },
-        {
-          id: 'mat-cctv-02',
-          category: 'diapositivas',
-          title: 'Presentación: Software VMS y Protocolo de Preservación de Evidencia',
-          filename: 'Diapositivas_VMS_Cadena_Custodia.pptx',
-          size: '12.4 MB',
-          type: 'PPTX',
-          updatedAt: '03 Septiembre, 2026',
-          author: 'Ing. Roberto Cáceres',
-          description: 'Formatos de exportación judicial de grabaciones para entrega a Fiscalía y Carabineros.',
-          downloadUrl: '#'
-        }
-      ],
-      recordings: [
-        {
-          id: 'rec-cctv-03',
-          classNum: 3,
-          title: 'Lentes Ópticos, Ángulos de Visión y Cámaras Domo vs Bala',
-          date: '03 Septiembre, 2026',
-          duration: '2h 10m',
-          instructor: 'Ing. Roberto Cáceres',
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-        }
-      ]
+      upcomingSessions: [],
+      materials: [],
+      recordings: []
     }
   ];
 
   const currentCourse = studentCourses[selectedCourseIndex] || studentCourses[0];
+  const isCurrentCourseCctv = isCctvSpecialCourse(currentCourse);
+  const isCctvAuthorized = cctvStatus?.has_active && (cctvStatus?.user_id === currentUser?.id || currentUser?.rol === 'ADMIN');
 
   const copyToClipboard = (text, fieldName) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -411,10 +418,10 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
     alert(`Iniciando descarga segura de: "${doc.title}" (${doc.size})\nDesde el servidor institucional de PrevySeg.`);
   };
 
-  const filteredMaterials = currentCourse.materials.filter((m) => {
+  const filteredMaterials = (currentCourse?.materials || []).filter((m) => {
     const matchesCategory = activeMaterialTab === 'todos' || m.category === activeMaterialTab;
-    const matchesSearch = m.title.toLowerCase().includes(searchMaterial.toLowerCase()) || 
-                          m.filename.toLowerCase().includes(searchMaterial.toLowerCase());
+    const matchesSearch = (m.title || '').toLowerCase().includes(searchMaterial.toLowerCase()) || 
+                          (m.filename || '').toLowerCase().includes(searchMaterial.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -448,11 +455,16 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
               onChange={(e) => setSelectedCourseIndex(Number(e.target.value))}
               className="bg-slate-50 hover:bg-slate-100 text-slate-900 font-bold text-xs sm:text-sm py-2.5 px-4 pr-10 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#00A896] cursor-pointer appearance-none shadow-xs transition-all w-full"
             >
-              {studentCourses.map((course, idx) => (
-                <option key={course.id} value={idx}>
-                  {course.title} ({course.totalHours})
-                </option>
-              ))}
+              {studentCourses.map((course, idx) => {
+                const isCctv = isCctvSpecialCourse(course);
+                const isUserActive = cctvStatus?.has_active && (cctvStatus.user_id === currentUser?.id || currentUser?.rol === 'ADMIN');
+                
+                return (
+                  <option key={course.id} value={idx}>
+                    {course.title} ({course.totalHours}) {isCctv ? (isUserActive ? '• [Autoestudio 30 Días ACTIVO ✓]' : '• [Acceso Individual]') : ''}
+                  </option>
+                );
+              })}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
               ▼
@@ -461,8 +473,72 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
         </div>
       </div>
 
-      {/* 2. Banner de Sesión en Vivo / Sala de Videoconferencia (HERO SECTION) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#072B4F] via-[#041d35] to-[#0b2545] border border-slate-700 text-white p-6 sm:p-8 lg:p-10 shadow-2xl">
+      {/* RENDERIZADO CONDICIONAL: CURSO ESPECIAL CCTV (AUTOESTUDIO DOCUMENTAL) VS CURSO VIRTUAL EN VIVO */}
+      {isCurrentCourseCctv ? (
+        isCctvAuthorized ? (
+          <CctvStudyPortal currentUser={currentUser} cctvStatus={cctvStatus} />
+        ) : (
+          <div className="bg-white border-2 border-slate-200 rounded-3xl p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-sm space-y-5 animate-in fade-in">
+            <div className="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+              <Lock size={32} />
+            </div>
+            <div className="space-y-2">
+              <span className="text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 px-3 py-1 rounded-full border border-amber-200">
+                Capacitación Individual de Autoestudio CCTV
+              </span>
+              <h2 className="text-2xl font-black text-slate-900">
+                Habilitación No Activa para tu Cuenta
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-lg mx-auto">
+                El curso de <strong>Técnicas de Operación CCTV y Alarmas de Seguridad Privada</strong> se imparte mediante una modalidad especial de autoestudio documental (sin clases virtuales sincrónicas ni profesor docente) y <strong>se habilita de manera individual a 1 sola persona a la vez</strong> por un plazo estricto de 30 días.
+              </p>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 text-left space-y-2 max-w-lg mx-auto">
+              <strong className="block text-slate-900 font-bold">Estado de tu Solicitud de Capacitación CCTV:</strong>
+              
+              {studentCctvRequest?.visto_bueno ? (
+                <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-300 text-teal-950 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-teal-800">
+                    <CheckCircle2 size={16} className="text-teal-600" />
+                    <span>¡Solicitud Aprobada con Visto Bueno Oficial!</span>
+                  </div>
+                  <p className="text-[11px] text-teal-700">
+                    La administración otorgó el visto bueno a tu postulación. Tu cupo individual de 30 días será incorporado próximamente para comenzar tu autoestudio.
+                  </p>
+                </div>
+              ) : studentCctvRequest?.estado_aprobacion === 'PENDIENTE' ? (
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-800">
+                    <Clock size={16} className="text-amber-600 animate-spin" />
+                    <span>Solicitud de Aprobación en Revisión</span>
+                  </div>
+                  <p className="text-[11px] text-amber-800">
+                    Tu solicitud fue ingresada el {studentCctvRequest.created_at ? new Date(studentCctvRequest.created_at).toLocaleDateString('es-CL') : 'recientemente'} y se encuentra en revisión en la vista de administración (Gestión de Cursos CCTV) para otorgar el visto bueno.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 pt-1">
+                  <p className="text-[11px] text-slate-600">
+                    Para ingresar a este programa individual, debes enviar una solicitud de aprobación para que la administración evalúe y otorgue el visto bueno a tu cupo.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleStudentRequestCctv}
+                    disabled={requestingCctv}
+                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-[#0284c7] hover:from-sky-500 hover:to-sky-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <Send size={14} />
+                    <span>{requestingCctv ? 'Enviando solicitud...' : 'Enviar Solicitud de Aprobación para CCTV'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      ) : (
+        <>
+          {/* 2. Banner de Sesión en Vivo / Sala de Videoconferencia (HERO SECTION) */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#072B4F] via-[#041d35] to-[#0b2545] border border-slate-700 text-white p-6 sm:p-8 lg:p-10 shadow-2xl">
         {/* Luces decorativas de fondo */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-80 h-80 bg-sky-500/10 rounded-full blur-[100px] pointer-events-none" />
@@ -904,6 +980,8 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
         )}
 
       </div>
+      </>
+      )}
 
       {/* MODAL 1: PREVISUALIZACIÓN DE DOCUMENTO */}
       <AnimatePresence>

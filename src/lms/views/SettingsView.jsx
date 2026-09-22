@@ -32,9 +32,10 @@ import {
   Compass,
   Sliders
 } from 'lucide-react';
-import { supabase } from '../../config/supabase';
+import { supabase, isCctvSpecialCourse } from '../../config/supabase';
 import { getSavedCourses, updateCourseItem } from '../../data/coursesData';
 import CourseManagerModal from '../../components/CourseManagerModal';
+import CctvActivationManager from '../components/CctvActivationManager';
 
 // =========================================================================
 // CATEGORÍAS COMPLETAS IMPLEMENTADAS (SEGURIDAD Y OFICIOS)
@@ -848,6 +849,18 @@ const SettingsView = ({ _isEditMode, _currentUser }) => {
             </button>
           </div>
         </div>
+
+        {/* ========================================================================= */}
+        {/* PANEL EXCLUSIVO: HABILITACIÓN INDIVIDUAL DE CAPACITACIÓN CCTV (30 DÍAS)   */}
+        {/* ========================================================================= */}
+        {(isCctvSpecialCourse(selectedCourse) || isCctvSpecialCourse(formData)) && (
+          <CctvActivationManager 
+            course={selectedCourse || formData} 
+            onStatusChange={(status) => {
+              // Notificación de estado actualizado
+            }} 
+          />
+        )}
 
         {/* 1. SECCIÓN GENERAL */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">

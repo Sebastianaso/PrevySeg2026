@@ -18,7 +18,7 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
-import { supabase } from '../../config/supabase';
+import { supabase, isCctvSpecialCourse } from '../../config/supabase';
 import heroGrad from '../../assets/images/hero_graduation.jpg';
 import promoImg from '../../assets/images/security_promo.jpg';
 import blogCctv from '../../assets/images/blog_cctv.jpg';
@@ -272,10 +272,19 @@ const MyCoursesView = ({ currentUser, onSelectCourse, isEditMode }) => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
 
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-sky-600 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
-                      {course.modalidad || 'SENCE'}
+                  <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
+                    <span className={`text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md ${
+                      isCctvSpecialCourse(course)
+                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 border border-amber-300'
+                        : 'bg-sky-600'
+                    }`}>
+                      {isCctvSpecialCourse(course) ? 'Autoestudio CCTV (30 Días)' : (course.modalidad || 'SENCE')}
                     </span>
+                    {isCctvSpecialCourse(course) && (
+                      <span className="bg-slate-950/80 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-400/40 backdrop-blur-xs">
+                        Sin Profesor • 5 Manuales
+                      </span>
+                    )}
                   </div>
 
                   <div className="absolute bottom-2.5 right-2.5 text-[10px] bg-black/80 backdrop-blur-sm px-2.5 py-0.5 rounded-md text-white font-mono">
