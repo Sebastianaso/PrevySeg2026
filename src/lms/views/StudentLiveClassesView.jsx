@@ -48,11 +48,11 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
   // Cargar estado de habilitación de CCTV
   useEffect(() => {
     let isMounted = true;
-    getCctvActiveStatus().then(status => {
+    getCctvActiveStatus(null, currentUser?.id).then(status => {
       if (isMounted) setCctvStatus(status);
     });
     return () => { isMounted = false; };
-  }, []);
+  }, [currentUser?.id]);
 
   // Cargar estado de solicitud de aprobación del alumno para CCTV
   useEffect(() => {
@@ -398,7 +398,12 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
 
   const currentCourse = studentCourses[selectedCourseIndex] || studentCourses[0];
   const isCurrentCourseCctv = isCctvSpecialCourse(currentCourse);
-  const isCctvAuthorized = cctvStatus?.has_active && (cctvStatus?.user_id === currentUser?.id || currentUser?.rol === 'ADMIN');
+  const isCctvAuthorized = Boolean(
+    currentUser?.rol === 'ADMIN' ||
+    cctvStatus?.is_user_active ||
+    cctvStatus?.user_id === currentUser?.id ||
+    (cctvStatus?.active_students && cctvStatus.active_students.some(s => s.user_id === currentUser?.id || s.student_rut === currentUser?.rut))
+  );
 
   const copyToClipboard = (text, fieldName) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -473,10 +478,9 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
         </div>
       </div>
 
-      {/* RENDERIZADO CONDICIONAL: CURSO ESPECIAL CCTV (AUTOESTUDIO DOCUMENTAL) VS CURSO VIRTUAL EN VIVO */}
       {isCurrentCourseCctv ? (
         isCctvAuthorized ? (
-          <CctvStudyPortal currentUser={currentUser} cctvStatus={cctvStatus} />
+          <CctvStudyPortal currentUser={currentUser} cctvStatus={cctvStatus?.user_activation || cctvStatus} />
         ) : (
           <div className="bg-white border-2 border-slate-200 rounded-3xl p-8 sm:p-12 text-center max-w-2xl mx-auto shadow-sm space-y-5 animate-in fade-in">
             <div className="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
@@ -490,7 +494,7 @@ export const StudentLiveClassesView = ({ currentUser, onSelectCourse }) => {
                 Habilitación No Activa para tu Cuenta
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-lg mx-auto">
-                El curso de <strong>Técnicas de Operación CCTV y Alarmas de Seguridad Privada</strong> se imparte mediante una modalidad especial de autoestudio documental (sin clases virtuales sincrónicas ni profesor docente) y <strong>se habilita de manera individual a 1 sola persona a la vez</strong> por un plazo estricto de 30 días.
+                El curso de <strong>Técnicas de Operación CCTV y Alarmas de Seguridad Privada</strong> se imparte mediante una modalidad especial de autoestudio documental individual (sin clases virtuales sincrónicas ni profesor docente) y <strong>se habilita de manera personal</strong> por un plazo de 30 días a contar del visto bueno administrativo.
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 text-left space-y-2 max-w-lg mx-auto">

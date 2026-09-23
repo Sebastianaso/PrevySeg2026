@@ -486,19 +486,20 @@ export const isCctvSpecialCourse = (course) => {
 /**
  * Obtiene el estado de habilitación actual del curso especial CCTV.
  */
-export const getCctvActiveStatus = async (courseId = null) => {
+export const getCctvActiveStatus = async (courseId = null, userId = null) => {
   try {
     const { data, error } = await supabase.rpc('get_cctv_active_status', {
       p_course_id: courseId || null,
+      p_user_id: userId || null,
     });
     if (error) {
       console.warn('Error al obtener estado de activación CCTV:', error);
-      return { has_active: false };
+      return { has_active: false, active_students: [], total_active: 0 };
     }
-    return data;
+    return data || { has_active: false, active_students: [], total_active: 0 };
   } catch (err) {
     console.warn('Error en getCctvActiveStatus:', err);
-    return { has_active: false };
+    return { has_active: false, active_students: [], total_active: 0 };
   }
 };
 

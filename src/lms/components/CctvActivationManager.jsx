@@ -92,6 +92,9 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
   const activeStatus = approvalData.active_status;
   const pendingRequests = approvalData.pending_requests || [];
   const approvedApplicants = approvalData.approved_applicants || [];
+  const activeStudents = (activeStatus?.active_students && activeStatus.active_students.length > 0)
+    ? activeStatus.active_students
+    : (activeStatus?.has_active && activeStatus.student_name ? [activeStatus] : []);
 
   // =========================================================================
   // ACCIONES ADMINISTRATIVAS: VISTO BUENO Y APROBACIÓN
@@ -100,16 +103,6 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
   // 1. Dar el Visto Bueno y Aceptar Solicitud
   const handleApprove = async (request, incorporateNow = false) => {
     if (!request?.request_id) return;
-
-    if (incorporateNow && activeStatus?.has_active) {
-      const confirmChange = window.confirm(
-        `Actualmente ${activeStatus.student_name} está cursando CCTV.\n\n` +
-        `Esta capacitación es individual (solo 1 alumno a la vez).\n` +
-        `Al dar el visto bueno e incorporar a ${request.nombre}, el alumno anterior será guardado en el historial de auditoría y comenzarán los 30 días para ${request.nombre}.\n\n` +
-        `¿Deseas continuar?`
-      );
-      if (!confirmChange) return;
-    }
 
     setSubmitting(true);
     try {
@@ -121,9 +114,9 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
       );
 
       if (incorporateNow) {
-        showToast(`✓ ¡Visto bueno otorgado a ${request.nombre} e incorporado inmediatamente al curso por 30 días!`, 'success');
+        showToast(`✓ ¡Visto bueno otorgado a ${request.nombre} e incorporado inmediatamente a su autoestudio individual por 30 días!`, 'success');
       } else {
-        showToast(`✓ ¡Visto bueno otorgado a ${request.nombre}! Ha quedado aceptado en la lista de alumnos listos para ser incorporados.`, 'success');
+        showToast(`✓ ¡Visto bueno otorgado a ${request.nombre}! Ha quedado aceptado en la lista para iniciar su autoestudio individual.`, 'success');
       }
       await loadData();
     } catch (err) {
@@ -156,27 +149,17 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
     }
   };
 
-  // 3. Incorporar postulante que YA TIENE el Visto Bueno (1 a la vez)
+  // 3. Incorporar postulante que YA TIENE el Visto Bueno (Periodo Individual de 30 Días)
   const handleIncorporateApproved = async (applicant) => {
     if (!applicant?.user_id) {
       showToast('Error: El alumno no tiene un ID de usuario registrado en la base de datos.', 'error');
       return;
     }
 
-    if (activeStatus?.has_active) {
-      const confirmChange = window.confirm(
-        `Actualmente ${activeStatus.student_name} está cursando CCTV.\n\n` +
-        `Esta capacitación es individual (solo 1 alumno a la vez).\n` +
-        `Al incorporar a ${applicant.nombre} (${applicant.rut}), el alumno anterior será archivado en el historial de auditoría y comenzarán los 30 días para ${applicant.nombre}.\n\n` +
-        `¿Deseas continuar?`
-      );
-      if (!confirmChange) return;
-    }
-
     setSubmitting(true);
     try {
       const res = await incorporateCctvStudent(applicant.user_id, course?.id);
-      showToast(`✓ ¡${res.student_name} incorporado exitosamente al curso CCTV por 30 días!`, 'success');
+      showToast(`✓ ¡${res.student_name} incorporado exitosamente a su autoestudio individual por 30 días!`, 'success');
       await loadData();
     } catch (err) {
       console.error('Error al incorporar alumno:', err);
@@ -186,15 +169,15 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
     }
   };
 
-  // 4. Desactivar alumno activo y archivar en historial
-  const handleDeactivate = async () => {
-    if (!activeStatus?.activation_id) return;
-    if (!window.confirm(`¿Seguro que deseas dar de baja el acceso CCTV de ${activeStatus.student_name}? Su periodo terminará y quedará archivado en el historial de auditoría.`)) return;
+  // 4. Desactivar alumno activo específico y archivar en historial
+  const handleDeactivate = async (activationId, studentName) => {
+    if (!activationId) return;
+    if (!window.confirm(`¿Seguro que deseas dar de baja el acceso CCTV de ${studentName}? Su periodo de 30 días terminará y quedará registrado en el historial de auditoría.`)) return;
 
     setSubmitting(true);
     try {
-      await deactivateCctvStudent(activeStatus.activation_id);
-      showToast(`Acceso CCTV de ${activeStatus.student_name} finalizado. El cupo individual ahora está disponible.`, 'success');
+      await deactivateCctvStudent(activationId);
+      showToast(`Acceso CCTV de ${studentName} finalizado y registrado en auditoría.`, 'info');
       await loadData();
     } catch (err) {
       console.error('Error al desactivar:', err);
@@ -204,13 +187,13 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
     }
   };
 
-  // 5. Extender 30 días adicionales
-  const handleExtend30Days = async () => {
-    if (!activeStatus?.user_id) return;
+  // 5. Extender 30 días adicionales para un alumno específico
+  const handleExtend30Days = async (userId, studentName) => {
+    if (!userId) return;
     setSubmitting(true);
     try {
-      await activateCctvStudent(course?.id, activeStatus.user_id);
-      showToast(`✓ Periodo extendido exitosamente por 30 días adicionales para ${activeStatus.student_name}.`, 'success');
+      await activateCctvStudent(course?.id, userId);
+      showToast(`✓ Periodo extendido exitosamente por 30 días adicionales para ${studentName}.`, 'success');
       await loadData();
     } catch (err) {
       console.error('Error al extender periodo:', err);
@@ -352,10 +335,10 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
         <div className="p-3 rounded-2xl bg-sky-950/40 border border-sky-500/30 flex items-center justify-between">
           <div className="flex items-center gap-2 text-sky-300">
             <Users size={16} />
-            <span className="font-bold">Cursando Actualmente:</span>
+            <span className="font-bold">Cursando Individualmente:</span>
           </div>
           <span className="text-base font-black text-sky-300 px-2 py-0.5 rounded-lg bg-sky-500/20">
-            {activeStatus?.has_active ? '1 / 1 (Activo)' : '0 / 1 (Libre)'}
+            {activeStudents.length} Alumno(s) Activo(s)
           </span>
         </div>
       </div>
@@ -522,7 +505,7 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
         ) : (
           <div className="grid grid-cols-1 gap-3 max-h-72 overflow-y-auto pr-1">
             {approvedApplicants.map((app) => {
-              const isAlreadyActive = activeStatus?.has_active && activeStatus.user_id === app.user_id;
+              const isAlreadyActive = activeStudents.some(s => s.user_id === app.user_id || s.student_rut === app.rut);
 
               return (
                 <div
@@ -544,7 +527,7 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
                       {isAlreadyActive ? (
                         <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                          CURSANDO AHORA (ACTIVO)
+                          CURSANDO AHORA (INDIVIDUAL)
                         </span>
                       ) : (
                         <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">
@@ -561,7 +544,7 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
                     {isAlreadyActive ? (
                       <span className="text-xs text-emerald-400 font-bold flex items-center gap-1">
                         <Check size={14} />
-                        <span>En curso activo</span>
+                        <span>En curso activo (30 días)</span>
                       </span>
                     ) : (
                       <button
@@ -571,7 +554,7 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
                         className="bg-gradient-to-r from-[#0284c7] to-sky-600 hover:from-sky-500 hover:to-sky-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         <UserCheck size={14} />
-                        <span>Incorporar (1 a la vez)</span>
+                        <span>Incorporar a Autoestudio (30 Días)</span>
                       </button>
                     )}
                   </div>
@@ -583,16 +566,16 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
       </div>
 
       {/* ========================================================================= */}
-      {/* SECCIÓN 3: 👤 ALUMNO ACTUALMENTE ACTIVO EN EL CURSO (MÁXIMO 1 A LA VEZ)    */}
+      {/* SECCIÓN 3: 👤 ALUMNOS CON AUTOESTUDIO INDIVIDUAL ACTIVO                   */}
       {/* ========================================================================= */}
       <div className="bg-slate-800/90 border border-sky-500/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-lg">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-sky-300 flex items-center gap-1.5">
             <Users size={14} />
-            <span>Alumno Actualmente en Curso (Habilitado Activo - Máximo 1):</span>
+            <span>Alumnos con Autoestudio Individual Activo:</span>
           </span>
-          <span className="text-[11px] text-slate-400">
-            {activeStatus?.has_active ? 'Cupo Ocupado (1/1)' : 'Cupo Disponible (0/1)'}
+          <span className="text-[11px] text-sky-300 font-semibold px-2.5 py-0.5 rounded-full bg-sky-950 border border-sky-500/30">
+            {activeStudents.length} Alumno(s) Cursando en Paralelo
           </span>
         </div>
 
@@ -601,82 +584,86 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
             <RefreshCw size={14} className="animate-spin text-sky-400" />
             <span>Consultando estado...</span>
           </div>
-        ) : activeStatus?.has_active ? (
-          <div className="bg-sky-950/70 border border-sky-400/50 rounded-2xl p-4 sm:p-5 space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-300 font-black text-base flex-shrink-0">
-                  {activeStatus.student_name ? activeStatus.student_name.slice(0, 2).toUpperCase() : 'AL'}
+        ) : activeStudents.length > 0 ? (
+          <div className="space-y-3">
+            {activeStudents.map((student) => (
+              <div key={student.activation_id || student.user_id} className="bg-sky-950/70 border border-sky-400/50 rounded-2xl p-4 sm:p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-300 font-black text-base flex-shrink-0">
+                      {student.student_name ? student.student_name.slice(0, 2).toUpperCase() : 'AL'}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-white text-sm sm:text-base">
+                          {student.student_name}
+                        </h4>
+                        <span className="bg-emerald-500 text-slate-950 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
+                          <span>CURSANDO AHORA (INDIVIDUAL)</span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300 mt-0.5 font-mono">
+                        RUT: {student.student_rut} {student.student_email ? `• ${student.student_email}` : ''}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Botones de acción del alumno activo */}
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleExtend30Days(student.user_id, student.student_name)}
+                      disabled={submitting}
+                      className="px-3.5 py-2 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-500 text-white transition-all cursor-pointer flex items-center gap-1 shadow-sm disabled:opacity-50"
+                      title="Extiende 30 días adicionales a partir de hoy"
+                    >
+                      <RefreshCw size={13} />
+                      <span>Extender +30 Días</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeactivate(student.activation_id, student.student_name)}
+                      disabled={submitting}
+                      className="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-600/80 hover:bg-rose-500 text-white transition-all cursor-pointer flex items-center gap-1 shadow-sm disabled:opacity-50"
+                      title="Finaliza el periodo individual del alumno y archiva el registro en el historial"
+                    >
+                      <UserX size={13} />
+                      <span>Dar de Baja</span>
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-white text-sm sm:text-base">
-                      {activeStatus.student_name}
-                    </h4>
-                    <span className="bg-emerald-500 text-slate-950 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
-                      <span>CURSANDO AHORA</span>
+
+                {/* Cronograma y cuenta regresiva */}
+                <div className="pt-3 border-t border-sky-800/50 space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-300 flex items-center gap-1">
+                      <Clock size={13} className="text-amber-400" />
+                      <span>Vigencia Individual de 30 Días:</span>
+                      <strong className="text-amber-300 ml-1 font-bold">
+                        Quedan {student.days_remaining} días y {student.hours_remaining || 0} hrs
+                      </strong>
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Fecha límite: <strong className="text-white">{student.expires_at ? new Date(student.expires_at).toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' }) : '30 días'}</strong>
                     </span>
                   </div>
-                  <p className="text-xs text-slate-300 mt-0.5 font-mono">
-                    RUT: {activeStatus.student_rut} {activeStatus.student_email ? `• ${activeStatus.student_email}` : ''}
+
+                  <div className="w-full h-2.5 bg-slate-900/90 rounded-full overflow-hidden border border-slate-700">
+                    <div 
+                      className={`h-full transition-all duration-500 ${
+                        student.days_remaining > 10 ? 'bg-gradient-to-r from-emerald-500 to-sky-400' : 'bg-gradient-to-r from-amber-500 to-rose-500'
+                      }`}
+                      style={{ width: `${calculateDaysPercent(student.days_remaining)}%` }}
+                    />
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 italic">
+                    * Acceso individual activo a los 5 manuales técnicos en su portal de estudiante.
                   </p>
                 </div>
               </div>
-
-              {/* Botones de acción del alumno activo */}
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <button
-                  type="button"
-                  onClick={handleExtend30Days}
-                  disabled={submitting}
-                  className="px-3.5 py-2 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-500 text-white transition-all cursor-pointer flex items-center gap-1 shadow-sm disabled:opacity-50"
-                  title="Extiende 30 días adicionales a partir de hoy"
-                >
-                  <RefreshCw size={13} />
-                  <span>Extender +30 Días</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDeactivate}
-                  disabled={submitting}
-                  className="px-3.5 py-2 text-xs font-bold rounded-xl bg-rose-600/80 hover:bg-rose-500 text-white transition-all cursor-pointer flex items-center gap-1 shadow-sm disabled:opacity-50"
-                  title="Finaliza el periodo del alumno y archiva el registro en el historial"
-                >
-                  <UserX size={13} />
-                  <span>Dar de Baja / Liberar Cupo</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Cronograma y cuenta regresiva */}
-            <div className="pt-3 border-t border-sky-800/50 space-y-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-300 flex items-center gap-1">
-                  <Clock size={13} className="text-amber-400" />
-                  <span>Vigencia de 30 Días:</span>
-                  <strong className="text-amber-300 ml-1 font-bold">
-                    Quedan {activeStatus.days_remaining} días y {activeStatus.hours_remaining || 0} hrs
-                  </strong>
-                </span>
-                <span className="text-[11px] text-slate-400">
-                  Fecha límite: <strong className="text-white">{activeStatus.expires_at ? new Date(activeStatus.expires_at).toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' }) : '30 días'}</strong>
-                </span>
-              </div>
-
-              <div className="w-full h-2.5 bg-slate-900/90 rounded-full overflow-hidden border border-slate-700">
-                <div 
-                  className={`h-full transition-all duration-500 ${
-                    activeStatus.days_remaining > 10 ? 'bg-gradient-to-r from-emerald-500 to-sky-400' : 'bg-gradient-to-r from-amber-500 to-rose-500'
-                  }`}
-                  style={{ width: `${calculateDaysPercent(activeStatus.days_remaining)}%` }}
-                />
-              </div>
-
-              <p className="text-[11px] text-slate-400 italic">
-                * Solo <strong>{activeStatus.student_name}</strong> tiene acceso a la biblioteca técnica de CCTV en su portal de alumno.
-              </p>
-            </div>
+            ))}
           </div>
         ) : (
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-700/60 text-center space-y-2">
@@ -684,10 +671,10 @@ const CctvActivationManager = ({ course, onStatusChange }) => {
               <Lock size={20} />
             </div>
             <p className="text-sm font-bold text-slate-200">
-              Actualmente no hay ningún alumno activo cursando CCTV
+              Actualmente no hay alumnos en autoestudio activo
             </p>
             <p className="text-xs text-slate-400 max-w-md mx-auto">
-              El cupo individual se encuentra <strong>disponible</strong>. Puedes seleccionar a uno de los alumnos con visto bueno para incorporarlo.
+              Los alumnos aprobados pueden ser incorporados en cualquier momento para iniciar su propio periodo individual de 30 días.
             </p>
           </div>
         )}

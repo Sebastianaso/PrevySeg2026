@@ -171,14 +171,14 @@ const EXTRA_COURSES_DATA = [
     image: cctvOperatorImg,
     price: '$140.000 CLP',
     priceNumber: 140000,
-    priceDetail: 'Autoestudio Documental • 30 Días (Cupo Individual con Visto Bueno)',
+    priceDetail: 'Modalidad 100% Individual • 30 Días (Autoestudio Documental con Visto Bueno)',
     days: 'Autoestudio Flexible',
     hours: '24/7 en Aula Virtual',
-    startDate: 'Habilitación por Turno Individual (30 Días)',
+    startDate: 'Autoestudio Individual Flexible (30 Días)',
     endDate: '30 días desde visto bueno',
     totalHours: '5 Manuales Técnicos',
     senceCode: 'CCTV-ALARM-09',
-    highlight: 'Cupo 1 a la Vez • 30 Días',
+    highlight: 'Autoestudio Individual • 30 Días',
     status: 'Disponible',
     isCctv: true
   },
@@ -648,14 +648,14 @@ const ExtraCoursesView = ({ currentUser }) => {
                           <span>Capacitación Especial CCTV</span>
                         </span>
                         <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
-                          1 Alumno a la Vez • 30 Días de Autoestudio
+                          Modalidad 100% Individual • 30 Días de Autoestudio
                         </span>
                       </div>
                       <h2 className="text-lg sm:text-xl font-black text-slate-900 leading-snug">
                         Formulario de Inscripción en Técnicas de Operación CCTV y Alarmas
                       </h2>
                       <p className="text-xs text-slate-500">
-                        Rellena tus antecedentes para solicitar la incorporación a la capacitación individual. Tu postulación será enviada a la administración para obtener el visto bueno oficial.
+                        Rellena tus antecedentes para solicitar la incorporación a la capacitación individual (no grupal). Tu postulación será evaluada por la administración para otorgar el visto bueno y habilitar tus 30 días de acceso personal.
                       </p>
                     </div>
 
@@ -798,7 +798,7 @@ const ExtraCoursesView = ({ currentUser }) => {
                           className="mt-0.5 rounded text-[#0284c7] focus:ring-sky-400"
                         />
                         <span className="text-[11px] text-slate-600 leading-snug">
-                          Declaro conocer que el curso de <strong>Técnicas de Operación CCTV y Alarmas</strong> opera mediante autoestudio de 5 manuales técnicos sin profesor en vivo, con habilitación individual a <strong>1 alumno a la vez por un plazo de 30 días</strong>, y solicito la evaluación y <strong>Visto Bueno</strong> de mi cupo por parte de la administración.
+                          Declaro conocer que el curso de <strong>Técnicas de Operación CCTV y Alarmas</strong> opera en modalidad 100% individual de autoestudio (sin clases grupales), con acceso personal a los 5 manuales técnicos por un plazo de <strong>30 días a contar de la habilitación</strong> por parte de la administración, y solicito la evaluación y <strong>Visto Bueno</strong> de mi cupo.
                         </span>
                       </label>
                     </div>
