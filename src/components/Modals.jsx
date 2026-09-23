@@ -210,7 +210,7 @@ _Enviado desde el formulario oficial de Contacto Directo de PrevySeg._`;
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-500 transition-all"
                 >
                   <option value="_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725">_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725</option>
-                  <option value="Operador de Central de Cámaras de Televigilancia. C.C.T.V.">Operador de Central de Cámaras de Televigilancia. C.C.T.V.</option>
+                  <option value="Técnicas de operación CCTV y alarmas de seguridad privada">Técnicas de operación CCTV y alarmas de seguridad privada (Autoestudio 30 Días)</option>
                   <option value="Curso de formación Guardia de Seguridad">Curso de formación Guardia de Seguridad</option>
                   <option value="Formación de Supervisor de Seguridad Privada *ONLINE*">Formación de Supervisor de Seguridad Privada *ONLINE*</option>
                   <option value="Capacitación ITIC">Capacitación ITIC</option>
@@ -805,7 +805,7 @@ export const SearchModal = ({ isOpen, onClose, onSelectCourse }) => {
 
   const coursesList = [
     { name: '_2_66_2026 Resolución de Conflictos y Manejo de Situaciones Difíciles Código Sence: 1238088725', category: 'Seguridad Privada', price: '$85.000 CLP' },
-    { name: 'Operador de Central de Cámaras de Televigilancia. C.C.T.V.', category: 'Seguridad Privada', price: '$140.000 CLP' },
+    { name: 'Técnicas de operación CCTV y alarmas de seguridad privada', category: 'Seguridad Privada', price: '$140.000 CLP' },
     { name: 'Curso de formación Guardia de Seguridad', category: 'Seguridad Privada', price: '$120.000 CLP' },
     { name: 'Formación de Supervisor de Seguridad Privada *ONLINE*', category: 'Seguridad Privada', price: '$180.000 CLP' },
     { name: 'Capacitación ITIC', category: 'Sistemas internos', price: '$75.000 CLP' },

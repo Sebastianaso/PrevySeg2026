@@ -404,10 +404,18 @@ const ExtraCoursesView = ({ currentUser }) => {
     }
   };
 
-  const isSelectedCctv = selectedCourseForModal && (
-    isCctvSpecialCourse(selectedCourseForModal) || 
-    selectedCourseForModal.id === 'seg-09' || 
-    selectedCourseForModal.isCctv
+  const isSelectedCctv = Boolean(
+    selectedCourseForModal && (
+      isCctvSpecialCourse(selectedCourseForModal) || 
+      selectedCourseForModal.id === 'seg-09' || 
+      selectedCourseForModal.id === 'extra-02' ||
+      selectedCourseForModal.id === 'cctv-online' ||
+      selectedCourseForModal.isCctv ||
+      (selectedCourseForModal.title && selectedCourseForModal.title.toLowerCase().replace(/\./g, '').includes('cctv')) ||
+      (selectedCourseForModal.title && selectedCourseForModal.title.toLowerCase().includes('televigilancia')) ||
+      (selectedCourseForModal.title && selectedCourseForModal.title.toLowerCase().includes('camaras')) ||
+      (selectedCourseForModal.title && selectedCourseForModal.title.toLowerCase().includes('cámaras'))
+    )
   );
 
   return (

@@ -462,15 +462,24 @@ export const processEnrollmentRegistration = async ({
  */
 export const isCctvSpecialCourse = (course) => {
   if (!course) return false;
-  const title = (course.titulo || course.title || course.nombre || course.nombreCompleto || '').toLowerCase();
-  const code = (course.codigo_sence || course.code || course.id || '').toLowerCase();
+  if (course.isCctv) return true;
+  const rawTitle = course.titulo || course.title || course.nombre || course.nombreCompleto || course.name || course.shortTitle || '';
+  const title = String(rawTitle).toLowerCase().replace(/\./g, '');
+  const rawCode = course.codigo_sence || course.code || course.id || '';
+  const code = String(rawCode).toLowerCase().replace(/\./g, '');
+  const id = String(course.id || '').toLowerCase();
+
   return (
+    id === 'seg-09' || 
+    id === 'extra-02' ||
+    id === 'cctv-online' ||
+    id === '20de0d7b-4173-4d5d-a712-3b77c6c854fb' ||
     title.includes('cctv') || 
     code.includes('cctv') || 
-    course.id === 'seg-09' || 
-    course.id === '20de0d7b-4173-4d5d-a712-3b77c6c854fb' ||
     title.includes('televigilancia') ||
-    title.includes('circuitos cerrados')
+    title.includes('circuitos cerrados') ||
+    title.includes('camaras') ||
+    title.includes('cámaras')
   );
 };
 
