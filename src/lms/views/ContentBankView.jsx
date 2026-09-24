@@ -24,7 +24,7 @@ const ContentBankView = () => {
       type: 'Paquete H5P / Interactivo',
       size: '14.2 MB',
       updated: '28 Agosto, 2026',
-      author: 'Ashley Adaros',
+      author: 'Viviane Montesillo',
     },
     {
       id: 'cnt-02',
@@ -40,7 +40,7 @@ const ContentBankView = () => {
       type: 'Video MP4 / HD',
       size: '48.5 MB',
       updated: '15 Agosto, 2026',
-      author: 'Ashley Adaros',
+      author: 'Viviane Montesillo',
     },
     {
       id: 'cnt-04',

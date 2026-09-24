@@ -309,7 +309,7 @@ stateDiagram-v2
         </tr>
         <tr>
           <td><strong>Director Académico OTEC</strong></td>
-          <td>Ashley Adaros — Dirección PrevySeg Ltda.</td>
+          <td>Viviane Montesillo — Dirección PrevySeg Ltda.</td>
           <td style="color: #16A34A; font-weight: bold;">APROBADO INSTITUCIONAL</td>
         </tr>
         <tr>

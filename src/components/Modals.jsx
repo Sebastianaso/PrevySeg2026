@@ -560,7 +560,7 @@ export const PlatformModal = ({ isOpen, onClose, onLoginSuccess, initialMode = '
                   onClick={() => handleFillDemo('15692858-5', '15692858')}
                   className="text-left text-purple-700 hover:text-purple-900 flex justify-between items-center cursor-pointer p-2 rounded-lg hover:bg-purple-50 border border-purple-200 transition-colors"
                 >
-                  <span className="font-semibold">👑 Ashley Adaros (ADMINISTRADOR OTEC)</span>
+                  <span className="font-semibold">👑 Viviane Montesillo (ADMINISTRADOR OTEC)</span>
                   <span className="font-mono text-slate-500 text-[10px]">15.692.858-5</span>
                 </button>
 

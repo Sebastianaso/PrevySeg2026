@@ -715,7 +715,7 @@ async function createFormalEngineeringRequirementsDoc() {
             indent: { left: 720 },
             children: [
               new TextRun({ text: "RESPONSABLES TÉCNICOS:  ", bold: true, color: COLOR_DARK_SLATE, size: 19 }),
-              new TextRun({ text: "Ashley Adaros (Director Académico) / Sebastián Araya (Coordinador OS-10 / TI)", color: COLOR_TEXT, size: 19 })
+              new TextRun({ text: "Viviane Montesillo (Directora Académica) / Sebastián Araya (Coordinador OS-10 / TI)", color: COLOR_TEXT, size: 19 })
             ]
           }),
           new Paragraph({
@@ -1122,7 +1122,7 @@ async function createFormalEngineeringRequirementsDoc() {
               new TableRow({
                 children: [
                   createCell("Director Académico PrevySeg", { bold: true, bgColor: COLOR_BG_LIGHT }),
-                  createCell("Ashley Adaros\nDirección OTEC PrevySeg", { bgColor: COLOR_BG_LIGHT }),
+                  createCell("Viviane Montesillo\nDirección OTEC PrevySeg", { bgColor: COLOR_BG_LIGHT }),
                   createCell("Septiembre 2026\n[ APROBADO INSTITUCIONAL ]", { bgColor: COLOR_BG_LIGHT, textColor: COLOR_PRIMARY, bold: true })
                 ]
               }),

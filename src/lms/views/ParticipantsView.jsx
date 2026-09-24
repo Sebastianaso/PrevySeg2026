@@ -262,8 +262,9 @@ const ParticipantsView = ({ isEditMode }) => {
 
       setShowEnrollModal(false);
       const roleName = newParticipant.rol === 'TEACHER' ? 'Profesor / Docente' : newParticipant.rol === 'ADMIN' ? 'Administrador' : newParticipant.rol === 'EMPRESA' ? 'Empresa' : 'Estudiante';
-      setToastSuccess(`Usuario ${newParticipant.nombre} (${roleName}) creado exitosamente en PostgreSQL.`);
-      setTimeout(() => setToastSuccess(''), 4000);
+      const assignedPass = newParticipant.password?.trim() ? newParticipant.password.trim() : cleanR;
+      setToastSuccess(`Usuario ${newParticipant.nombre} (${roleName}) creado exitosamente. Clave de acceso: ${assignedPass}`);
+      setTimeout(() => setToastSuccess(''), 5000);
 
       setNewParticipant({
         nombre: '',
@@ -713,12 +714,12 @@ const ParticipantsView = ({ isEditMode }) => {
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="block text-xs font-semibold text-slate-700">Contraseña de Acceso</label>
-                  <span className="text-[10px] text-slate-400">Por defecto: RUT del usuario</span>
+                  <span className="text-[10px] text-slate-400">Por defecto: RUT sin puntos ni guión</span>
                 </div>
                 <div className="relative">
                   <input
                     type={showNewUserPass ? 'text' : 'password'}
-                    placeholder="Opcional (si se deja vacío, será su RUT)"
+                    placeholder="Opcional (por defecto será su RUT ej: 169045396)"
                     value={newParticipant.password}
                     onChange={(e) => setNewParticipant({ ...newParticipant, password: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#0284c7] focus:bg-white"

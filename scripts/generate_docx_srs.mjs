@@ -598,7 +598,7 @@ async function generateDocx() {
               new TableRow({
                 children: [
                   createCell('Director Académico OTEC', false, 35, null, true),
-                  createCell('Ashley Adaros — Dirección PrevySeg Ltda.', false, 35),
+                  createCell('Viviane Montesillo — Dirección PrevySeg Ltda.', false, 35),
                   createCell('APROBADO INSTITUCIONAL', false, 30, 'DCFCE7', true, AlignmentType.CENTER)
                 ]
               }),

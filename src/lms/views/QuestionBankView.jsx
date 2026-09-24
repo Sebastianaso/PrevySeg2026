@@ -34,7 +34,7 @@ const QuestionBankView = () => {
       type: 'Opción múltiple',
       points: 2,
       lastModified: '25 Agosto, 2026',
-      author: 'Ashley Adaros',
+      author: 'Viviane Montesillo',
     },
     {
       id: 'q-02',
@@ -52,7 +52,7 @@ const QuestionBankView = () => {
       type: 'Desarrollo / Ensayo',
       points: 5,
       lastModified: '18 Agosto, 2026',
-      author: 'Ashley Adaros',
+      author: 'Viviane Montesillo',
     },
     {
       id: 'q-04',
@@ -70,7 +70,7 @@ const QuestionBankView = () => {
       type: 'Emparejamiento',
       points: 4,
       lastModified: '10 Agosto, 2026',
-      author: 'Ashley Adaros',
+      author: 'Viviane Montesillo',
     },
   ];
 

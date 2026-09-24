@@ -49,12 +49,45 @@ export const loginWithRut = async (rut, password) => {
 
   const email = rutToEmail(cleaned);
 
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+  // 1. Intentar autenticar con la contraseña tal como fue ingresada
+  let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email,
     password: cleanPass,
   });
 
+  // 2. Si falla y la contraseña parece corresponder al RUT (variantes comunes: con o sin DV, con puntos o guión):
+  if (authError && cleaned.length >= 7) {
+    const bodyWithoutDv = cleaned.slice(0, -1);
+    const cleanPassNorm = cleanRut(cleanPass);
+    const isRutRelated = cleanPassNorm === cleaned || 
+                         cleanPassNorm === bodyWithoutDv || 
+                         cleanPass === bodyWithoutDv ||
+                         cleanPass === cleaned;
+
+    if (isRutRelated) {
+      const candidates = [
+        cleaned,
+        bodyWithoutDv,
+        formatRut(cleaned),
+        `${bodyWithoutDv}-${cleaned.slice(-1)}`
+      ].filter(c => c && c !== cleanPass);
+
+      for (const altPass of candidates) {
+        const retry = await supabase.auth.signInWithPassword({
+          email,
+          password: altPass,
+        });
+        if (retry.data?.user && !retry.error) {
+          authData = retry.data;
+          authError = null;
+          break;
+        }
+      }
+    }
+  }
+
   if (authError) {
+    console.error('Error de autenticación Supabase:', authError);
     throw new Error('RUT o contraseña incorrectos. Verifica tus datos o regístrate si eres alumno nuevo.');
   }
 

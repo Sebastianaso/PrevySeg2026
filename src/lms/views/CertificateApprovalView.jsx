@@ -104,7 +104,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
           status: isApproved ? 'APROBADO' : 'PENDIENTE',
           certificateCode: `PREVY-2026-${(student.rut || '00').slice(0, 4)}-${en.id.slice(0, 4).toUpperCase()}`,
           certificateUrl: cert?.url_pdf || `https://clmamemnvttgdvebjnbw.supabase.co/storage/v1/object/public/certificates/cert_${student.rut?.replace(/[\.\-]/g, '')}.pdf`,
-          approvedBy: isApproved ? 'Ashley Adaros (Director Académico)' : null,
+          approvedBy: isApproved ? 'Viviane Montesillo (Directora Académica)' : null,
           approvalDate: isApproved ? 'Agosto 2026' : null,
           emailDispatched: isApproved,
           emailDispatchedAt: isApproved ? '02/09/2026 10:15 hrs' : null
@@ -165,7 +165,7 @@ export const CertificateApprovalView = ({ currentUser }) => {
           return {
             ...item,
             status: 'APROBADO',
-            approvedBy: currentUser?.nombre || 'Ashley Adaros (Director Académico)',
+            approvedBy: currentUser?.nombre || 'Viviane Montesillo (Directora Académica)',
             approvalDate: new Date().toLocaleDateString('es-CL'),
             emailDispatched: true,
             emailDispatchedAt: new Date().toLocaleDateString('es-CL') + ' ' + new Date().toLocaleTimeString().slice(0, 5) + ' hrs'
@@ -573,9 +573,9 @@ export const CertificateApprovalView = ({ currentUser }) => {
                   <div className="flex gap-6 text-center text-[11px] text-slate-500">
                     <div className="space-y-1">
                       <div className="w-32 border-b border-slate-300 pb-1 font-serif italic text-sky-700 text-xs font-bold">
-                        Ashley Adaros G.
+                        Viviane Montesillo
                       </div>
-                      <span className="block text-[10px] font-bold text-slate-800">Director Académico</span>
+                      <span className="block text-[10px] font-bold text-slate-800">Directora Académica</span>
                       <span className="block text-[9px] text-slate-500">PrevySeg OTEC</span>
                     </div>
 

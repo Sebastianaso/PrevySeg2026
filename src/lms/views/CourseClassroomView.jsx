@@ -549,7 +549,7 @@ export const CourseClassroomView = ({ courseTitle, onBack }) => {
                   </div>
 
                   <div className="pt-4 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500">
-                    <span>Firmado digitalmente: Ashley Adaros (Director Académico)</span>
+                    <span>Firmado digitalmente: Viviane Montesillo (Directora Académica)</span>
                     <span className="text-emerald-700 font-bold">✓ Copia Oficial del Alumno</span>
                   </div>
                 </div>
