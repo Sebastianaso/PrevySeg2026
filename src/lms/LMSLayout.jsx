@@ -595,7 +595,7 @@ const LMSLayout = ({ currentUser, onLogout, onReturnHome, initialTab }) => {
                   <CertificateApprovalView currentUser={currentUser} />
                 )}
                 {activeNavTab === 'informes' && (
-                  <ReportsView isEditMode={isEditMode} />
+                  <ReportsView isEditMode={isEditMode} currentUser={currentUser} />
                 )}
                 {activeNavTab === 'preguntas' && (
                   <QuestionBankView isEditMode={isEditMode} />

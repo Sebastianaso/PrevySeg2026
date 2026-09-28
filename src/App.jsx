@@ -11,12 +11,12 @@ import NetworkBackground from './components/NetworkBackground';
 import ScrollToTop from './components/ScrollToTop';
 import LMSLayout from './lms/LMSLayout';
 import { supabase, logoutUser } from './config/supabase';
-import { 
-  ContactModal, 
-  PlatformModal, 
-  SearchModal, 
-  ArticleModal, 
-  EnrollmentModal 
+import {
+  ContactModal,
+  PlatformModal,
+  SearchModal,
+  ArticleModal,
+  EnrollmentModal
 } from './components/Modals';
 import SchoolDetailModal from './components/SchoolDetailModal';
 
@@ -31,7 +31,7 @@ function App() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedSchoolModal, setSelectedSchoolModal] = useState(null); // 'seguridad' | 'oficios' | null
-  
+
   // Estado de usuario autenticado en LMS y pestaña inicial
   const [currentLMSUser, setCurrentLMSUser] = useState(null);
   const [lmsInitialTab, setLmsInitialTab] = useState('area-personal');
@@ -59,23 +59,23 @@ function App() {
             const enriched = {
               ...profile,
               user: profile.rut,
-              cargo: profile.rol === 'ADMIN' 
-                ? 'Director Ejecutivo / Administrador OTEC' 
+              cargo: profile.rol === 'ADMIN'
+                ? 'Director Ejecutivo / Administrador OTEC'
                 : isEmployer
-                ? 'Gerencia de Selección & RRHH • Empresa Verificada'
-                : profile.rol === 'TEACHER' 
-                ? 'Docente Instructor SPD' 
-                : 'Estudiante / Alumno Regular',
+                  ? 'Gerencia de Selección & RRHH • Empresa Verificada'
+                  : profile.rol === 'TEACHER'
+                    ? 'Docente Instructor SPD'
+                    : 'Estudiante / Alumno Regular',
             };
             setCurrentLMSUser(enriched);
             setLmsInitialTab(
-              profile.rol === 'ADMIN' 
-                ? 'ajustes-sitio' 
+              profile.rol === 'ADMIN'
+                ? 'ajustes-sitio'
                 : isEmployer
-                ? 'mis-ofertas'
-                : profile.rol === 'TEACHER' 
-                ? 'docente-panel' 
-                : 'area-personal'
+                  ? 'mis-ofertas'
+                  : profile.rol === 'TEACHER'
+                    ? 'docente-panel'
+                    : 'area-personal'
             );
           }
         }
@@ -134,13 +134,13 @@ function App() {
     setCurrentLMSUser(userData);
     const isEmp = userData.rol === 'EMPLOYER' || userData.rol === 'EMPLEADOR' || userData.rol === 'EMPRESA';
     const resolvedTab = targetTab || (
-      userData.rol === 'ADMIN' 
-        ? 'ajustes-sitio' 
+      userData.rol === 'ADMIN'
+        ? 'ajustes-sitio'
         : isEmp
-        ? 'mis-ofertas'
-        : userData.rol === 'TEACHER' 
-        ? 'docente-panel' 
-        : 'area-personal'
+          ? 'mis-ofertas'
+          : userData.rol === 'TEACHER'
+            ? 'docente-panel'
+            : 'area-personal'
     );
     setLmsInitialTab(resolvedTab);
     setIsPlatformOpen(false);
@@ -167,12 +167,12 @@ function App() {
 
   return (
     <div className="relative min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-[#0284c7] selection:text-white">
-      
+
       {/* Dynamic Network Node Canvas Background */}
       <NetworkBackground />
 
       {/* 1. Header (Sticky Top Bar + Main Navigation with react-scroll) */}
-      <Header 
+      <Header
         currentUser={currentLMSUser}
         onLogout={handleLogout}
         onOpenPlatform={() => handleOpenPlatform('login')}
@@ -185,9 +185,9 @@ function App() {
 
       {/* Main Page Layout */}
       <main className="flex-grow relative z-10">
-        
+
         {/* Section #inicio (Hero con Switcher Intercambiable de Escuela) */}
-        <Hero 
+        <Hero
           onOpenContact={() => handleOpenContactWithCourse('')}
           onOpenEnrollment={() => handleOpenEnrollmentWithCourse('')}
           onOpenSchoolDetail={(school) => setSelectedSchoolModal(school)}
@@ -196,7 +196,7 @@ function App() {
         />
 
         {/* Section #quienes-somos (About Us: Misión Oficial PrevySeg, Visión, Valores) */}
-        <AboutUs 
+        <AboutUs
           onSelectSchool={(school) => {
             setActiveSchool(school);
             setSelectedSchoolModal(school);
@@ -204,7 +204,7 @@ function App() {
         />
 
         {/* Section #servicios (Catálogo de Cursos de la Escuela Activa con Apertura de Ficha al Inscribirse) */}
-        <Services 
+        <Services
           onSelectCourse={(course) => handleOpenEnrollmentWithCourse(course)}
           onOpenSchoolDetail={(school) => setSelectedSchoolModal(school)}
           activeSchool={activeSchool}
@@ -212,7 +212,7 @@ function App() {
         />
 
         {/* Execution Section (Cyan Checkmarks, Action, and Promo Image adaptables a la Escuela activa) */}
-        <ExecutionSection 
+        <ExecutionSection
           onLearnMore={handleLearnMore}
           activeSchool={activeSchool}
         />
@@ -221,14 +221,14 @@ function App() {
         <StatsSection />
 
         {/* Experiences Section (3 Blog/News Cards) */}
-        <ExperiencesSection 
+        <ExperiencesSection
           onReadArticle={(article) => setSelectedArticle(article)}
         />
 
       </main>
 
       {/* Section #contacto & Footer */}
-      <ContactFooter 
+      <ContactFooter
         onOpenContactModal={() => handleOpenContactWithCourse('')}
         onOpenEnrollmentModal={() => handleOpenEnrollmentWithCourse('')}
       />
@@ -263,28 +263,28 @@ function App() {
         }}
       />
 
-      <ContactModal 
-        isOpen={isContactOpen} 
+      <ContactModal
+        isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
         defaultCourse={selectedCourse}
       />
 
-      <PlatformModal 
-        isOpen={isPlatformOpen} 
+      <PlatformModal
+        isOpen={isPlatformOpen}
         initialMode={platformModalMode}
         initialRut={platformInitialRut}
         onClose={() => setIsPlatformOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
 
-      <SearchModal 
-        isOpen={isSearchOpen} 
+      <SearchModal
+        isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onSelectCourse={(course) => handleOpenEnrollmentWithCourse(course)}
       />
 
-      <ArticleModal 
-        article={selectedArticle} 
+      <ArticleModal
+        article={selectedArticle}
         onClose={() => setSelectedArticle(null)}
         onOpenContact={() => handleOpenEnrollmentWithCourse(selectedArticle?.category || '')}
       />

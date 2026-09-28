@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FileText, 
-  CheckCircle2, 
-  AlertCircle, 
-  ShieldCheck, 
-  CreditCard, 
-  Send, 
-  Printer, 
-  Download, 
-  Building2, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  User, 
-  Calendar, 
-  DollarSign, 
-  Check, 
-  Sparkles, 
-  Lock, 
+import {
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  ShieldCheck,
+  CreditCard,
+  Send,
+  Printer,
+  Download,
+  Building2,
+  Phone,
+  Mail,
+  MapPin,
+  User,
+  Calendar,
+  DollarSign,
+  Check,
+  Sparkles,
+  Lock,
   ExternalLink,
   ChevronDown,
   Info,
@@ -222,10 +222,10 @@ const AdmissionPortalView = ({ currentUser }) => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-200 print:bg-white print:text-black print:p-0">
-      
+
       {/* ================= HEADER INSTITUCIONAL (COPIA FIEL DE LA FICHA EN PAPEL) ================= */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
-        
+
         {/* Banner superior de Ficha */}
         <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div className="flex items-center gap-4">
@@ -304,17 +304,15 @@ const AdmissionPortalView = ({ currentUser }) => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedCourseId(c.id)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 relative ${
-                    isSelected
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 relative ${isSelected
                       ? 'bg-sky-50/80 border-sky-500 shadow-sm ring-2 ring-sky-500'
                       : 'bg-white border-slate-200 hover:border-sky-300 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-start justify-between gap-2">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                        c.type === 'spd' ? 'bg-sky-100 text-sky-800' : 'bg-amber-100 text-amber-800'
-                      }`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${c.type === 'spd' ? 'bg-sky-100 text-sky-800' : 'bg-amber-100 text-amber-800'
+                        }`}>
                         {c.category}
                       </span>
                       {isSelected && (
@@ -424,7 +422,7 @@ const AdmissionPortalView = ({ currentUser }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-            
+
             {/* Nombre Completo */}
             <div className="space-y-1.5 sm:col-span-2">
               <label className="font-bold text-slate-700 flex items-center gap-1.5">
@@ -592,15 +590,14 @@ const AdmissionPortalView = ({ currentUser }) => {
 
           {/* Tabla de Cuotas según la Ficha */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {/* Cuota 1 */}
-            <div 
+            <div
               onClick={() => setPaymentOption('cuota1')}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                paymentOption === 'cuota1'
+              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${paymentOption === 'cuota1'
                   ? 'bg-sky-50 border-sky-400 ring-2 ring-sky-400 shadow-sm'
                   : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-              }`}
+                }`}
             >
               <div>
                 <span className="text-[10px] text-sky-700 font-bold uppercase tracking-wider block">
@@ -618,13 +615,12 @@ const AdmissionPortalView = ({ currentUser }) => {
             </div>
 
             {/* Cuota 2 / Total */}
-            <div 
+            <div
               onClick={() => setPaymentOption('total')}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                paymentOption === 'total'
+              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${paymentOption === 'total'
                   ? 'bg-teal-50 border-teal-400 ring-2 ring-teal-400 shadow-sm'
                   : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-              }`}
+                }`}
             >
               <div>
                 <span className="text-[10px] text-teal-700 font-bold uppercase tracking-wider block">
@@ -659,11 +655,10 @@ const AdmissionPortalView = ({ currentUser }) => {
                     key={m.id}
                     type="button"
                     onClick={() => setPaymentMethod(m.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
-                      paymentMethod === m.id
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${paymentMethod === m.id
                         ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
                         : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
-                    }`}
+                      }`}
                   >
                     {m.label}
                   </button>
@@ -727,11 +722,10 @@ const AdmissionPortalView = ({ currentUser }) => {
                     whileTap={{ scale: 0.97 }}
                     type="submit"
                     disabled={isProcessingPayment || paymentSuccess}
-                    className={`px-6 py-3 rounded-xl font-black text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-sm transition-all ${
-                      paymentSuccess
+                    className={`px-6 py-3 rounded-xl font-black text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-sm transition-all ${paymentSuccess
                         ? 'bg-emerald-600 text-white'
                         : 'bg-teal-600 text-white hover:bg-teal-700'
-                    }`}
+                      }`}
                   >
                     {isProcessingPayment ? (
                       <span>Procesando Abono...</span>
